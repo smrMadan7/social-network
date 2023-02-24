@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { useLocation, useNavigate } from "react-router";
 import metamaskLogo from "./.././.././assets/Auth/metamask-logo.svg";
@@ -8,7 +8,6 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import Web3 from "web3";
 import { chainId, network, signMessage } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
-import { WebSocketProvider } from "ethers";
 import PoweredBy from "../PoweredBy/PoweredBy";
 
 declare global {
@@ -20,7 +19,6 @@ declare global {
 
 const SignInCard = () => {
   const navigate = useNavigate();
-  const exactPath = useLocation().pathname.slice(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [defaultAccount, setDefaultAccount] = useState("");
   const [isInstall, setIsInstall] = useState(false);

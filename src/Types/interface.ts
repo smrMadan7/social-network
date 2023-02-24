@@ -1,7 +1,3 @@
-import { ComponentElement } from "react";
-import { IconType } from "react-icons/lib";
-import { JsxAttributeLike } from "typescript";
-
 export interface INotificationProps {
   headerImg?: React.ReactElement<any, any>;
   title?: string;

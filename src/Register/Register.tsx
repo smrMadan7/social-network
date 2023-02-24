@@ -1,20 +1,17 @@
 import React from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
-import SignInCard from "../components/Cards/SignInCard";
-import Member from "../components/Forms/Member";
-import Team from "../components/Forms/Team";
-import teamImg from "./.././assets/Auth/team.png";
-import member from "./.././assets/Auth/member.png";
+import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar/Navbar";
-import logo from "./.././assets/Navbar/logo.svg";
+import PoweredBy from "../components/PoweredBy/PoweredBy";
 import fileCoinLogo from "./.././assets/Auth/filecoin-logo.svg";
 import ipfsLogo from "./.././assets/Auth/ipfs-logo.svg";
-import PoweredBy from "../components/PoweredBy/PoweredBy";
+import member from "./.././assets/Auth/member.png";
+import teamImg from "./.././assets/Auth/team.png";
+import logo from "./.././assets/Navbar/logo.svg";
 
 const Register = () => {
   const navigate = useNavigate();
   const registrationHandler = (e: React.SyntheticEvent, mode: string) => {
-    if (mode == "member") {
+    if (mode === "member") {
       navigate("/register/member");
     } else if (mode === "team") {
       navigate("/register/team");
@@ -28,10 +25,10 @@ const Register = () => {
         <div className="relative w-full h-full">
           <div className=" absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 text-center ">
             <div className="p-5 flex justify-between items-center  gap-10 top-0">
-              <img src={ipfsLogo} width="48px" height="48px"></img>
+              <img alt="ipfs logo" src={ipfsLogo} width="48px" height="48px"></img>
 
-              <img src={logo} width="100px" height="100px"></img>
-              <img src={fileCoinLogo} width="38px" height="38px"></img>
+              <img alt="app logo" src={logo} width="100px" height="100px"></img>
+              <img alt="filecoin logo" src={fileCoinLogo} width="38px" height="38px"></img>
             </div>
             {/* register card */}
             <div className="border flex flex-col bg-white w-300  rounded-lg">
@@ -45,7 +42,13 @@ const Register = () => {
                     onClick={(e) => registrationHandler(e, "member")}
                   >
                     As a Member
-                    <img loading="lazy" src={member} width="30px" height="20px"></img>
+                    <img
+                      alt="member icon"
+                      loading="lazy"
+                      src={member}
+                      width="30px"
+                      height="20px"
+                    ></img>
                   </button>
                 </div>
                 <div className="px-5">
@@ -54,7 +57,7 @@ const Register = () => {
                     onClick={(e) => registrationHandler(e, "team")}
                   >
                     As a Team
-                    <img src={teamImg} width="30px" height="20px"></img>
+                    <img alt="team icon" src={teamImg} width="30px" height="20px"></img>
                   </button>
                 </div>
               </div>

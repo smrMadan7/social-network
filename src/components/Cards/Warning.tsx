@@ -1,4 +1,3 @@
-import React from "react";
 import { IWarningProps } from "../../Types/interface";
 
 const Warning = (props: IWarningProps) => {

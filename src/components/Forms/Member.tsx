@@ -1,18 +1,18 @@
-import React, { SetStateAction, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
 
 import { create } from "ipfs-http-client";
 import Cropper, { Area } from "react-easy-crop";
-import { GrFormAdd, GrFormClose } from "react-icons/gr";
+import { GrFormAdd } from "react-icons/gr";
 import { useNavigate } from "react-router";
+import { ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import getCroppedImage from "../../utils/crop";
+import Warning from "../Cards/Warning";
 import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
-import defaultProfile from "./.././../assets/Form/default-user.png";
 import PoweredBy from "../PoweredBy/PoweredBy";
-import { ipfsPostUrl } from "../../constants/AppConstants";
-import Warning from "../Cards/Warning";
+import defaultProfile from "./.././../assets/Form/default-user.png";
 
 const Member = () => {
   const [formStatus, setFormStatus] = useState("");
@@ -310,7 +310,7 @@ const Member = () => {
                   name="member"
                   onSubmit={formSubmitHandler}
                 >
-                  <div className=" w-full flex flex-col md:flex-col sm:flex-col xs:flex-col gap-3">
+                  <div className="flex-col w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
                         {/* First Name */}
@@ -448,7 +448,7 @@ const Member = () => {
                           <div className="text-gray-700 flex gap-2 ">
                             {selectedRoles?.length === 0 ? (
                               <>
-                                <p className="text-gray-400">Add Your Role</p>
+                                <p className="sm:d-block text-gray-400">Add Your Role</p>
                               </>
                             ) : (
                               <>

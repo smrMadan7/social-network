@@ -3,7 +3,7 @@ import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 
 const MemberProfile = () => {
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appState }: any = useUserContext();
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePath}`;
   return (
@@ -90,6 +90,7 @@ const MemberProfile = () => {
                     <div className="items-center text-center flex md:justify-center sm:justify-start">
                       <div className=" cursor-pointer" style={{ width: "140px", height: "140px" }}>
                         <img
+                          alt="user profile"
                           className="border rounded-full"
                           height="140px"
                           width="140px"

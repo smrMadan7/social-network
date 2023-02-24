@@ -1,9 +1,6 @@
-import React, { HTMLInputTypeAttribute, useEffect, useState } from "react";
-import { GrFormClose } from "react-icons/gr";
-import { AiFillStar } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import { AiFillStar, AiOutlineFileGif } from "react-icons/ai";
 import { MdOutlinePermMedia } from "react-icons/md";
-import { AiOutlineFileGif } from "react-icons/ai";
-import { TbWorld } from "react-icons/tb";
 
 const NewPost = () => {
   const [filePath, setFilePath] = useState("");
@@ -21,8 +18,6 @@ const NewPost = () => {
     let input: HTMLInputElement = document.createElement("input");
     input.type = "file";
     input.onchange = () => {
-      var timestamp = Number(new Date());
-
       if (input.files != null) {
         let files = Array.from(input.files);
         setFilePath(URL.createObjectURL(files[0]));
@@ -119,7 +114,7 @@ const NewPost = () => {
           </div>
         </div>
         <div className=" overflow-y-auto" style={{ height: "230px" }}>
-          <img src={filePath}></img>
+          <img alt="user profile" src={filePath}></img>
         </div>
 
         <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">

@@ -1,4 +1,3 @@
-import React from "react";
 import { INotificationProps } from "../../Types/interface";
 
 const Notification = (props: INotificationProps) => {
