@@ -169,13 +169,15 @@ const Navbar = () => {
                       <IoIosContact color="gray" />
                       Contact
                     </a>
-                    <div
+                    <a
+                      href="https://github.com/Vellaiyan-Marimuthu/social-network"
+                      target="_blank"
                       className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
                       onClick={() => setMoreStatus(false)}
                     >
                       <AiFillBug color="gray" />
                       Report a bug
-                    </div>
+                    </a>
                   </div>
                 )}
               </div>
