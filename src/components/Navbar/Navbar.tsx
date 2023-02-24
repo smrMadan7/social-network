@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 
-import { AiOutlineLogin } from "react-icons/ai";
-import { IoIosContact } from "react-icons/io";
 import { AiFillBug } from "react-icons/ai";
-import defaultUser from "./.././.././assets/Form/default-user.png";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import Loading from "../Loading/Loading";
 import { BiLogOut } from "react-icons/bi";
-import logo from "./.././.././assets/Navbar/logo.svg";
-import { useUserContext } from "../../context/UserContextProvider";
+import { IoIosContact } from "react-icons/io";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ipfsGateway } from "../../constants/AppConstants";
+import { useUserContext } from "../../context/UserContextProvider";
+import Loading from "../Loading/Loading";
+import defaultUser from "./.././.././assets/Form/default-user.png";
+import logo from "./.././.././assets/Navbar/logo.svg";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ const Navbar = () => {
   const [moreStatus, setMoreStatus] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
   const [greeting, setGreeting] = useState("");
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appState }: any = useUserContext();
   const user = localStorage.getItem("signedIn");
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
@@ -72,10 +71,10 @@ const Navbar = () => {
     setProfileStatus(false);
     setMoreStatus(false);
     setIsLogout(true);
-    appStatedispatch({});
 
     setTimeout(() => {
       navigate("/");
+      window.location.reload();
     }, 3000);
   };
 
@@ -107,7 +106,7 @@ const Navbar = () => {
       >
         <div className="flex gap-11">
           <div className="flex cursor-pointer rounded-lg" onClick={logoOnClickHandler}>
-            <img height="60" width="60" src={logo} loading="lazy"></img>
+            <img alt="app-log " height="60" width="60" src={logo} loading="lazy"></img>
             <div className="hidden md:block mt-1 ">
               <p className="font-bold text-md">Protocol Labs</p>
               <p className="font-bold text-md leading-none">Social Network</p>
@@ -170,6 +169,7 @@ const Navbar = () => {
                       Contact
                     </a>
                     <a
+                      rel="noreferrer"
                       href="https://github.com/Vellaiyan-Marimuthu/social-network"
                       target="_blank"
                       className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
@@ -205,8 +205,14 @@ const Navbar = () => {
             className="border rounded-full cursor-pointer flex flex-col"
             onClick={() => setProfileStatus(true)}
           >
-            {image != defaultUser && (
-              <img height="45px" width="45px" src={image} className="rounded-full"></img>
+            {image !== defaultUser && (
+              <img
+                alt="user profile"
+                height="45px"
+                width="45px"
+                src={image}
+                className="rounded-full"
+              ></img>
             )}
             {profileStatus && (
               <div className="fixed border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-8 top-14 ">
@@ -229,8 +235,8 @@ const Navbar = () => {
                 <div
                   className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
                   onClick={() => {
-                    setMoreStatus(false);
                     logoutHandler();
+                    setMoreStatus(false);
                   }}
                 >
                   <BiLogOut
