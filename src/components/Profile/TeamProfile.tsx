@@ -1,20 +1,8 @@
-import React, { SetStateAction, useCallback, useEffect, useState } from "react";
-import { IoIosClose } from "react-icons/io";
-
-import { create } from "ipfs-http-client";
-import Cropper, { Area } from "react-easy-crop";
-import { GrFormAdd } from "react-icons/gr";
-import { useNavigate } from "react-router";
-import { useUserContext } from "../../context/UserContextProvider";
-import getCroppedImage from "../../utils/crop";
-import Loading from "../Loading/Loading";
-import Navbar from "../Navbar/Navbar";
-import defaultProfile from "./.././../assets/Form/default-user.png";
-import PoweredBy from "../PoweredBy/PoweredBy";
 import { ipfsGateway } from "../../constants/AppConstants";
+import { useUserContext } from "../../context/UserContextProvider";
 
 const TeamProfile = () => {
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appState }: any = useUserContext();
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePath}`;
   return (
@@ -115,6 +103,7 @@ const TeamProfile = () => {
                     <div className="items-center text-center flex md:justify-center sm:justify-start">
                       <div className=" cursor-pointer" style={{ width: "140px", height: "140px" }}>
                         <img
+                          alt="user-profile"
                           src={imageUrl}
                           className="border rounded-full"
                           height="140px"

@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { BiMessageAltEdit, BiMenu } from "react-icons/bi";
-import { RiArrowDownSLine } from "react-icons/ri";
 import { HiLightBulb } from "react-icons/hi";
-import { FiFilter } from "react-icons/fi";
 import { FaThList } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 
@@ -13,15 +11,12 @@ import { CiCircleMore } from "react-icons/ci";
 
 import NewPost from "../components/Cards/NewPost";
 import { GrFormClose } from "react-icons/gr";
-import { useUserContext } from "../context/UserContextProvider";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
   const [isPost, setIsPost] = useState(false);
-  const { appState, appStateDispatch }: any = useUserContext();
 
   useEffect(() => {
-    console.log("user degails in home component", appState);
     setFilterStatus("timeline");
     setIsPost(false);
   }, []);

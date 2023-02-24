@@ -1,10 +1,8 @@
-import React from "react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
-import App from "../App";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Member from "../components/Forms/Member";
 import Team from "../components/Forms/Team";
 import MemberProfile from "../components/Profile/MemberProfile";
-import TeamProfile from "../components/Profile/TeamProfilel";
+import TeamProfile from "../components/Profile/TeamProfile";
 
 import SignIn from "../components/SignIn/SignIn";
 import Layout from "../containers/Layout";
