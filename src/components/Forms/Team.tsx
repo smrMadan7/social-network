@@ -210,17 +210,17 @@ const Team = () => {
                   name="member"
                   onSubmit={formSubmitHandler}
                 >
-                  <div className=" w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
+                  <div className="flex-col w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
                         {/* OrganizationName */}
                         <div className="flex w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
-                          <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">
+                          <label className="w-60 md:w-30  block tracking-wide text-gray-700 font-bold mb-2">
                             Org Name:
                           </label>
                           <input
                             required
-                            className=" md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                            className="w-full md:w-full  appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="organization-name"
                             type="text"
                             name="organizationName"
@@ -231,12 +231,12 @@ const Team = () => {
                         {/* Website */}
 
                         <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
-                          <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                          <label className="w-60 md:w-30  block tracking-wide text-gray-700 text-md font-bold mb-2">
                             Website:
                           </label>
                           <input
                             required
-                            className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                            className="w-full  md:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="website"
                             name="website"
                             type="url"
@@ -246,12 +246,12 @@ const Team = () => {
                       </div>
                       {/* Contact Email */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Contact Email:
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                          Email:
                         </label>
                         <input
                           required
-                          className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                          className="w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="contact-email"
                           name="contactEmail"
                           type="email"
@@ -260,11 +260,11 @@ const Team = () => {
                       </div>
                       {/* Twitter */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
                           Twitter
                         </label>
                         <input
-                          className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                          className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="twitter"
                           name="twitter"
                           type="url"
@@ -273,11 +273,11 @@ const Team = () => {
                       </div>
                       {/* Discord */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
                           Discord
                         </label>
                         <input
-                          className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                          className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="discord"
                           name="discord"
                           type="url"

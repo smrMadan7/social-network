@@ -310,17 +310,17 @@ const Member = () => {
                   name="member"
                   onSubmit={formSubmitHandler}
                 >
-                  <div className=" w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
+                  <div className=" w-full flex flex-col md:flex-col sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
                         {/* First Name */}
-                        <div className="flex w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
-                          <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">
+                        <div className="flex  w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
+                          <label className="w-50 sm:w-40 md:w-50  block tracking-wide text-gray-700 font-bold mb-2">
                             First Name:
                           </label>
                           <input
                             required
-                            className=" md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                            className="w-60 md:w-full  bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="first-name"
                             type="text"
                             name="firstName"
@@ -331,12 +331,12 @@ const Member = () => {
                         {/* Last Name */}
 
                         <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
-                          <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                          <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                             Last Name:
                           </label>
                           <input
                             required
-                            className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                            className="w-60 md:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="last-name"
                             name="lastName"
                             type="text"
@@ -347,12 +347,12 @@ const Member = () => {
 
                       {/* Display Name */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                        <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                           Display Name:
                         </label>
                         <input
                           required
-                          className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                          className="w-60 md:w-full  appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="display-name"
                           name="displayName"
                           type="text"
@@ -363,10 +363,10 @@ const Member = () => {
                       {/* open to work */}
 
                       <div className="text-sm flex  px-4  md:mb-0 items-center gap-2">
-                        <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold ">
+                        <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold ">
                           Open To Work:
                         </label>
-                        <div className="w-full relative cursor-pointer ">
+                        <div className="w-60 sm:w-75 md:w-full relative cursor-pointer ">
                           <select
                             id="isWork"
                             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-gray-500 cursor-pointer"
