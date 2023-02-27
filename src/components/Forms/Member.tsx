@@ -214,7 +214,7 @@ const Member = () => {
         {warning && <Warning message="Something went wrong. Please try again!"></Warning>}
         {toast && <Warning message="Upload Profile "></Warning>}
         {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center sm:w-full">
+          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center sm:w-full">
             <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>
               <div>
                 <Cropper
@@ -627,7 +627,7 @@ const Member = () => {
                   </div>
 
                   {/* actions  */}
-                  <div className="flex md:justify-end sm:justify-center gap-4 px-5 text-white py-7">
+                  <div className="flex justify-end py-4 md:py-1 gap-4 px-5 text-white  ">
                     <button
                       type="button"
                       className="sm:w-30 md:w-20 border rounded-lg px-3 py-2 bg-violet-700 hover:bg-violet-900"

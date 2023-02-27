@@ -3,7 +3,7 @@ import React from "react";
 const PoweredBy = () => {
   return (
     <>
-      <div className="absolute right-4 bottom-3 ">
+      <div className="hidden md:block absolute right-4 bottom-3 ">
         <a
           href="https://filecoin.io/"
           target="_blank"
