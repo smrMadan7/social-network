@@ -5,7 +5,13 @@ import { create } from "ipfs-http-client";
 import Cropper, { Area } from "react-easy-crop";
 import { GrFormAdd } from "react-icons/gr";
 import { useNavigate } from "react-router";
-import { addMember, handleCheck, ipfsPostUrl, verifyUser } from "../../constants/AppConstants";
+import {
+  addMember,
+  handleCheck,
+  ipfsPost,
+  ipfsPostUrl,
+  verifyUser,
+} from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import getCroppedImage from "../../utils/crop";
 import Warning from "../Cards/Warning";
@@ -15,6 +21,7 @@ import PoweredBy from "../PoweredBy/PoweredBy";
 import defaultProfile from "./.././../assets/Form/default-user.png";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import Web3 from "web3";
+import { Buffer } from "buffer";
 
 declare global {
   interface Window {
@@ -127,6 +134,7 @@ const Member = () => {
       const file = await ipfs.add(croppedImg);
       return file.path;
     } catch (error) {
+      console.log("Error", error);
       return;
     }
   };

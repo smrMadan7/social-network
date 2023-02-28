@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { BiMenu, BiMessageAltEdit } from "react-icons/bi";
-import { BsStars } from "react-icons/bs";
 import { FaThList, FaUserAlt } from "react-icons/fa";
-import { HiLightBulb, HiOutlineCurrencyDollar } from "react-icons/hi";
+import { HiLightBulb } from "react-icons/hi";
 import { Outlet } from "react-router-dom";
-
-import { CiCircleMore } from "react-icons/ci";
-import Follow from "../components/Cards/Follow";
 
 import { create } from "ipfs-http-client";
 import { useCallback } from "react";
@@ -16,11 +12,11 @@ import { GrFormClose } from "react-icons/gr";
 import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
-import { useUserContext } from "../context/UserContextProvider";
-import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
-import getCroppedImage from "../utils/crop";
-import Warning from "../components/Cards/Warning";
 import Notification from "../components/Cards/Notification";
+import Warning from "../components/Cards/Warning";
+import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
+import { useUserContext } from "../context/UserContextProvider";
+import getCroppedImage from "../utils/crop";
 
 import Chat from "../components/Cards/Chat";
 
@@ -40,7 +36,6 @@ const Home = () => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
-  const [content, setContent] = useState();
   const [posts, setPosts] = useState<any>([]);
   const [ipfsPath, setIpfsPath] = useState<any>();
   console.log(uuidv4());
@@ -56,13 +51,10 @@ const Home = () => {
     getAllPosts();
 
     if (!appState?.action?.user) {
-      console.log("user not found ");
       window.location.reload();
     }
     setIsPost(false);
   }, []);
-
-  const users = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
 
   const mediaUpload = () => {
     let input: HTMLInputElement = document.createElement("input");
@@ -97,7 +89,7 @@ const Home = () => {
     e.preventDefault();
     setIsLoading(true);
     const contentElement: any = document.getElementById("content");
-    setContent(contentElement.innerText);
+    const content = contentElement.innerHTML;
 
     try {
       ipfsClient(uploadImage)
@@ -157,6 +149,7 @@ const Home = () => {
               console.log("result in new post is ", result);
               if (result.status !== false) {
                 setIsPost(false);
+
                 getAllPosts();
               }
             })

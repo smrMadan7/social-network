@@ -3,7 +3,7 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { ipfs, ipfsGateway } from "../../constants/AppConstants";
+import { ipfsPost, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { IChatProps } from "../../Types/interface";
 import Loading from "../Loading/Loading";
@@ -26,7 +26,7 @@ const Chat = (post: any) => {
   };
 
   useEffect(() => {
-    fetch(`${ipfs}${post?.post?.postURI}`, requestOptions)
+    fetch(`${ipfsPost}${post?.post?.postURI}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
@@ -72,11 +72,12 @@ const Chat = (post: any) => {
             </div>
 
             <div className="description-container">{postDetails?.content}</div>
-            <div className="description-container" style={{ width: "200px", height: "200px" }}>
-              {postDetails?.media[0]?.file && (
+            {postDetails?.media[0]?.file && (
+              <div className="description-container" style={{ width: "200px", height: "200px" }}>
                 <img src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100"></img>
-              )}
-            </div>
+              </div>
+            )}
+
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div className="hover:bg-slate-300 rounded-full px-2 py-2 ">
                 <TbMessage
@@ -121,7 +122,7 @@ const Chat = (post: any) => {
           </div>
         </>
       ) : (
-        <div>
+        <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
           <Loading />
         </div>
       )}
