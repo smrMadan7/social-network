@@ -6,7 +6,7 @@ import Reload from "../components/Cards/Reload";
 import Loading from "../components/Loading/Loading";
 
 import Navbar from "../components/Navbar/Navbar";
-import { getUser } from "../constants/AppConstants";
+import { chainId, getUser, network } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
 
 declare global {
@@ -25,6 +25,11 @@ const SecureLayout = () => {
   const [user, setUser] = useState(false);
   const [fetchUser, setFetchUser] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [defaultAccount, setDefaultAccount] = useState("");
+  const [isInstall, setIsInstall] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   if (!appState?.action?.user) {
     // setFetchUser(false);
   }
@@ -78,10 +83,69 @@ const SecureLayout = () => {
             navigate("/sign-in");
           });
       } else {
-        navigate("/sign-in");
+        borwserWalletHandler();
       }
     };
     getCurrentUser();
+
+    const detectProvider = () => {
+      let provider: MetaMaskInpageProvider;
+      if (window.ethereum) {
+        provider = window.ethereum;
+        return provider;
+      } else {
+        setIsInstall(true);
+        setIsLoading(false);
+        setErrorMessage("Install MetaMask Please");
+      }
+      return;
+    };
+
+    const connectWallet = async () => {
+      try {
+        const currentProvider: any = window.ethereum;
+
+        if (currentProvider) {
+          await currentProvider?.request({ method: "eth_requestAccounts" });
+          const web3 = new Web3(currentProvider);
+          console.log("provider in signin card", currentProvider);
+          const userAccount = await web3.eth.getAccounts();
+
+          accountChanged(userAccount[0]);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    const accountChanged = async (accountName: string) => {
+      setDefaultAccount(accountName);
+
+      localStorage.setItem("signedIn", accountName);
+
+      setTimeout(() => {
+        setIsLoading(false);
+        setIsConnected(true);
+      }, 3000);
+    };
+
+    const borwserWalletHandler = async () => {
+      setIsLoading(true);
+      if (window.ethereum?.chainId !== Web3.utils.toHex(chainId)) {
+        try {
+          await window.ethereum?.request({
+            method: "wallet_addEthereumChain",
+            params: [network],
+          });
+
+          connectWallet();
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        connectWallet();
+      }
+    };
   }, []);
 
   return (
