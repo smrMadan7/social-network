@@ -56,25 +56,30 @@ const SecureLayout = () => {
       const userAccount = await web3.eth.getAccounts();
       const address = userAccount[0];
       setAccount(address);
-      fetch(`${getUser}${address}`, requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          console.log("response status", result);
-          if (result?.status === true) {
-            const user = result.data;
-            appStatedispatch({
-              user,
-            });
-            setLoading(false);
-            navigate("/home");
-          } else {
-            setLoading(false);
+
+      if (address) {
+        fetch(`${getUser}${address}`, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log("response status", result);
+            if (result?.status === true) {
+              const user = result.data;
+              appStatedispatch({
+                user,
+              });
+              setLoading(false);
+              navigate("/home");
+            } else {
+              setLoading(false);
+              navigate("/sign-in");
+            }
+          })
+          .catch((error) => {
             navigate("/sign-in");
-          }
-        })
-        .catch((error) => {
-          navigate("/sign-in");
-        });
+          });
+      } else {
+        navigate("/sign-in");
+      }
     };
     getCurrentUser();
   }, []);
