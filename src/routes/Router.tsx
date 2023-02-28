@@ -5,19 +5,21 @@ import MemberProfile from "../components/Profile/MemberProfile";
 import TeamProfile from "../components/Profile/TeamProfile";
 
 import SignIn from "../components/SignIn/SignIn";
-import Layout from "../containers/Layout";
+
+import SecureLayout from "../containers/SecureLayout";
 import Register from "../Register/Register";
 import Explore from "./Explore";
 import Home from "./Home";
+import Layout from "./Layout";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/register" element={<Register />}></Route>
-        <Route path="/register/team" element={<Team />}></Route>
-        <Route path="/register/member" element={<Member />}></Route>"
-        <Route element={<Layout />}>
+        <Route element={<SecureLayout />}>
+          <Route path="/register" element={<Register />}></Route>
+          <Route path="/register/team" element={<Team />}></Route>
+          <Route path="/register/member" element={<Member />}></Route>"
           <Route path="/home" element={<Home />}></Route>
           <Route path="/" element={<Home />}></Route>
           <Route path="/sign-in" element={<SignIn />}></Route>

@@ -1,4 +1,8 @@
-import { createContext, useContext, useReducer } from "react";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import { createContext, useContext, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router";
+import Web3 from "web3";
+import { getUser } from "../constants/AppConstants";
 
 export const UserContext = createContext({});
 
@@ -12,11 +16,9 @@ export const useUserContext = () => {
 };
 
 export const UserContextProvider = ({ children }: any) => {
-  const initialState: any = {};
+  let initialState: any = {};
 
   const reducer = (state = initialState, action: any) => {
-    console.log("data in provider", action);
-
     return {
       action,
     };

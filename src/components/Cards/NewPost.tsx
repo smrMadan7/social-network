@@ -1,13 +1,27 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AiFillStar, AiOutlineFileGif } from "react-icons/ai";
 import { MdOutlinePermMedia } from "react-icons/md";
+import { ipfsPostUrl } from "../../constants/AppConstants";
+import getCroppedImage from "../../utils/crop";
+import { create } from "ipfs-http-client";
+import Warning from "./Warning";
+import Loading from "../Loading/Loading";
+import Cropper, { Area } from "react-easy-crop";
+import { v4 as uuidv4 } from "uuid";
 
 const NewPost = () => {
   const [filePath, setFilePath] = useState("");
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isCode, setIsCode] = useState(false);
-
+  const [uploadImage, setUploadImage] = useState();
+  const [warning, setWarning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cropStatus, setCropStatus] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedPixel, setCroppedPixel] = useState<Area>();
+  const [zoom, setZoom] = useState(1);
+  console.log(uuidv4());
   useEffect(() => {
     setIsBold(false);
     setIsItalic(false);
@@ -21,14 +35,112 @@ const NewPost = () => {
       if (input.files != null) {
         let files = Array.from(input.files);
         setFilePath(URL.createObjectURL(files[0]));
+        setCropStatus(true);
       }
     };
     input.click();
   };
 
+  const ipfs = create({ url: ipfsPostUrl });
+
+  const ipfsClient = async (croppedImg: any) => {
+    try {
+      const file = await ipfs.add(croppedImg);
+      return file.path;
+    } catch (error) {
+      return;
+    }
+  };
+
+  const cropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+    setCroppedPixel(croppedAreaPixels);
+  };
+
+  const publishPost = async () => {
+    try {
+      ipfsClient(uploadImage)
+        .then((path) => {
+          if (path !== undefined) {
+          } else {
+            setWarning(true);
+            setIsLoading(false);
+            setTimeout(() => {
+              setWarning(false);
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          console.log("error is ", error);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getGroppedImage = useCallback(async () => {
+    try {
+      const { file, url }: any = await getCroppedImage(filePath, croppedPixel);
+
+      setFilePath(url);
+      setUploadImage(file);
+
+      setCropStatus(false);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [croppedPixel]);
   return (
     <>
       <div className="border-t-2  w-100 ">
+        {cropStatus ? (
+          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center sm:w-full">
+            <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>
+              <div>
+                <Cropper
+                  image={filePath}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={4 / 3}
+                  onCropChange={setCrop}
+                  onCropComplete={cropComplete}
+                  onZoomChange={setZoom}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 w-50 bg-gray-700 ">
+              <div className="flex justify-center items-center mt-3">
+                <input
+                  id="small-range"
+                  type="range"
+                  min={1}
+                  max={50}
+                  value={zoom}
+                  onChange={(e: any) => {
+                    setZoom(e.target.value);
+                  }}
+                  className="w-50 h-2 bg-blue-100 appearance-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-center mb-3">
+                <button
+                  className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white"
+                  onClick={getGroppedImage}
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {warning && <Warning message="Something went wrong. Please try again?"></Warning>}
+        {isLoading && (
+          <div className="flex items-center bg-black h-screen absolute">
+            <Loading />
+          </div>
+        )}
         <div className="flex gap-4 justify-between p-4">
           <div className="flex gap-8">
             <button
@@ -82,7 +194,7 @@ const NewPost = () => {
         <div className="w-full border-t-2">
           <div className="mt-3 p-4">
             <div
-              className="focus:outline-none select-text whitespace-pre-wrap break-words h-16"
+              className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
               contentEditable="true"
               data-placeholder="What's happening?"
               style={
@@ -113,8 +225,9 @@ const NewPost = () => {
             ></div>
           </div>
         </div>
-        <div className=" overflow-y-auto" style={{ height: "230px" }}>
-          <img alt="user profile" src={filePath}></img>
+
+        <div className=" overflow-y-auto " style={{ height: "230px" }}>
+          {filePath && !cropStatus && <img alt="uploaded Image" src={filePath}></img>}
         </div>
 
         <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">
@@ -127,7 +240,9 @@ const NewPost = () => {
             </div>
           </div>
           <div>
-            <button className="rounded-lg bg-violet-700 px-3 py-1 text-white">Publish</button>
+            <button className="rounded-lg bg-violet-700 px-3 py-1 text-white" onClick={publishPost}>
+              Publish
+            </button>
           </div>
         </div>
 

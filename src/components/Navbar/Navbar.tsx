@@ -24,9 +24,9 @@ const Navbar = () => {
 
   var image;
 
-  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePath}`;
+  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
-  if (appState?.action?.user?.profilePath === undefined) {
+  if (appState?.action?.user?.profilePictureUrl === undefined) {
     image = defaultUser;
   } else {
     image = imageUrl;
@@ -66,8 +66,6 @@ const Navbar = () => {
   }, [exactPath]);
 
   const logoutHandler = () => {
-    localStorage.removeItem("signedIn");
-    localStorage.removeItem("registered");
     setProfileStatus(false);
     setMoreStatus(false);
     setIsLogout(true);

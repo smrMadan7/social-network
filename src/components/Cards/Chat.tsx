@@ -1,10 +1,8 @@
-import React from "react";
-import { IChat, IChatProps } from "../../Types/interface";
-import { MdVerified } from "react-icons/md";
 import { BiDotsVerticalRounded } from "react-icons/bi";
+import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
+import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { BsArrowLeftRight } from "react-icons/bs";
-import { BsHeart } from "react-icons/bs";
+import { IChatProps } from "../../Types/interface";
 
 const Chat = (chat: IChatProps) => {
   return (

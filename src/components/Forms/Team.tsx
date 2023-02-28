@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { create } from "ipfs-http-client";
 import Cropper, { Area } from "react-easy-crop";
 import { useNavigate } from "react-router";
-import { ipfsPostUrl } from "../../constants/AppConstants";
+import { addTeam, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import getCroppedImage from "../../utils/crop";
 import Warning from "../Cards/Warning";
@@ -11,6 +11,13 @@ import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
 import defaultProfile from "./.././../assets/Form/default-user.png";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import Web3 from "web3";
+
+interface Window {
+  ethereum?: MetaMaskInpageProvider;
+  web3?: any;
+}
 
 const Team = () => {
   const [description, setDescription] = useState("");
@@ -27,6 +34,7 @@ const Team = () => {
   const [uploadedImage, setUploadedImage] = useState<string>();
   const { appState, appStatedispatch }: any = useUserContext();
   const [warning, setWarning] = useState(false);
+  const [handle, setHandle] = useState(false);
 
   const navigate = useNavigate();
 
@@ -36,6 +44,7 @@ const Team = () => {
     setUserImage(defaultProfile);
     setToast(false);
     setCropStatus(false);
+    setHandle(false);
   }, []);
   const ipfs = create({ url: ipfsPostUrl });
 
@@ -48,6 +57,25 @@ const Team = () => {
     }
   };
 
+  const checkHandle = (event: any) => {
+    if (event.target.value.length > 3) {
+      var requestOptions: any = {
+        method: "GET",
+        redirect: "follow",
+      };
+
+      fetch(`${handleCheck}${event.target.value}`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === true) {
+            setHandle(false);
+          } else {
+            setHandle(true);
+          }
+        });
+    }
+  };
+
   const formSubmitHandler = (event: React.SyntheticEvent) => {
     event.preventDefault();
     setIsLoading(true);
@@ -55,7 +83,7 @@ const Team = () => {
     if (uploadedImage) {
       setToast(false);
 
-      ipfsClient(uploadImage).then((path) => {
+      ipfsClient(uploadImage).then(async (path) => {
         if (path !== undefined) {
           const target = event.target as typeof event.target & {
             organizationName: { value: string };
@@ -63,28 +91,52 @@ const Team = () => {
             contactEmail: { value: string };
             twitter: { value: string };
             discord: { value: string };
+            handle: { value: string };
           };
+          const provider: any = window.ethereum;
+          const web3: any = new Web3(provider);
+
+          const userAccount = await web3.eth.getAccounts();
+          const address = userAccount[0];
+
           const user = {
             organizationName: target.organizationName.value,
             website: target.website.value,
-            email: target.contactEmail.value,
+            contact: target.contactEmail.value,
             social: {
               twitter: target.twitter.value,
               discord: target.twitter.value,
             },
-            description: description,
-            profilePath: path,
+            desc: description,
+            profilePictureUrl: path,
+            handle: target.handle.value,
+            address: address,
           };
 
-          localStorage.setItem("registered", JSON.stringify(user));
-          console.log("user is ", user);
-          appStatedispatch({
-            user,
-          });
+          var raw = JSON.stringify(user);
+          var myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/json");
 
-          setTimeout(() => {
-            navigate("/home");
-          }, 5000);
+          var requestOptions: any = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+          };
+
+          fetch(addTeam, requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+              if (result.status !== false) {
+                const user = result.data;
+                appStatedispatch({
+                  user,
+                });
+                setTimeout(() => {
+                  navigate("/home");
+                }, 3000);
+              }
+            });
         } else {
           setWarning(true);
           setIsLoading(false);
@@ -122,6 +174,7 @@ const Team = () => {
   };
 
   const cropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+    console.log("cropped area", croppedAreaPixels);
     setCroppedPixel(croppedAreaPixels);
   };
 
@@ -223,6 +276,27 @@ const Team = () => {
                             type="text"
                             name="organizationName"
                             placeholder="Organization Name"
+                          ></input>
+                        </div>
+
+                        {/* handle */}
+                        {handle && (
+                          <div className=" text-red-700 flex justify-end px-5 py-1">
+                            *handle already taken
+                          </div>
+                        )}
+
+                        <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                          <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                            Handle
+                          </label>
+                          <input
+                            className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                            id="handle"
+                            name="handle"
+                            placeholder="handle"
+                            min={3}
+                            onChange={checkHandle}
                           ></input>
                         </div>
 

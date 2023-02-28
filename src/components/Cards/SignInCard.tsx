@@ -6,14 +6,17 @@ import appLogo from "././.././../assets/Navbar/logo.svg";
 
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import Web3 from "web3";
-import { chainId, network, signMessage } from "../../constants/AppConstants";
+import { chainId, network, signMessage, verifyUser } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
 import PoweredBy from "../PoweredBy/PoweredBy";
+import useFetch from "../hooks/useFetch";
+import { Signature } from "ethers";
+import { useUserContext } from "../../context/UserContextProvider";
 
 declare global {
   interface Window {
     ethereum?: MetaMaskInpageProvider;
-    web3?: Web3;
+    web3?: any;
   }
 }
 
@@ -24,6 +27,7 @@ const SignInCard = () => {
   const [isInstall, setIsInstall] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const { appState, appStatedispatch }: any = useUserContext();
 
   useEffect(() => {
     setIsInstall(false);
@@ -47,8 +51,7 @@ const SignInCard = () => {
   const accountChanged = async (accountName: string) => {
     setDefaultAccount(accountName);
 
-    console.log("user current account is ", accountName);
-    localStorage.setItem("signedIn", "true");
+    localStorage.setItem("signedIn", accountName);
 
     setTimeout(() => {
       setIsLoading(false);
@@ -108,13 +111,34 @@ const SignInCard = () => {
         ""
       );
 
-      setIsLoading(true);
-    }
+      const body = {
+        signatureHex: signature,
+        address: userAccount[0],
+        message: signMessage,
+      };
 
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/register");
-    }, 3000);
+      var requestOptions: any = {
+        method: "POST",
+        body: JSON.stringify(body),
+        redirect: "follow",
+      };
+      setIsLoading(true);
+      fetch(verifyUser, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === false) {
+            setTimeout(() => {
+              setIsLoading(false);
+              navigate("/register");
+            }, 3000);
+          } else {
+            setTimeout(() => {
+              setIsLoading(false);
+              navigate("/home");
+            }, 3000);
+          }
+        });
+    }
   };
 
   return (

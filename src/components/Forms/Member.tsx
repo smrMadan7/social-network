@@ -5,7 +5,7 @@ import { create } from "ipfs-http-client";
 import Cropper, { Area } from "react-easy-crop";
 import { GrFormAdd } from "react-icons/gr";
 import { useNavigate } from "react-router";
-import { ipfsPostUrl } from "../../constants/AppConstants";
+import { addMember, handleCheck, ipfsPostUrl, verifyUser } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import getCroppedImage from "../../utils/crop";
 import Warning from "../Cards/Warning";
@@ -13,6 +13,15 @@ import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
 import defaultProfile from "./.././../assets/Form/default-user.png";
+import { MetaMaskInpageProvider } from "@metamask/providers";
+import Web3 from "web3";
+
+declare global {
+  interface Window {
+    ethereum?: MetaMaskInpageProvider;
+    web3?: any;
+  }
+}
 
 const Member = () => {
   const [formStatus, setFormStatus] = useState("");
@@ -36,6 +45,7 @@ const Member = () => {
   const { appState, appStatedispatch }: any = useUserContext();
   const [toast, setToast] = useState(false);
   const [warning, setWarning] = useState(false);
+  const [handle, setHandle] = useState(false);
 
   const navigate = useNavigate();
 
@@ -48,6 +58,7 @@ const Member = () => {
     setCropStatus(false);
     setToast(false);
     setWarning(false);
+    setHandle(false);
   }, []);
 
   const inputFormSubmitHandler = (event: React.SyntheticEvent) => {
@@ -120,40 +131,91 @@ const Member = () => {
     }
   };
 
-  const formSubmitHandler = (event: React.SyntheticEvent) => {
+  const checkHandle = (event: any) => {
+    if (event.target.value.length > 3) {
+      var requestOptions: any = {
+        method: "GET",
+        redirect: "follow",
+      };
+
+      fetch(`${handleCheck}${event.target.value}`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === true) {
+            setHandle(false);
+          } else {
+            setHandle(true);
+          }
+        });
+    }
+  };
+  const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     if (uploadedImage) {
       setIsLoading(true);
-      ipfsClient(uplodFile).then((path) => {
-        if (path !== undefined) {
+      ipfsClient(uplodFile).then(async (path) => {
+        if (path !== undefined && handle === false) {
           const target = event.target as typeof event.target & {
             firstName: { value: string };
             lastName: { value: string };
             displayName: { value: string };
             open: { value: string };
+            handle: { value: string };
           };
+
+          const provider: any = window.ethereum;
+          const web3: any = new Web3(provider);
+
+          const userAccount = await web3.eth.getAccounts();
+          const address = userAccount[0];
+
           const user = {
             firstName: target.firstName.value,
             lastName: target.lastName.value,
+            handle: target.handle.value,
             displayName: target.displayName.value,
-            openForWork: target.open.value,
             bio: bio,
             role: selectedRoles,
             organization: selectedOrganization,
-            skills: selectedSkills,
-            profilePath: path,
+            skill: selectedSkills,
+            openForWork: target.open.value,
+            address: address,
+            profilePictureUrl: path,
           };
 
-          localStorage.setItem("registered", JSON.stringify(user));
-
-          appStatedispatch({
-            user,
-          });
+          var requestOptions: any = {
+            method: "POST",
+            mode: "cors",
+            redirect: "follow",
+          };
           setIsLoading(true);
-          setTimeout(() => {
-            navigate("/home");
-          }, 5000);
+
+          var raw = JSON.stringify(user);
+          var myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/json");
+
+          var requestOptions: any = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+          };
+
+          fetch(addMember, requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+              if (result.status !== false) {
+                localStorage.setItem("registered", "true");
+                const user = result.data;
+                appStatedispatch({
+                  user,
+                });
+                setTimeout(() => {
+                  navigate("/home");
+                }, 3000);
+              }
+            });
         } else {
           setWarning(true);
           setIsLoading(false);
@@ -324,7 +386,7 @@ const Member = () => {
                             id="first-name"
                             type="text"
                             name="firstName"
-                            placeholder="First Name"
+                            placeholder="first name"
                           ></input>
                         </div>
 
@@ -340,7 +402,7 @@ const Member = () => {
                             id="last-name"
                             name="lastName"
                             type="text"
-                            placeholder="Last Name"
+                            placeholder="last name"
                           ></input>
                         </div>
                       </div>
@@ -356,7 +418,30 @@ const Member = () => {
                           id="display-name"
                           name="displayName"
                           type="text"
-                          placeholder="Display Name"
+                          placeholder="display name"
+                        ></input>
+                      </div>
+
+                      {/* Handle  */}
+                      {handle && (
+                        <div className=" text-red-700 flex justify-end px-5 py-1">
+                          *handle already taken
+                        </div>
+                      )}
+
+                      <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                        <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
+                          Handle
+                        </label>
+                        <input
+                          required
+                          className="w-60 md:w-full  appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                          id="handle"
+                          name="handle"
+                          type="text"
+                          placeholder="handle"
+                          min={3}
+                          onChange={checkHandle}
                         ></input>
                       </div>
 
@@ -426,7 +511,7 @@ const Member = () => {
                         form="member"
                         name="bio"
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                        placeholder="Write your thoughts here..."
+                        placeholder="write your thoughts here..."
                       ></textarea>
                     </div>
                   </div>
@@ -442,7 +527,7 @@ const Member = () => {
                           className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full"
                           onClick={() => {
                             setFormStatus("role");
-                            setInputPlaceholder(`Enter Your Role`);
+                            setInputPlaceholder(`enter your role`);
                           }}
                         >
                           <div className="text-gray-700 flex gap-2 ">
@@ -483,7 +568,7 @@ const Member = () => {
                             className="font-bold text-xl cursor-pointer"
                             onClick={() => {
                               setFormStatus("role");
-                              setInputPlaceholder(`Enter Your Role`);
+                              setInputPlaceholder(`enter your role`);
                             }}
                           >
                             <GrFormAdd
@@ -504,7 +589,7 @@ const Member = () => {
                         <div
                           className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
                           onClick={() => {
-                            setInputPlaceholder("Enter Your Organization");
+                            setInputPlaceholder("enter your organization");
                             setFormStatus("organization");
                           }}
                         >
@@ -549,7 +634,7 @@ const Member = () => {
                             onClick={() => {
                               setFormStatus("organization");
 
-                              setInputPlaceholder("Enter Your Organization");
+                              setInputPlaceholder("enter your organization");
                             }}
                           >
                             <GrFormAdd
@@ -573,7 +658,7 @@ const Member = () => {
                         className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
                         onClick={() => {
                           setFormStatus("skill");
-                          setInputPlaceholder("Enter Your Skill");
+                          setInputPlaceholder("enter your skill");
                         }}
                       >
                         <div className="text-gray-700 flex gap-2 role-container">
@@ -613,7 +698,7 @@ const Member = () => {
                         <div
                           className="font-bold text-xl cursor-pointer"
                           onClick={() => {
-                            setInputPlaceholder("Enter Your Skill");
+                            setInputPlaceholder("enter your skill");
                             setFormStatus("skill");
                           }}
                         >
