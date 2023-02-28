@@ -69,7 +69,7 @@ const Layout = () => {
           }
         })
         .catch((error) => {
-          navigate("/home");
+          navigate("/sign-in");
         });
     };
     getCurrentUser();
