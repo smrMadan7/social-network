@@ -19,6 +19,7 @@ module.exports = {
       },
       height: {
         30: "30%",
+        55: "55%",
       },
       backgroundColor: {
         blackOverlay: "rgba(0, 0 ,0 ,0.3)",

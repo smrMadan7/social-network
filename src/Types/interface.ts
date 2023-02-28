@@ -23,6 +23,7 @@ export interface IChatProps {
     userId?: string;
     userName?: string;
     isVerified?: boolean;
+    postImage?: string;
     message?: string;
     likes?: number;
     mirrors?: number;

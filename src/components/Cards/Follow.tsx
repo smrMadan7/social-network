@@ -1,6 +1,26 @@
+import { useEffect, useState } from "react";
 import { SlUserFollow } from "react-icons/sl";
+import { getUser } from "../../constants/AppConstants";
 
 const Follow = () => {
+  const [followers, setFollowers] = useState([]);
+
+  useEffect(() => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions: any = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    fetch(`${getUser}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {})
+      .catch((error) => {});
+  });
+
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-3">
@@ -12,8 +32,8 @@ const Follow = () => {
           className=" rounded-full"
         ></img>
         <div>
-          <p className="font-semibold">Alan</p>
-          <p>@donosonaumczuk</p>
+          <p className="font-semibold ">Alan</p>
+          <p className="font-semibold userid-background">@donosonaumczuk</p>
         </div>
       </div>
       <div className="cursor-pointer text-violet-600">
@@ -21,6 +41,16 @@ const Follow = () => {
           <SlUserFollow className=" " />
         </div>
       </div>
+
+      <style>
+        {`
+          .userid-background {
+            background: rgb(203,66,252);
+            background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+        }`}
+      </style>
     </div>
   );
 };

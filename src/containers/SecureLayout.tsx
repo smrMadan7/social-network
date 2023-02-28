@@ -3,14 +3,11 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import Web3 from "web3";
 import Reload from "../components/Cards/Reload";
-import SignInCard from "../components/Cards/SignInCard";
 import Loading from "../components/Loading/Loading";
 
 import Navbar from "../components/Navbar/Navbar";
-import SignIn from "../components/SignIn/SignIn";
 import { getUser } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
-import Register from "../Register/Register";
 
 declare global {
   interface Window {
@@ -19,21 +16,28 @@ declare global {
   }
 }
 
-const Layout = () => {
+const SecureLayout = () => {
   const { appState, appStatedispatch }: any = useUserContext();
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState("");
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const navigate = useNavigate();
+  const [user, setUser] = useState(false);
+  const [fetchUser, setFetchUser] = useState(false);
 
-  setTimeout(() => {
-    setRefresh(true);
-    setLoading(false);
-  }, 10000);
+  if (!appState?.action?.user) {
+    // setFetchUser(false);
+  }
+
+  // setTimeout(() => {
+  //   // setRefresh(true);
+  //   // setLoading(false);
+  //   window.location.reload();
+  // }, 5000);
 
   useEffect(() => {
     setLoading(true);
-    setRefresh(false);
+    setRefresh(true);
   }, []);
 
   const provider: any = window.ethereum;
@@ -81,7 +85,7 @@ const Layout = () => {
         <div>
           <Navbar />
           <Loading />
-          {(loading || refresh) && <Reload refreshStatus={refresh} />}
+          <Reload refreshStatus={refresh} />
         </div>
       ) : (
         <>
@@ -92,4 +96,4 @@ const Layout = () => {
     </>
   );
 };
-export default Layout;
+export default SecureLayout;

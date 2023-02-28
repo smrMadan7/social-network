@@ -4,7 +4,7 @@ import { useUserContext } from "../../context/UserContextProvider";
 const TeamProfile = () => {
   const { appState }: any = useUserContext();
 
-  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePath}`;
+  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
   return (
     <>
       <div className=" p-5 md:gap-16 gap-4  w-full  flex flex-col items-center justify-center">
@@ -65,7 +65,7 @@ const TeamProfile = () => {
                         name="contactEmail"
                         type="email"
                         placeholder="Contact Email"
-                        value={appState?.action?.user?.email}
+                        value={appState?.action?.user?.contact}
                       ></input>
                     </div>
                     {/* Twitter */}
@@ -133,7 +133,7 @@ const TeamProfile = () => {
                       name="description"
                       className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                       placeholder="Write your thoughts here..."
-                      value={appState?.action?.user?.description}
+                      value={appState?.action?.user?.desc}
                     ></textarea>
                   </div>
                 </div>

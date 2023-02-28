@@ -19,12 +19,12 @@ const Reload = ({ refreshStatus }: any) => {
         <div className="border flex flex-col bg-white w-300  rounded-lg">
           {refreshStatus ? (
             <>
-              <div className="flex items-center justify-center text-2xl font-bold">
-                <h1 className="mt-3">Something is wrong!!</h1>
+              <div className="flex flex-col items-center justify-center text-2xl font-bold">
+                <h1 className="mt-3">Welcome!!</h1>
               </div>
 
               <div className="flex flex-col gap-3 font-medium">
-                <div className="px-5 py-7">
+                <div className="px-5 py-4">
                   <button
                     className="border-black flex border rounded-lg justify-between w-full px-4 py-3 hover:text-white hover:bg-black"
                     onClick={() => window.location.reload()}

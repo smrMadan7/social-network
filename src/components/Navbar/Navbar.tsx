@@ -17,7 +17,7 @@ const Navbar = () => {
   const [moreStatus, setMoreStatus] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
   const [greeting, setGreeting] = useState("");
-  const { appState }: any = useUserContext();
+  const { appState, appStatedispatch }: any = useUserContext();
   const user = localStorage.getItem("signedIn");
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
@@ -42,6 +42,7 @@ const Navbar = () => {
 
   useEffect(() => {
     setProfileStatus(false);
+    setMoreStatus(false);
     const hours = new Date().getHours();
     if (hours < 12) {
       setGreeting("Good Morning");
@@ -54,7 +55,8 @@ const Navbar = () => {
 
   useEffect(() => {
     setIsLogout(false);
-    if ((exactPath === "" || exactPath === "home") && user && isRegistered) {
+    setMoreStatus(false);
+    if (exactPath === "" || exactPath === "home") {
       setRouterStatus("home");
     } else if (exactPath === "explore") {
       setRouterStatus("explore");
@@ -70,10 +72,15 @@ const Navbar = () => {
     setMoreStatus(false);
     setIsLogout(true);
 
+    const user = {};
+    appStatedispatch({
+      user,
+    });
+
     setTimeout(() => {
       navigate("/");
       window.location.reload();
-    }, 3000);
+    }, 2000);
   };
 
   const logoOnClickHandler = () => {
@@ -89,19 +96,12 @@ const Navbar = () => {
             setMoreStatus(false);
             setProfileStatus(false);
           }}
-        >
-          <div className="absolute w-full h-full">abc</div>
-        </div>
+        ></div>
       ) : (
         <div></div>
       )}
 
-      <div
-        className="fixed flex  items-center px-4 py-2 nav-container w-full border justify-between bg-white"
-        onClick={() => {
-          setMoreStatus(false);
-        }}
-      >
+      <div className="fixed flex  items-center px-4 py-2 nav-container w-full border justify-between bg-white ">
         <div className="flex gap-11">
           <div className="flex cursor-pointer rounded-lg" onClick={logoOnClickHandler}>
             <img alt="app-log " height="60" width="60" src={logo} loading="lazy"></img>
@@ -112,74 +112,76 @@ const Navbar = () => {
           </div>
 
           <div className=" text-center items-center hidden md:flex">
-            <ul className="flex gap-6 font-semibold ">
-              <NavLink to={"/home"}>
-                <li
-                  className="cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
-                  style={
-                    routerStatus === "home"
-                      ? {
-                          background: "#C5C5C5",
-                          color: "black",
-                          borderRadius: "10px",
-                        }
-                      : { background: "" }
-                  }
-                >
-                  Home
-                </li>
-              </NavLink>
+            {image !== defaultUser && (
+              <ul className="flex gap-6 font-semibold ">
+                <NavLink to={"/home"}>
+                  <li
+                    className="cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
+                    style={
+                      routerStatus === "home"
+                        ? {
+                            background: "#C5C5C5",
+                            color: "black",
+                            borderRadius: "10px",
+                          }
+                        : { background: "" }
+                    }
+                  >
+                    Home
+                  </li>
+                </NavLink>
 
-              <NavLink to={"/explore"}>
-                <li
-                  className="cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
-                  style={
-                    routerStatus === "explore"
-                      ? {
-                          background: "#C5C5C5",
-                          color: "black",
-                          borderRadius: "10px",
-                        }
-                      : { background: "" }
-                  }
-                >
-                  Explore
-                </li>
-              </NavLink>
-              <div>
-                <li
-                  className="flex flex-col cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
-                  onClick={(e: React.SyntheticEvent) => {
-                    setMoreStatus(true);
-                    e.stopPropagation();
-                  }}
-                >
-                  More
-                </li>
-                {moreStatus && (
-                  <div className="fixed border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white ">
-                    <a
-                      href="mailto:spaceport-admin@protocol.ai"
-                      className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-gray-300"
-                      onClick={() => setMoreStatus(false)}
-                    >
-                      <IoIosContact color="gray" />
-                      Contact
-                    </a>
-                    <a
-                      rel="noreferrer"
-                      href="https://github.com/Vellaiyan-Marimuthu/social-network"
-                      target="_blank"
-                      className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
-                      onClick={() => setMoreStatus(false)}
-                    >
-                      <AiFillBug color="gray" />
-                      Report a bug
-                    </a>
-                  </div>
-                )}
-              </div>
-            </ul>
+                <NavLink to={"/explore"}>
+                  <li
+                    className="cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
+                    style={
+                      routerStatus === "explore"
+                        ? {
+                            background: "#C5C5C5",
+                            color: "black",
+                            borderRadius: "10px",
+                          }
+                        : { background: "" }
+                    }
+                  >
+                    Explore
+                  </li>
+                </NavLink>
+                <div>
+                  <li
+                    className="flex flex-col cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
+                    onClick={(e: React.SyntheticEvent) => {
+                      setMoreStatus(true);
+                      e.stopPropagation();
+                    }}
+                  >
+                    More
+                  </li>
+                  {moreStatus && (
+                    <div className="fixed border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white ">
+                      <a
+                        href="mailto:spaceport-admin@protocol.ai"
+                        className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-gray-300"
+                        onClick={() => setMoreStatus(false)}
+                      >
+                        <IoIosContact color="gray" />
+                        Contact
+                      </a>
+                      <a
+                        rel="noreferrer"
+                        href="https://github.com/Vellaiyan-Marimuthu/social-network/issues/new"
+                        target="_blank"
+                        className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
+                        onClick={() => setMoreStatus(false)}
+                      >
+                        <AiFillBug color="gray" />
+                        Report a bug
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </ul>
+            )}
           </div>
         </div>
 
@@ -213,22 +215,21 @@ const Navbar = () => {
               ></img>
             )}
             {profileStatus && (
-              <div className="fixed border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-8 top-14 ">
-                <NavLink to={profileRoute}>
-                  <div
-                    style={routerStatus === "profile" ? { background: "gray" } : { background: "" }}
-                    className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-gray-300"
-                    onClick={() => {
-                      setMoreStatus(false);
-                      setProfileStatus(false);
-                    }}
-                  >
-                    <IoIosContact
-                      style={routerStatus === "profile" ? { color: "black" } : { color: "gray" }}
-                    />
-                    Profile
-                  </div>
-                </NavLink>
+              <div className="fixed z-40 border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-8 top-14 ">
+                <div
+                  style={routerStatus === "profile" ? { background: "gray" } : { background: "" }}
+                  className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-gray-300"
+                  onClick={() => {
+                    setMoreStatus(false);
+                    setProfileStatus(false);
+                    navigate(profileRoute);
+                  }}
+                >
+                  <IoIosContact
+                    style={routerStatus === "profile" ? { color: "black" } : { color: "gray" }}
+                  />
+                  Profile
+                </div>
 
                 <div
                   className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"

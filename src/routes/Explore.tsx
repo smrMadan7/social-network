@@ -2,7 +2,7 @@ import React from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { MdOutlineScience } from "react-icons/md";
 import Chat from "../components/Cards/Chat";
-import Warning from "../components/Cards/Notification";
+import Notification from "../components/Cards/Notification";
 import { IChat } from "../Types/interface";
 
 const Explore = () => {
@@ -15,6 +15,7 @@ const Explore = () => {
       isVerified: true,
       message: "Good Morning to everyone",
       likes: 4,
+      postImage: "",
       mirrors: 3,
       date: "Feb 6",
     },
@@ -26,6 +27,7 @@ const Explore = () => {
       isVerified: true,
       message: "Good Morning to everyone",
       likes: 4,
+      postImage: "",
       mirrors: 3,
       date: "Feb 6",
     },
@@ -100,7 +102,7 @@ const Explore = () => {
         </div>
         <div className="flex-col hidden md:flex md:w-30 ">
           <div className="border-orange-300	text-yellow-600 w-full bg-amber-100  rounded-lg">
-            <Warning
+            <Notification
               headerImg={<MdOutlineScience />}
               title={"Beta Warning"}
               description={

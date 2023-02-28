@@ -5,7 +5,9 @@ import { useUserContext } from "../../context/UserContextProvider";
 const MemberProfile = () => {
   const { appState }: any = useUserContext();
 
-  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePath}`;
+  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
+  console.log("dfdf", appState);
+
   return (
     <>
       <div className=" p-5 md:gap-16 gap-4  w-full  flex flex-col items-center justify-center">
@@ -135,29 +137,23 @@ const MemberProfile = () => {
                       </label>
                       <div className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full">
                         <div className="text-gray-700 flex gap-2 ">
-                          {appState?.action?.user?.role.length === 0 ? (
-                            <>
-                              <p className="text-gray-400 p-2"></p>
-                            </>
-                          ) : (
-                            <>
-                              <p className="flex gap-3 flex-wrap">
-                                {appState?.action?.user?.role.map((role: string, index: number) => {
-                                  return (
-                                    <>
-                                      <div
-                                        key={index}
-                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        {role}
-                                      </div>
-                                    </>
-                                  );
-                                })}
-                              </p>
-                            </>
-                          )}
+                          <>
+                            <p className="flex gap-3 flex-wrap">
+                              {appState?.action?.user?.role.map((role: string, index: number) => {
+                                return (
+                                  <>
+                                    <div
+                                      key={index}
+                                      className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {role}
+                                    </div>
+                                  </>
+                                );
+                              })}
+                            </p>
+                          </>
                         </div>
                       </div>
                     </div>
@@ -171,31 +167,25 @@ const MemberProfile = () => {
                       </label>
                       <div className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer">
                         <div className="text-gray-700 flex gap-2 role-container">
-                          {appState?.action?.user?.organization.length === 0 ? (
-                            <>
-                              <p className="text-gray-400 p-2 px"></p>
-                            </>
-                          ) : (
-                            <>
-                              <p className="flex gap-3 flex-wrap">
-                                {appState?.action?.user?.organization.map(
-                                  (organization: string, index: number) => {
-                                    return (
-                                      <>
-                                        <div
-                                          key={index}
-                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          {organization}
-                                        </div>
-                                      </>
-                                    );
-                                  }
-                                )}
-                              </p>
-                            </>
-                          )}
+                          <>
+                            <p className="flex gap-3 flex-wrap">
+                              {appState?.action?.user?.organization.map(
+                                (organization: string, index: number) => {
+                                  return (
+                                    <>
+                                      <div
+                                        key={index}
+                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {organization}
+                                      </div>
+                                    </>
+                                  );
+                                }
+                              )}
+                            </p>
+                          </>
                         </div>
                       </div>
                     </div>
@@ -211,31 +201,23 @@ const MemberProfile = () => {
                     </label>
                     <div className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer">
                       <div className="text-gray-700 flex gap-2 role-container">
-                        {appState?.action?.user?.skills.length === 0 ? (
-                          <>
-                            <p className="text-gray-400 p-2"></p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="flex gap-3 flex-wrap">
-                              {appState?.action?.user?.skills.map(
-                                (skill: string, index: number) => {
-                                  return (
-                                    <>
-                                      <div
-                                        key={index}
-                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        {skill}
-                                      </div>
-                                    </>
-                                  );
-                                }
-                              )}
-                            </p>
-                          </>
-                        )}
+                        <>
+                          <p className="flex gap-3 flex-wrap">
+                            {appState?.action?.user?.skill.map((skill: string, index: number) => {
+                              return (
+                                <>
+                                  <div
+                                    key={index}
+                                    className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {skill}
+                                  </div>
+                                </>
+                              );
+                            })}
+                          </p>
+                        </>
                       </div>
                     </div>
                   </div>
