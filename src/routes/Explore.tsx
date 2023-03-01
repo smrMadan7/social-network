@@ -1,82 +1,52 @@
-import React, { useState } from "react";
+import { uuidV4 } from "ethers/types/utils";
+import React, { useEffect, useState } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { MdOutlineScience } from "react-icons/md";
+import Web3 from "web3";
 import Chat from "../components/Cards/Chat";
 import Notification from "../components/Cards/Notification";
+import Post from "../components/Cards/Post";
+import { getFeeds } from "../constants/AppConstants";
 import { IChat } from "../Types/interface";
+import { v4 as uuidv4 } from "uuid";
+import banner from "./../assets/Explore/banner.png";
 
 const Explore = () => {
-  const [posts, setPosts] = useState();
-  const chats = [
-    {
-      imageUrl:
-        "https://user-content.lenster.xyz/300x300/https://gateway.ipfscdn.io/ipfs/bafybeigcmbs2wfkccazb5xifosfxymrt33j7u2smgfhxt7khlzwtddxl4m",
-      userName: "Yoginth",
-      userId: "@Yoginth",
-      isVerified: true,
-      message: "Good Morning to everyone",
-      likes: 4,
-      postImage: "",
-      mirrors: 3,
-      date: "Feb 6",
-    },
-    {
-      imageUrl:
-        "https://user-content.lenster.xyz/300x300/https://gateway.ipfscdn.io/ipfs/bafybeigcmbs2wfkccazb5xifosfxymrt33j7u2smgfhxt7khlzwtddxl4m",
-      userName: "Yoginth",
-      userId: "@Yoginth",
-      isVerified: true,
-      message: "Good Morning to everyone",
-      likes: 4,
-      postImage: "",
-      mirrors: 3,
-      date: "Feb 6",
-    },
-    {
-      imageUrl:
-        "https://user-content.lenster.xyz/300x300/https://gateway.ipfscdn.io/ipfs/bafybeigcmbs2wfkccazb5xifosfxymrt33j7u2smgfhxt7khlzwtddxl4m",
-      userName: "Yoginth",
-      userId: "@Yoginth",
-      isVerified: true,
-      message: "Good Morning to everyone",
-      likes: 4,
-      mirrors: 3,
-      date: "Feb 6",
-    },
-    {
-      imageUrl:
-        "https://user-content.lenster.xyz/300x300/https://gateway.ipfscdn.io/ipfs/bafybeigcmbs2wfkccazb5xifosfxymrt33j7u2smgfhxt7khlzwtddxl4m",
-      userName: "Yoginth",
-      userId: "@Yoginth",
-      isVerified: true,
-      message: "Good Morning to everyone",
-      likes: 4,
-      mirrors: 3,
-      date: "Feb 6",
-    },
-    {
-      imageUrl:
-        "https://user-content.lenster.xyz/300x300/https://gateway.ipfscdn.io/ipfs/bafybeigcmbs2wfkccazb5xifosfxymrt33j7u2smgfhxt7khlzwtddxl4m",
-      userName: "Yoginth",
-      userId: "@Yoginth",
-      isVerified: true,
-      message: "Good Morning to everyone",
-      likes: 4,
-      mirrors: 3,
-      date: "Feb 6",
-    },
-    {
-      imageUrl:
-        "https://user-content.lenster.xyz/300x300/https://gateway.ipfscdn.io/ipfs/bafybeigcmbs2wfkccazb5xifosfxymrt33j7u2smgfhxt7khlzwtddxl4m",
-      userName: "Yoginth",
-      userId: "@Yoginth",
-      isVerified: true,
-      message: "Good Morning to everyone",
-      likes: 4,
-      mirrors: 3,
-      date: "Feb 6",
-    },
-  ];
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    getAllFeeds();
+  }, []);
+
+  const getAllFeeds = async () => {
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
+    const userAccount = await web3.eth.getAccounts();
+    const address = userAccount[0];
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions: any = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    console.log("address is ", `${getFeeds}${address}`);
+    fetch(`${getFeeds}${address}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status !== false) {
+          setPosts(result.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  getAllFeeds();
 
   return (
     <div className="home-container flex flex-col w-full overflow-y-auto">
@@ -97,8 +67,8 @@ const Explore = () => {
           className="w-full md:w-70 border rounded-lg overflow-y-auto"
           style={{ height: "84vh" }}
         >
-          {chats?.map((chat: IChat, index: number) => {
-            return <Chat chat={chat} key={index} />;
+          {posts?.map((post: any, index: number) => {
+            return <Post post={post} key={index + uuidv4()} />;
           })}
         </div>
         <div className="flex-col hidden md:flex md:w-30 ">
@@ -124,8 +94,8 @@ const Explore = () => {
           .featured {
             width: 100%;
             height: 300px;
-            background: linear-gradient(90deg, #fff, #fff 50%, transparent),
-              url(https://static-assets.lenster.xyz/images/hero.webp);
+            background: linear-gradient(90deg, #fff, #fff 10%, transparent),
+              url(${banner});
             background-size: cover;
           }
           ::-webkit-scrollbar {

@@ -8,7 +8,7 @@ import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
 import defaultUser from "./.././.././assets/Form/default-user.png";
-import logo from "./.././.././assets/Navbar/logo.svg";
+import logo from "./.././.././assets/Navbar/nav-logo.svg";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -104,11 +104,11 @@ const Navbar = () => {
       <div className="fixed flex  items-center px-4 py-2 nav-container w-full border justify-between bg-white ">
         <div className="flex gap-11">
           <div className="flex cursor-pointer rounded-lg" onClick={logoOnClickHandler}>
-            <img alt="app-log " height="60" width="60" src={logo} loading="lazy"></img>
-            <div className="hidden md:block mt-1 ">
+            <img alt="app-log " src={logo} loading="lazy"></img>
+            {/* <div className="hidden md:block mt-1 ">
               <p className="font-bold text-md">Protocol Labs</p>
               <p className="font-bold text-md leading-none">Social Network</p>
-            </div>
+            </div> */}
           </div>
 
           <div className=" text-center items-center hidden md:flex">

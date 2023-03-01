@@ -3,7 +3,7 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { ipfsPost, ipfsGateway } from "../../constants/AppConstants";
+import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { IChatProps } from "../../Types/interface";
 import Loading from "../Loading/Loading";
@@ -26,9 +26,7 @@ const Chat = (post: any) => {
   };
 
   useEffect(() => {
-    console.log("post uri is", `${ipfsPost}/${post?.post?.postURI}`);
-
-    fetch(`${ipfsPost}${post?.post?.postURI}`, {})
+    fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
@@ -51,7 +49,10 @@ const Chat = (post: any) => {
                 <img src={userImageUrl} height={50} width={50} className=" rounded-full"></img>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
-                    <p className="text-lg">{appState?.action?.user?.firstName}</p>
+                    <p className="text-lg">
+                      {appState?.action?.user?.firstName}
+                      {appState?.action?.user?.organizationName}
+                    </p>
                     <MdVerified fontSize={18} color="blue" />
                   </div>
                   <div className="flex gap-2 items-center text-center">

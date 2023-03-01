@@ -17,6 +17,7 @@ import Warning from "../components/Cards/Warning";
 import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
 import getCroppedImage from "../utils/crop";
+import { AiOutlineReload } from "react-icons/ai";
 
 import Chat from "../components/Cards/Chat";
 
@@ -206,7 +207,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100">
+      <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
         <div style={{ height: "90px" }}></div>
 
         <div className="flex gap-5 " style={{ height: "78vh" }}>
@@ -240,14 +241,14 @@ const Home = () => {
                   Timeline
                 </button>
                 <button
-                  className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none hidden"
+                  className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
                   style={
                     filterStatus === "highlight" ? { background: "#cfc6f0" } : { background: "" }
                   }
-                  onClick={() => setFilterStatus("highlight")}
+                  onClick={() => getAllPosts()}
                 >
-                  <HiLightBulb fontSize={23} />
-                  Highlights
+                  <AiOutlineReload fontSize={23} />
+                  Reload
                 </button>
               </div>
 
