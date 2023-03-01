@@ -31,7 +31,6 @@ const Chat = (post: any) => {
       .then((result) => {
         if (result.status !== false) {
           setPostDetails(result);
-          console.log("post details are", result);
         }
       })
       .catch((error) => {

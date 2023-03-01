@@ -134,7 +134,7 @@ const Member = () => {
       const file = await ipfs.add(croppedImg);
       return file.path;
     } catch (error) {
-      console.log("Error", error);
+      console.log(error);
       return;
     }
   };

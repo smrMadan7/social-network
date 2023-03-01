@@ -34,14 +34,7 @@ const SecureLayout = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [warningMessage, setWarningMessage] = useState("Please Install MetaMask");
   if (!appState?.action?.user) {
-    // setFetchUser(false);
   }
-
-  // setTimeout(() => {
-  //   // setRefresh(true);
-  //   // setLoading(false);
-  //   window.location.reload();
-  // }, 5000);
 
   useEffect(() => {
     setLoading(true);
@@ -70,7 +63,6 @@ const SecureLayout = () => {
           fetch(`${getUser}${address}`, requestOptions)
             .then((response) => response.json())
             .then((result) => {
-              console.log("response status", result);
               if (result?.status === true) {
                 const user = result.data;
                 appStatedispatch({
@@ -113,12 +105,10 @@ const SecureLayout = () => {
     const connectWallet = async () => {
       try {
         const currentProvider: any = detectProvider();
-        console.log("current provider: ", currentProvider);
 
         if (currentProvider) {
           await currentProvider?.request({ method: "eth_requestAccounts" });
           const web3 = new Web3(currentProvider);
-          console.log("provider in signin card", currentProvider);
           const userAccount = await web3.eth.getAccounts();
 
           accountChanged(userAccount[0]);

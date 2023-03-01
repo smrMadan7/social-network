@@ -174,7 +174,6 @@ const Team = () => {
   };
 
   const cropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
-    console.log("cropped area", croppedAreaPixels);
     setCroppedPixel(croppedAreaPixels);
   };
 

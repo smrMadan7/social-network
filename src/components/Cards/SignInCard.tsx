@@ -82,11 +82,7 @@ const SignInCard = () => {
       if (currentProvider) {
         await currentProvider?.request({ method: "eth_requestAccounts" });
         const web3 = new Web3(currentProvider);
-
-        console.log("provider in signin card", currentProvider);
-
         const userAccount = await web3.eth.getAccounts();
-
         accountChanged(userAccount[0]);
       }
     } catch (err) {

@@ -38,7 +38,6 @@ const Home = () => {
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
   const [ipfsPath, setIpfsPath] = useState<any>();
-  console.log(uuidv4());
   useEffect(() => {
     setIsBold(false);
     setIsItalic(false);
@@ -140,26 +139,20 @@ const Home = () => {
             body: JSON.stringify(post),
             redirect: "follow",
           };
-
-          console.log(createPost);
-
           fetch(createPost, requestOptions)
             .then((response) => response.json())
             .then((result) => {
-              console.log("result in new post is ", result);
               if (result.status !== false) {
                 setIsPost(false);
 
                 getAllPosts();
               }
             })
-            .catch((error) => {
-              console.log("error in new post is ", error);
-            });
+            .catch((error) => {});
         })
         .catch((error) => {
           setWarning(true);
-          console.log("error is ", error);
+          console.log(error);
         });
     } catch (e) {
       console.log(e);
@@ -200,13 +193,12 @@ const Home = () => {
     fetch(`${getPostById}${address}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log("result in new post is ", result);
         if (result.status !== false) {
           setPosts(result.data);
         }
       })
       .catch((error) => {
-        console.log("error in new post is ", error);
+        console.log(error);
       });
   };
 

@@ -31,7 +31,7 @@ const NewPost = ({ postStatus }: any) => {
   const [isPost, setIsPost] = useState(postStatus);
   const [zoom, setZoom] = useState(1);
   const [content, setContent] = useState();
-  console.log(uuidv4());
+
   useEffect(() => {
     setIsBold(false);
     setIsItalic(false);
@@ -82,11 +82,7 @@ const NewPost = ({ postStatus }: any) => {
             const web3: any = new Web3(provider);
             const userAccount = await web3.eth.getAccounts();
             const address = userAccount[0];
-
             const currentTimeStamp = Math.floor(Date.now() / 1000);
-            console.log("uploaded file is ", uploadImage?.type);
-            console.log("content is ", content);
-
             const uri: any = {
               version: "1.0.0",
               description: "",
@@ -106,8 +102,6 @@ const NewPost = ({ postStatus }: any) => {
               postData: uri,
             };
 
-            console.log("post is ", post);
-
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
@@ -117,12 +111,10 @@ const NewPost = ({ postStatus }: any) => {
               body: JSON.stringify(post),
               redirect: "follow",
             };
-            console.log(createPost);
 
             fetch(createPost, requestOptions)
               .then((response) => response.json())
               .then((result) => {
-                console.log("result in new post is ", result);
                 if (result.status !== false) {
                 }
               })
@@ -140,7 +132,6 @@ const NewPost = ({ postStatus }: any) => {
         })
         .catch((error) => {
           setWarning(true);
-          console.log("error is ", error);
         });
     } catch (e) {
       console.log(e);

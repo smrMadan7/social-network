@@ -6,7 +6,6 @@ const MemberProfile = () => {
   const { appState }: any = useUserContext();
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
-  console.log("dfdf", appState);
 
   return (
     <>
