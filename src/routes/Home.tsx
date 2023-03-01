@@ -282,7 +282,7 @@ const Home = () => {
                   {posts?.map((post: any, index: any) => {
                     return (
                       <>
-                        <div key={index}>
+                        <div key={uuidv4() + index}>
                           <Chat post={post} />
                         </div>
                       </>

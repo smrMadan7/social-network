@@ -76,6 +76,7 @@ const SecureLayout = () => {
               }
             })
             .catch((error) => {
+              console.log(error);
               setWarningMessage("Something went wrong!!");
               setWarning(true);
               navigate("/sign-in");

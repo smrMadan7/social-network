@@ -1,17 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
 
+import { MetaMaskInpageProvider } from "@metamask/providers";
 import { create } from "ipfs-http-client";
 import Cropper, { Area } from "react-easy-crop";
 import { GrFormAdd } from "react-icons/gr";
 import { useNavigate } from "react-router";
-import {
-  addMember,
-  handleCheck,
-  ipfsPost,
-  ipfsPostUrl,
-  verifyUser,
-} from "../../constants/AppConstants";
+import { v4 as uuidv4 } from "uuid";
+import Web3 from "web3";
+import { addMember, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import getCroppedImage from "../../utils/crop";
 import Warning from "../Cards/Warning";
@@ -19,9 +16,6 @@ import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
 import defaultProfile from "./.././../assets/Form/default-user.png";
-import { MetaMaskInpageProvider } from "@metamask/providers";
-import Web3 from "web3";
-import { Buffer } from "buffer";
 
 declare global {
   interface Window {
@@ -550,7 +544,7 @@ const Member = () => {
                                     return (
                                       <>
                                         <div
-                                          key={index}
+                                          key={uuidv4() + index}
                                           className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
                                           onClick={(e) => e.stopPropagation()}
                                         >
@@ -614,7 +608,7 @@ const Member = () => {
                                       return (
                                         <>
                                           <div
-                                            key={index}
+                                            key={uuidv4()}
                                             className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
                                             onClick={(e) => e.stopPropagation()}
                                           >
@@ -681,7 +675,7 @@ const Member = () => {
                                   return (
                                     <>
                                       <div
-                                        key={index}
+                                        key={uuidv4()}
                                         className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
                                         onClick={(e) => e.stopPropagation()}
                                       >

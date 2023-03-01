@@ -26,11 +26,14 @@ const Chat = (post: any) => {
   };
 
   useEffect(() => {
-    fetch(`${ipfsPost}${post?.post?.postURI}`, requestOptions)
+    console.log("post uri is", `${ipfsPost}/${post?.post?.postURI}`);
+
+    fetch(`${ipfsPost}${post?.post?.postURI}`, {})
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
           setPostDetails(result);
+          console.log("post details are", result);
         }
       })
       .catch((error) => {
