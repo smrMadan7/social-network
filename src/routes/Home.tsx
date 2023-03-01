@@ -202,6 +202,8 @@ const Home = () => {
       });
   };
 
+  getAllPosts();
+
   return (
     <>
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100">
@@ -307,7 +309,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-
       {/* Add new post */}
 
       {isPost && (
@@ -381,6 +382,7 @@ const Home = () => {
                     <div className="flex gap-4 justify-between p-4">
                       <div className="flex gap-8">
                         <button
+                          type="button"
                           className="font-semibold text-violet-900 text-xl cursor-pointer rounded-full "
                           style={isBold ? { fontWeight: "700" } : { fontWeight: "" }}
                           onClick={() => {
@@ -395,6 +397,7 @@ const Home = () => {
                         </button>
 
                         <button
+                          type="button"
                           className="font-semibold text-violet-900 text-xl italic"
                           style={isItalic ? { fontWeight: "700" } : { fontWeight: "" }}
                           onClick={() => {
@@ -408,6 +411,7 @@ const Home = () => {
                           I
                         </button>
                         <button
+                          type="button"
                           className="font-semibold text-violet-900 text-xl"
                           style={isCode ? { fontWeight: "700" } : { fontWeight: "" }}
                           onClick={() => {

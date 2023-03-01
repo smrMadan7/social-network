@@ -33,122 +33,126 @@ const SecureLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [warningMessage, setWarningMessage] = useState("Please Install MetaMask");
-  if (!appState?.action?.user) {
+  const [initialState, setInitialState] = useState(false);
+
+  if (appState?.action?.user) {
+    console.log("user already exists");
   }
 
   useEffect(() => {
     setLoading(true);
     setRefresh(true);
+    getCurrentUser();
   }, []);
 
   const provider: any = window.ethereum;
   const web3: any = new Web3(provider);
 
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
+  const getCurrentUser = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-      var requestOptions: any = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow",
-      };
+    var requestOptions: any = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
 
-      if (window.ethereum) {
-        const userAccount = await web3.eth.getAccounts();
-        const address = userAccount[0];
-        setAccount(address);
-        if (address) {
-          fetch(`${getUser}${address}`, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-              if (result?.status === true) {
-                const user = result.data;
-                appStatedispatch({
-                  user,
-                });
-                setLoading(false);
-                navigate("/home");
-              } else {
-                setLoading(false);
-                navigate("/sign-in");
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              setWarningMessage("Something went wrong!!");
-              setWarning(true);
+    if (window.ethereum) {
+      const userAccount = await web3.eth.getAccounts();
+      const address = userAccount[0];
+      setAccount(address);
+      if (address) {
+        fetch(`${getUser}${address}`, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            if (result?.status === true) {
+              const user = result.data;
+              appStatedispatch({
+                user,
+              });
+              setLoading(false);
+              navigate("/home");
+            } else {
+              setLoading(false);
+
               navigate("/sign-in");
-            });
-        } else {
-          borwserWalletHandler();
-        }
-      } else {
-        setWarning(true);
-      }
-    };
-    getCurrentUser();
-
-    const detectProvider = () => {
-      let provider: MetaMaskInpageProvider;
-      if (window.ethereum) {
-        provider = window.ethereum;
-        return provider;
-      } else {
-        setWarning(true);
-        setIsLoading(false);
-        setErrorMessage("Install MetaMask Please");
-      }
-      return;
-    };
-
-    const connectWallet = async () => {
-      try {
-        const currentProvider: any = detectProvider();
-
-        if (currentProvider) {
-          await currentProvider?.request({ method: "eth_requestAccounts" });
-          const web3 = new Web3(currentProvider);
-          const userAccount = await web3.eth.getAccounts();
-
-          accountChanged(userAccount[0]);
-          getCurrentUser();
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    const accountChanged = async (accountName: string) => {
-      setDefaultAccount(accountName);
-
-      localStorage.setItem("signedIn", accountName);
-
-      setTimeout(() => {
-        setIsLoading(false);
-        setIsConnected(true);
-      }, 3000);
-    };
-
-    const borwserWalletHandler = async () => {
-      setIsLoading(true);
-      if (window.ethereum?.chainId !== Web3.utils.toHex(chainId)) {
-        try {
-          await window.ethereum?.request({
-            method: "wallet_addEthereumChain",
-            params: [network],
+            }
+          })
+          .catch((error) => {
+            // window.location.reload();
+            getCurrentUser();
+            // console.log(error);
+            // setWarningMessage("Something went wrong!!");
+            // setWarning(true);
+            // navigate("/sign-in");
           });
-
-          connectWallet();
-        } catch (error) {
-          console.log(error);
-        }
       } else {
-        connectWallet();
+        borwserWalletHandler();
       }
-    };
-  }, []);
+    } else {
+      setWarning(true);
+    }
+  };
+
+  const detectProvider = () => {
+    let provider: MetaMaskInpageProvider;
+    if (window.ethereum) {
+      provider = window.ethereum;
+      return provider;
+    } else {
+      setWarning(true);
+      setIsLoading(false);
+      setErrorMessage("Install MetaMask Please");
+    }
+    return;
+  };
+
+  const connectWallet = async () => {
+    try {
+      const currentProvider: any = detectProvider();
+
+      if (currentProvider) {
+        await currentProvider?.request({ method: "eth_requestAccounts" });
+        const web3 = new Web3(currentProvider);
+        const userAccount = await web3.eth.getAccounts();
+
+        accountChanged(userAccount[0]);
+        getCurrentUser();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const accountChanged = async (accountName: string) => {
+    setDefaultAccount(accountName);
+
+    localStorage.setItem("signedIn", accountName);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsConnected(true);
+    }, 3000);
+  };
+
+  const borwserWalletHandler = async () => {
+    setIsLoading(true);
+    if (window.ethereum?.chainId !== Web3.utils.toHex(chainId)) {
+      try {
+        await window.ethereum?.request({
+          method: "wallet_addEthereumChain",
+          params: [network],
+        });
+
+        connectWallet();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      connectWallet();
+    }
+  };
 
   return (
     <>

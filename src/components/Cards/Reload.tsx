@@ -20,9 +20,9 @@ const Reload = ({ refreshStatus }: any) => {
           {refreshStatus ? (
             <>
               <div className="flex flex-col items-center justify-center text-2xl font-bold">
-                <h1 className="mt-3">Welcome!!</h1>
+                <h1 className="m-3">Welcome!!</h1>
               </div>
-
+              {/* 
               <div className="flex flex-col gap-3 font-medium">
                 <div className="px-5 py-4">
                   <button
@@ -33,7 +33,7 @@ const Reload = ({ refreshStatus }: any) => {
                     <img src={reload} width="30px" height="20px"></img>
                   </button>
                 </div>
-              </div>
+              </div> */}
             </>
           ) : (
             <>

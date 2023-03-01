@@ -67,7 +67,7 @@ const Navbar = () => {
     }
   }, [exactPath]);
 
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
     setProfileStatus(false);
     setMoreStatus(false);
     setIsLogout(true);

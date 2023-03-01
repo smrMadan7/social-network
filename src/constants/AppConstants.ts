@@ -16,12 +16,12 @@ export const network = {
 
 export const signMessage = "pln social wants you to sign in!";
 
-export const ipfsGateway = "https://d7a4-106-51-1-131.in.ngrok.io/ipfs/";
-export const ipfsPostUrl = " https://fa3d-106-51-1-131.in.ngrok.io";
+export const ipfsGateway = "https://b11a-106-51-1-131.in.ngrok.io/ipfs/";
+export const ipfsPostUrl = "https://8b54-106-51-1-131.in.ngrok.io";
 
-export const ipfsPost = "https://d7a4-106-51-1-131.in.ngrok.io/ipfs/";
+export const ipfsPost = "https://b11a-106-51-1-131.in.ngrok.io/ipfs/";
 
-export const baseUrl = "https://5632-106-51-1-131.in.ngrok.io";
+export const baseUrl = "https://4b09-106-51-1-131.in.ngrok.io";
 
 export const verifyUser = `${baseUrl}/api/user/verify`;
 export const addMember = `${baseUrl}/api/user/registerMember`;
