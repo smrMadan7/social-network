@@ -145,6 +145,7 @@ const Home = () => {
             .then((result) => {
               if (result.status !== false) {
                 setIsPost(false);
+                setFilePath("");
 
                 getAllPosts();
               }
@@ -478,9 +479,9 @@ const Home = () => {
                         <div className="relative cursor-pointer" onClick={mediaUpload}>
                           <MdOutlinePermMedia fontSize={20} />
                         </div>
-                        <div className="cursor-pointer">
+                        {/* <div className="cursor-pointer">
                           <AiOutlineFileGif fontSize={20} />
-                        </div>
+                        </div> */}
                       </div>
                       <div>
                         <button

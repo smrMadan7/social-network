@@ -10,6 +10,7 @@ import { IChatProps } from "../../Types/interface";
 import Loading from "../Loading/Loading";
 
 const Post = (post: any) => {
+  console.log("===================", post);
   const [postDetails, setPostDetails] = useState<any>();
   const navigate = useNavigate();
   const [like, setLike] = useState(post?.post?.likes);
@@ -38,14 +39,14 @@ const Post = (post: any) => {
       });
   }, []);
 
-  const incrementLike = (e: any, post: any) => {
-    const postId = {
-      postId: post?.post?.postId,
+  const incrementLike = (e: any, postData: any) => {
+    const postIdData = {
+      postId: postData?.post?.profileId,
     };
     var requestOptions: any = {
       method: "POST",
       headers: myHeaders,
-      body: JSON.stringify(postId),
+      body: JSON.stringify(postIdData),
       redirect: "follow",
     };
 
