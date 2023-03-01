@@ -169,7 +169,7 @@ const Navbar = () => {
                       </a>
                       <a
                         rel="noreferrer"
-                        href="https://github.com/Vellaiyan-Marimuthu/social-network/issues/new"
+                        href="https://github.com/memser-spaceport/pln-directory-portal/issues"
                         target="_blank"
                         className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
                         onClick={() => setMoreStatus(false)}
