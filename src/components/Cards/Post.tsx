@@ -3,15 +3,16 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { ipfsGateway, like } from "../../constants/AppConstants";
+import { useNavigate } from "react-router";
+import { ipfsGateway, likeApi } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { IChatProps } from "../../Types/interface";
 import Loading from "../Loading/Loading";
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
-
-  console.log("=============", post);
+  const navigate = useNavigate();
+  const [like, setLike] = useState(post?.post?.likes);
 
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
 
@@ -48,14 +49,12 @@ const Post = (post: any) => {
       redirect: "follow",
     };
 
-    fetch(like, requestOptions)
+    fetch(likeApi, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log("result in like is ", result);
+        setLike(post?.post?.likes + 1);
       })
-      .catch((error) => {
-        console.log("error in like is ", error);
-      });
+      .catch((error) => {});
   };
 
   return (
@@ -96,14 +95,14 @@ const Post = (post: any) => {
             )}
 
             <div className=" flex gap-7 bottom-menu-container items-center">
-              <div className="hover:bg-slate-300 rounded-full px-2 py-2 ">
+              <div className=" px-2 py-2 ">
                 <TbMessage
                   fontSize={18}
                   className="text-indigo-300 hover:bg-slate-300 rounded-full"
                 />{" "}
               </div>
               <div className="flex items-center">
-                <div className="hover:bg-violet-200 rounded-full px-2 py-2 ">
+                <div className=" px-2 py-2 ">
                   <BsArrowLeftRight fontSize={18} className="text-violet-300 rounded-full " />
                 </div>
                 <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
@@ -114,10 +113,10 @@ const Post = (post: any) => {
                   className="rounded-full hover:bg-fuchsia-200 px-2  py-2 flex items-center gap-1 text-fuchsia-500"
                   onClick={(e) => incrementLike(e, post)}
                 >
-                  <BsHeart fontSize={15} className="text-fuchsia-500 " />
-                  {post?.post?.likes}
+                  <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
+                  {like}
                 </div>
-                <p className="text-sm text-fuchsia-700 ">{post?.chat?.likes}</p>
+                {/* <p className="text-sm text-fuchsia-700 ">{like}</p> */}
               </div>
             </div>
             <style>

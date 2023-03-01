@@ -82,15 +82,12 @@ const Chat = (post: any) => {
             )}
 
             <div className=" flex gap-7 bottom-menu-container items-center">
-              <div className="hover:bg-slate-300 rounded-full px-2 py-2 ">
-                <TbMessage
-                  fontSize={18}
-                  className="text-indigo-500 hover:bg-slate-300 rounded-full"
-                />{" "}
+              <div className=" px-2 py-2 ">
+                <TbMessage fontSize={18} className="text-indigo-200  " />{" "}
               </div>
               <div className="flex items-center">
-                <div className="hover:bg-violet-200 rounded-full px-2 py-2 ">
-                  <BsArrowLeftRight fontSize={18} className="text-violet-500 rounded-full " />
+                <div className=" px-2 py-2 ">
+                  <BsArrowLeftRight fontSize={18} className="text-violet-200" />
                 </div>
                 <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
               </div>
