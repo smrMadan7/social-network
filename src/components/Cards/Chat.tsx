@@ -125,7 +125,7 @@ const Chat = (post: any) => {
         </>
       ) : (
         <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
-          <Loading />
+          {/* <Loading /> */}
         </div>
       )}
     </>

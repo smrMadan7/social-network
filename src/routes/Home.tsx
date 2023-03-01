@@ -240,7 +240,7 @@ const Home = () => {
                   Timeline
                 </button>
                 <button
-                  className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200"
+                  className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none hidden"
                   style={
                     filterStatus === "highlight" ? { background: "#cfc6f0" } : { background: "" }
                   }
