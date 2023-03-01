@@ -277,7 +277,9 @@ const Home = () => {
                 <div className="p-7 flex justify-center bg-white border rounded-lg ">
                   <div className="flex flex-col items-center gap-2 text-violet-700 ">
                     <FaThList fontSize={20} />
-                    <h1 className="font-semibold text-md text-black">No Posts Yet!</h1>
+                    <h1 className="font-semibold text-md text-black">
+                      You haven't posted anything yet!
+                    </h1>
                   </div>
                 </div>
               ) : (
