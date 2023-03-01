@@ -46,8 +46,6 @@ const Explore = () => {
       });
   };
 
-  getAllFeeds();
-
   return (
     <div className="home-container flex flex-col w-full overflow-y-auto">
       <div style={{ height: "90px" }}></div>

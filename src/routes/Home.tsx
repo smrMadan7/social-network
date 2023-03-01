@@ -203,8 +203,6 @@ const Home = () => {
       });
   };
 
-  getAllPosts();
-
   return (
     <>
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
