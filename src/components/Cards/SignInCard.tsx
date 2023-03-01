@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import metamaskLogo from "./.././.././assets/Auth/metamask-logo.svg";
 import appLogo from "././.././../assets/Navbar/logo.svg";
 
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import Web3 from "web3";
 import { chainId, network, signMessage, verifyUser } from "../../constants/AppConstants";
+import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
 import PoweredBy from "../PoweredBy/PoweredBy";
-import useFetch from "../hooks/useFetch";
-import { Signature } from "ethers";
-import { useUserContext } from "../../context/UserContextProvider";
 
 declare global {
   interface Window {

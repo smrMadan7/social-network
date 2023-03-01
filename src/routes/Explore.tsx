@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { HiOutlineCurrencyDollar } from "react-icons/hi";
 import { MdOutlineScience } from "react-icons/md";
 import Chat from "../components/Cards/Chat";
@@ -6,6 +6,7 @@ import Notification from "../components/Cards/Notification";
 import { IChat } from "../Types/interface";
 
 const Explore = () => {
+  const [posts, setPosts] = useState();
   const chats = [
     {
       imageUrl:
