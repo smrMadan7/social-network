@@ -46,7 +46,7 @@ const Explore = () => {
       });
   };
 
-  getAllFeeds();
+  // getAllFeeds();
 
   return (
     <div className="home-container flex flex-col w-full overflow-y-auto">

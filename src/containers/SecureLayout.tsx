@@ -4,7 +4,6 @@ import { GrFormClose } from "react-icons/gr";
 import { Outlet, useNavigate } from "react-router";
 import Web3 from "web3";
 import Reload from "../components/Cards/Reload";
-import Warning from "../components/Cards/Warning";
 import Loading from "../components/Loading/Loading";
 
 import Navbar from "../components/Navbar/Navbar";
@@ -34,10 +33,6 @@ const SecureLayout = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [warningMessage, setWarningMessage] = useState("Please Install MetaMask");
   const [initialState, setInitialState] = useState(false);
-
-  if (appState?.action?.user) {
-    console.log("user already exists");
-  }
 
   useEffect(() => {
     setLoading(true);
