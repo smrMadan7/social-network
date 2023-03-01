@@ -76,7 +76,7 @@ const SecureLayout = () => {
           })
           .catch((error) => {
             // window.location.reload();
-            getCurrentUser();
+            // getCurrentUser();
             // console.log(error);
             // setWarningMessage("Something went wrong!!");
             // setWarning(true);
