@@ -428,7 +428,10 @@ const Home = () => {
                         </button>
                       </div>
                       <div>
-                        <button className="flex gap-2 items-center border rounded-lg  px-2 py-1 text-white bg-violet-700">
+                        <button
+                          type="button"
+                          className="flex gap-2 items-center border rounded-lg  px-2 py-1 text-white bg-violet-700"
+                        >
                           <AiFillStar color="white" className="mt-1" />
                           Beta
                         </button>
