@@ -72,11 +72,6 @@ const Navbar = () => {
     setMoreStatus(false);
     setIsLogout(true);
 
-    const user = {};
-    appStatedispatch({
-      user,
-    });
-
     setTimeout(() => {
       navigate("/");
       window.location.reload();
@@ -104,7 +99,12 @@ const Navbar = () => {
       <div className="fixed flex  items-center px-4 py-2 nav-container w-full border justify-between bg-white ">
         <div className="flex gap-11">
           <div className="flex cursor-pointer rounded-lg" onClick={logoOnClickHandler}>
-            <img alt="app-log " src={logo} loading="lazy"></img>
+            <img
+              alt="app-log "
+              src={logo}
+              loading="lazy"
+              style={image !== defaultUser ? { padding: "0px" } : { padding: "10px" }}
+            ></img>
             {/* <div className="hidden md:block mt-1 ">
               <p className="font-bold text-md">Protocol Labs</p>
               <p className="font-bold text-md leading-none">Social Network</p>
@@ -169,7 +169,7 @@ const Navbar = () => {
                       </a>
                       <a
                         rel="noreferrer"
-                        href="https://github.com/memser-spaceport/pln-directory-portal/issues"
+                        href="https://github.com/memser-spaceport/pl-network-hub"
                         target="_blank"
                         className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
                         onClick={() => setMoreStatus(false)}
