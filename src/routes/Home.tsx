@@ -126,7 +126,7 @@ const Home = () => {
             ],
           };
           const post = {
-            profileId: uuidv4(),
+            postId: uuidv4(),
             address: address,
             postData: uri,
           };
