@@ -5,9 +5,6 @@ import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
 import { useNavigate } from "react-router";
 import { ipfsGateway, likeApi } from "../../constants/AppConstants";
-import { useUserContext } from "../../context/UserContextProvider";
-import { IChatProps } from "../../Types/interface";
-import Loading from "../Loading/Loading";
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -15,8 +12,6 @@ const Post = (post: any) => {
   const [like, setLike] = useState(post?.post?.likes);
 
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-
-  console.log("profile url is ", userImageUrl);
 
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
@@ -30,7 +25,6 @@ const Post = (post: any) => {
       .then((result) => {
         if (result.status !== false) {
           setPostDetails(result);
-          console.log("post details are", result);
         }
       })
       .catch((error) => {

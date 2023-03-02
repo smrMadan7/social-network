@@ -71,6 +71,7 @@ const Navbar = () => {
     setProfileStatus(false);
     setMoreStatus(false);
     setIsLogout(true);
+    localStorage.clear();
 
     setTimeout(() => {
       navigate("/");

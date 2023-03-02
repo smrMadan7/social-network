@@ -32,8 +32,6 @@ const Explore = () => {
       headers: myHeaders,
       redirect: "follow",
     };
-
-    console.log("address is ", `${getFeeds}${address}`);
     fetch(`${getFeeds}${address}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
