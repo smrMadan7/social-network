@@ -40,7 +40,7 @@ const Post = (post: any) => {
 
   const incrementLike = (e: any, postData: any) => {
     const postIdData = {
-      postId: postData?.post?.profileId,
+      postId: postData?.post?.postId,
     };
     var requestOptions: any = {
       method: "POST",
