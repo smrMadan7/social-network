@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
+import { AiTwotoneHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
 import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
-import { IChatProps } from "../../Types/interface";
-import Loading from "../Loading/Loading";
 
 const Chat = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -31,7 +30,6 @@ const Chat = (post: any) => {
       .then((result) => {
         if (result.status !== false) {
           setPostDetails(result);
-          console.log("post details are", result);
         }
       })
       .catch((error) => {
@@ -93,8 +91,17 @@ const Chat = (post: any) => {
               </div>
 
               <div className="flex items-center text-center">
-                <div className="rounded-full hover:bg-fuchsia-200 px-2  py-2 ">
-                  <BsHeart fontSize={15} className="text-fuchsia-500 " />
+                <div className="rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto">
+                  {post?.post?.likes > 0 ? (
+                    <>
+                      <AiTwotoneHeart fontSize={15} className="text-fuchsia-500 mt-1" />
+                    </>
+                  ) : (
+                    <>
+                      <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
+                    </>
+                  )}
+                  <p>{post?.post?.likes}</p>
                 </div>
                 <p className="text-sm text-fuchsia-700 ">{post?.chat?.likes}</p>
               </div>
