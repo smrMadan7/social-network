@@ -36,7 +36,6 @@ const SecureLayout = () => {
   useEffect(() => {
     setCurrentLocation(location.pathname);
     setLoading(true);
-    localStorage.clear();
     getCurrentUser();
   }, []);
 
