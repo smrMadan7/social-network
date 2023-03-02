@@ -252,7 +252,7 @@ const SecureLayout = () => {
                         </div>
                       </>
                     )}
-                  </div>
+                  </div> 
                 </>
               </div>
             </div>
