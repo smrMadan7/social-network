@@ -75,10 +75,8 @@ const Explore = () => {
               headerImg={<MdOutlineScience />}
               title={"Beta Warning"}
               description={
-                "This Decentralized chat system is still in the beta phase, things may break, please handle us with care."
+                "This Decentralized social network is still in the beta phase, things may break, please handle us with care."
               }
-              footerImg={<HiOutlineCurrencyDollar />}
-              footerContent={"Get testnet tokens"}
             />
           </div>
         </div>

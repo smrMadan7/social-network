@@ -14,7 +14,7 @@ const Chat = (post: any) => {
 
   const userImageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
-  const convertedDate = date.toLocaleDateString();
+  const convertedDate = date.toLocaleString();
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
