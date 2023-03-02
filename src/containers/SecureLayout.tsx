@@ -1,14 +1,18 @@
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import Web3 from "web3";
-import Reload from "../components/Cards/Reload";
 import Loading from "../components/Loading/Loading";
 
 import Navbar from "../components/Navbar/Navbar";
-import { chainId, getUser, network } from "../constants/AppConstants";
+import { chainId, getUser, network, verifyUser } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
+import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
+import logo from "./../assets/Navbar/logo.svg";
+
+import fileCoinLogo from "./../assets/Auth/filecoin-logo.svg";
+import ipfsLogo from "./../assets/Auth/ipfs-logo.svg";
 
 declare global {
   interface Window {
@@ -20,23 +24,18 @@ declare global {
 const SecureLayout = () => {
   const { appState, appStatedispatch }: any = useUserContext();
   const [loading, setLoading] = useState(true);
-  const [account, setAccount] = useState("");
-  const [refresh, setRefresh] = useState(true);
   const navigate = useNavigate();
-  const [user, setUser] = useState(false);
-  const [fetchUser, setFetchUser] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState("");
-  const [defaultAccount, setDefaultAccount] = useState("");
+  const location = useLocation();
   const [warning, setWarning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [warningMessage, setWarningMessage] = useState("Please Install MetaMask");
-  const [initialState, setInitialState] = useState(false);
+  const [isaddress, setIsAddress] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState("");
+  const [isWallet, setIsWallet] = useState(false);
 
   useEffect(() => {
+    setCurrentLocation(location.pathname);
     setLoading(true);
-    setRefresh(true);
     getCurrentUser();
   }, []);
 
@@ -44,46 +43,19 @@ const SecureLayout = () => {
   const web3: any = new Web3(provider);
 
   const getCurrentUser = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions: any = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
     if (window.ethereum) {
       const userAccount = await web3.eth.getAccounts();
       const address = userAccount[0];
-      setAccount(address);
-      if (address) {
-        fetch(`${getUser}${address}`, requestOptions)
-          .then((response) => response.json())
-          .then((result) => {
-            if (result?.status === true) {
-              const user = result.data;
-              appStatedispatch({
-                user,
-              });
-              setLoading(false);
-              navigate("/home");
-            } else {
-              setLoading(false);
 
-              navigate("/sign-in");
-            }
-          })
-          .catch((error) => {
-            // window.location.reload();
-            // getCurrentUser();
-            // console.log(error);
-            // setWarningMessage("Something went wrong!!");
-            // setWarning(true);
-            // navigate("/sign-in");
-          });
+      if (address) {
+        if (localStorage.getItem("isRegistered")) {
+          fetchUser();
+        } else {
+          setIsAddress(true);
+        }
       } else {
-        borwserWalletHandler();
+        setIsLoading(false);
+        setIsWallet(true);
       }
     } else {
       setWarning(true);
@@ -98,7 +70,6 @@ const SecureLayout = () => {
     } else {
       setWarning(true);
       setIsLoading(false);
-      setErrorMessage("Install MetaMask Please");
     }
     return;
   };
@@ -113,6 +84,7 @@ const SecureLayout = () => {
         const userAccount = await web3.eth.getAccounts();
 
         accountChanged(userAccount[0]);
+        setIsWallet(false);
         getCurrentUser();
       }
     } catch (err) {
@@ -121,14 +93,41 @@ const SecureLayout = () => {
   };
 
   const accountChanged = async (accountName: string) => {
-    setDefaultAccount(accountName);
-
     localStorage.setItem("signedIn", accountName);
 
     setTimeout(() => {
       setIsLoading(false);
-      setIsConnected(true);
     }, 3000);
+  };
+
+  const fetchUser = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions: any = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    const userAccount = await web3.eth.getAccounts();
+    const address = userAccount[0];
+    fetch(`${getUser}${address}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result?.status === true) {
+          const user = result.data;
+          appStatedispatch({
+            user,
+          });
+          setLoading(false);
+          navigate(currentLocation);
+          localStorage.setItem("isRegistered", "yes");
+        } else {
+          setLoading(false);
+          navigate("/register");
+        }
+      })
+      .catch((error) => {});
   };
 
   const borwserWalletHandler = async () => {
@@ -149,6 +148,50 @@ const SecureLayout = () => {
     }
   };
 
+  const signUser = async () => {
+    setIsLoading(true);
+    const currentProvider: any = detectProvider();
+
+    if (currentProvider !== undefined) {
+      const web3 = new Web3(currentProvider);
+      const userAccount = await web3.eth.getAccounts();
+      const signature = await web3.eth.personal.sign(
+        `pln social wants you to sign in`,
+        userAccount[0],
+        ""
+      );
+
+      const body = {
+        signature: signature,
+        address: userAccount[0],
+        message: `pln social wants you to sign in`,
+      };
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      var requestOptions: any = {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: myHeaders,
+        redirect: "follow",
+      };
+      setIsLoading(true);
+      fetch(verifyUser, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === false) {
+            setWarning(true);
+            setWarningMessage("Something went wrong!!");
+          } else {
+            fetchUser();
+          }
+        })
+        .catch((error) => {
+          console.log("error is ", error);
+        });
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -156,10 +199,68 @@ const SecureLayout = () => {
           <Navbar />
           {isLoading && <Loading />}
 
-          <Reload refreshStatus={refresh} />
+          {/* reload */}
+
+          <div className="relative w-full h-screen">
+            <div className=" absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 text-center ">
+              {(isaddress || isWallet) && (
+                <div className="p-5 flex justify-between items-center  gap-10 top-0">
+                  <img src={ipfsLogo} alt="ipfs-logo" width="48px" height="48px"></img>
+
+                  <img alt="app-logo" src={logo} width="100px" height="100px"></img>
+                  <img alt="file coin logo" src={fileCoinLogo} width="38px" height="38px"></img>
+                </div>
+              )}
+              {localStorage.getItem("isRegistered") && <Loading />}
+
+              <div
+                className="border flex flex-col bg-white w-300  rounded-lg"
+                style={isaddress || isWallet ? { border: "1px solid #ebecf0" } : { border: "0px" }}
+              >
+                <>
+                  <div className="flex flex-col items-center justify-center font-bold">
+                    {isaddress && (
+                      <>
+                        <h1 className="text-2xl m-3">Welcome!!</h1>
+
+                        <div className="flex flex-col gap-3 font-medium">
+                          <div className="px-5 py-4">
+                            <button
+                              className="text-xl border-black flex border gap-2 rounded-lg justify-between w-full px-4 py-2 hover:bg-gray-300"
+                              onClick={signUser}
+                            >
+                              Sign-In
+                              <img src={logo} width="35px" height="35px"></img>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    {isWallet && (
+                      <>
+                        <h1 className="text-2xl m-3">Welcome!!</h1>
+                        <div className="flex flex-col gap-3 font-medium">
+                          <div className="px-5 py-4">
+                            <button
+                              className="text-xl border-black flex border gap-2 rounded-lg justify-between w-full px-4 py-3 hover:bg-gray-300"
+                              onClick={borwserWalletHandler}
+                            >
+                              Browser Wallet
+                              <img src={metamaskLogo} width="30px" height="20px"></img>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              </div>
+            </div>
+          </div>
+
           {/* is meta mask is not installed */}
           {warning && (
-            <div className="absolute top-2 items-center flex justify-center w-full right-0 left-0 ">
+            <div className="z-10 absolute top-2 items-center flex justify-center w-full right-0 left-0 ">
               <div
                 className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative w-300"
                 role="alert"
