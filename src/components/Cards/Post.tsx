@@ -10,7 +10,6 @@ import { IChatProps } from "../../Types/interface";
 import Loading from "../Loading/Loading";
 
 const Post = (post: any) => {
-  console.log("===================", post);
   const [postDetails, setPostDetails] = useState<any>();
   const navigate = useNavigate();
   const [like, setLike] = useState(post?.post?.likes);
@@ -20,7 +19,7 @@ const Post = (post: any) => {
   console.log("profile url is ", userImageUrl);
 
   const date = new Date(post?.post?.timestamp);
-  const convertedDate = date.toLocaleDateString();
+  const convertedDate = date.toLocaleString();
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
