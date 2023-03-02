@@ -88,7 +88,10 @@ const Post = (post: any) => {
               </div>
             </div>
 
-            <div className="description-container">{postDetails?.content}</div>
+            <div
+              className="description-container"
+              dangerouslySetInnerHTML={{ __html: postDetails?.content }}
+            ></div>
             {postDetails?.media[0]?.file && (
               <div className="description-container" style={{ width: "200px", height: "200px" }}>
                 <img src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100"></img>
