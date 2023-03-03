@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import Navbar from "../components/Navbar/Navbar";
 import PoweredBy from "../components/PoweredBy/PoweredBy";
@@ -18,9 +18,11 @@ const Register = () => {
     }
   };
 
-  if (localStorage.getItem("isRegistered")) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (localStorage.getItem("isRegistered")) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>
