@@ -18,6 +18,10 @@ const Register = () => {
     }
   };
 
+  if (localStorage.getItem("isRegistered")) {
+    navigate("/");
+  }
+
   return (
     <>
       <div className="flex justify-start items-center flex-col h-screen">
