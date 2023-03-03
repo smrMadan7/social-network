@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 import { create } from "ipfs-http-client";
 import { useCallback } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import { AiFillStar, AiOutlineReload } from "react-icons/ai";
+import { AiFillStar, AiOutlineReload, AiOutlineItalic } from "react-icons/ai";
 import { GrFormClose } from "react-icons/gr";
 import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
@@ -16,8 +16,9 @@ import Warning from "../components/Cards/Warning";
 import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
 import getCroppedImage from "../utils/crop";
-
+import { Tooltip } from "react-tooltip";
 import Chat from "../components/Cards/Chat";
+import Loading from "../components/Loading/Loading";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -30,6 +31,7 @@ const Home = () => {
   const [isCode, setIsCode] = useState(false);
   const [uploadImage, setUploadImage] = useState<any>();
   const [warning, setWarning] = useState(false);
+  const [warningMessage, setWarningMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [cropStatus, setCropStatus] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -38,6 +40,7 @@ const Home = () => {
   const [posts, setPosts] = useState<any>([]);
   const [ipfsPath, setIpfsPath] = useState<any>();
   useEffect(() => {
+    setIsLoading(false);
     setIsBold(false);
     setIsItalic(false);
     setWarning(false);
@@ -85,78 +88,99 @@ const Home = () => {
 
   const publishPost = async (e: any) => {
     e.preventDefault();
-    setIsLoading(true);
+
     const contentElement: any = document.getElementById("content");
-    const content = contentElement.innerHTML;
+    var content = contentElement.innerHTML;
+    if (isBold) {
+      content = `<span class="font-bold">${content}</span>`;
+    } else if (isItalic) {
+      content = `<span class="italic">${content}</span>`;
+    } else if (isBold && isItalic) {
+      content = `<span class="font-bold italic">${content}</span>`;
+    } else {
+      content = content;
+    }
 
-    try {
-      ipfsClient(uploadImage)
-        .then(async (path) => {
-          if (path !== undefined) {
-            setIpfsPath(path);
-          } else {
+    console.log("content is ", content);
+
+    if (content !== "") {
+      try {
+        ipfsClient(uploadImage)
+          .then(async (path) => {
+            setIsLoading(true);
+            if (path !== undefined) {
+              setIpfsPath(path);
+            } else {
+              setIsLoading(true);
+            }
+
+            const provider: any = window.ethereum;
+            const web3: any = new Web3(provider);
+            const userAccount = await web3.eth.getAccounts();
+            const address = userAccount[0];
+
+            const currentTimeStamp = Math.floor(Date.now() / 1000);
+
+            const uri: any = {
+              version: "1.0.0",
+              description: "",
+              content: content,
+              coverImage: "",
+              media: [
+                {
+                  file: path,
+                  type: uploadImage?.type,
+                  timestamp: currentTimeStamp,
+                },
+              ],
+            };
+            const post = {
+              postId: uuidv4(),
+              address: address,
+              postData: uri,
+            };
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var requestOptions: any = {
+              method: "POST",
+              headers: myHeaders,
+              body: JSON.stringify(post),
+              redirect: "follow",
+            };
+            fetch(createPost, requestOptions)
+              .then((response) => response.json())
+              .then((result) => {
+                if (result.status !== false) {
+                  setIsPost(false);
+                  setIsLoading(false);
+                  setFilePath("");
+                  getAllPosts();
+                }
+              })
+              .catch((error) => {});
+          })
+          .catch((error) => {
+            setWarningMessage("Something went wrong!");
             setWarning(true);
-
             setTimeout(() => {
+              setWarningMessage("");
               setWarning(false);
-            }, 3000);
-            setIsLoading(false);
-          }
-
-          const provider: any = window.ethereum;
-          const web3: any = new Web3(provider);
-          const userAccount = await web3.eth.getAccounts();
-          const address = userAccount[0];
-
-          const currentTimeStamp = Math.floor(Date.now() / 1000);
-
-          const uri: any = {
-            version: "1.0.0",
-            description: "",
-            content: content,
-            coverImage: "",
-            media: [
-              {
-                file: path,
-                type: uploadImage?.type,
-                timestamp: currentTimeStamp,
-              },
-            ],
-          };
-          const post = {
-            postId: uuidv4(),
-            address: address,
-            postData: uri,
-          };
-
-          var myHeaders = new Headers();
-          myHeaders.append("Content-Type", "application/json");
-
-          var requestOptions: any = {
-            method: "POST",
-            headers: myHeaders,
-            body: JSON.stringify(post),
-            redirect: "follow",
-          };
-          fetch(createPost, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-              if (result.status !== false) {
-                setIsPost(false);
-                setFilePath("");
-
-                getAllPosts();
-              }
-            })
-            .catch((error) => {});
-        })
-        .catch((error) => {
-          setWarning(true);
-          console.log(error);
-        });
-    } catch (e) {
-      console.log(e);
+            }, 100);
+            console.log("Error occured while publishing post", error);
+          });
+      } catch (e) {
+        setWarning(true);
+      }
+    } else {
+      setWarningMessage("Nothing to post!!");
       setWarning(true);
+      setIsLoading(false);
+      setTimeout(() => {
+        setWarning(false);
+        setWarningMessage("");
+      }, 500);
     }
   };
 
@@ -171,7 +195,7 @@ const Home = () => {
       setCropStatus(false);
     } catch (e) {
       setWarning(true);
-      console.log(e);
+      console.log("Error occured while getGroppedImage", e);
     }
   }, [croppedPixel]);
 
@@ -198,12 +222,13 @@ const Home = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.log("Error occured while get all posts", error);
       });
   };
 
   return (
     <>
+      {isLoading && <Loading />}
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
         <div style={{ height: "90px" }}></div>
 
@@ -372,16 +397,14 @@ const Home = () => {
                     ) : (
                       <div></div>
                     )}
-                    {warning && (
-                      <Warning message="Something went wrong. Please try again?"></Warning>
-                    )}
-
+                    {warning && <Warning message={warningMessage}></Warning>}
                     <div className="flex gap-4 justify-between p-4">
                       <div className="flex gap-8">
                         <button
                           type="button"
-                          className="font-semibold text-violet-900 text-xl cursor-pointer rounded-full "
-                          style={isBold ? { fontWeight: "700" } : { fontWeight: "" }}
+                          id="bold"
+                          className="font-bold text-violet-900 text-2xl cursor-pointer rounded-full hover:bg-grey "
+                          style={isBold ? { fontWeight: "900" } : { fontWeight: "" }}
                           onClick={() => {
                             if (isBold) {
                               setIsBold(false);
@@ -395,7 +418,8 @@ const Home = () => {
 
                         <button
                           type="button"
-                          className="font-semibold text-violet-900 text-xl italic"
+                          id="italic"
+                          className="font-semibold text-violet-900 text-xl italic mt-1"
                           style={isItalic ? { fontWeight: "700" } : { fontWeight: "" }}
                           onClick={() => {
                             if (isItalic) {
@@ -405,9 +429,9 @@ const Home = () => {
                             }
                           }}
                         >
-                          I
+                          <AiOutlineItalic />
                         </button>
-                        <button
+                        {/* <button
                           type="button"
                           className="font-semibold text-violet-900 text-xl"
                           style={isCode ? { fontWeight: "700" } : { fontWeight: "" }}
@@ -420,18 +444,30 @@ const Home = () => {
                           }}
                         >
                           {"</>"}
-                        </button>
+                        </button> */}
                       </div>
                       <div>
                         <button
                           type="button"
-                          className="cursor-default flex gap-2 items-center border rounded-lg  px-2 py-1 text-white bg-violet-700"
+                          className="cursor-default flex gap-2 items-center border rounded-lg  px-2 py-1 text-yellow-600  bg-amber-100"
                         >
-                          <AiFillStar color="white" className="mt-1" />
+                          <AiFillStar className="mt-1" />
                           Beta
                         </button>
                       </div>
                     </div>
+                    <Tooltip
+                      anchorId="bold"
+                      place="bottom"
+                      content="Bold"
+                      className="z-10 absolute bg-black text-white border rounded-lg px-2"
+                    />
+                    <Tooltip
+                      anchorId="italic"
+                      place="bottom"
+                      content="Italic"
+                      className="z-10 absolute bg-black text-white border rounded-lg px-2"
+                    />
                     <div className="w-full border-t-2">
                       <div className="mt-3 p-4">
                         <div

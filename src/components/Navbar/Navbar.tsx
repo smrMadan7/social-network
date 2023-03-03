@@ -162,7 +162,7 @@ const Navbar = () => {
                     }}
                   >
                     More
-                    {moreStatus ? (
+                    {/* {moreStatus ? (
                       <div>
                         <MdKeyboardArrowDown size={20} className="mt-1" />
                       </div>
@@ -170,7 +170,7 @@ const Navbar = () => {
                       <div>
                         <MdKeyboardArrowUp size={20} className="mt-1" />
                       </div>
-                    )}
+                    )} */}
                   </li>
                   {moreStatus && (
                     <div
