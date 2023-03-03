@@ -23,6 +23,7 @@ module.exports = {
       },
       backgroundColor: {
         bgHover: "rgb(221 214 254)",
+        bgActive: "rgb(196 181 253)",
         blackOverlay: "rgba(0, 0 ,0 ,0.3)",
         grayOverlay: "rgba(0, 0 ,0 ,0.7)",
       },
