@@ -120,7 +120,11 @@ const SecureLayout = () => {
             user,
           });
           setLoading(false);
-          navigate(localStorage.getItem("currentLocation")!);
+          if (localStorage.getItem("currentLocation") === "/register") {
+            navigate("/");
+          } else {
+            navigate(localStorage.getItem("currentLocation")!);
+          }
           localStorage.setItem("isRegistered", "yes");
         } else {
           setLoading(false);
