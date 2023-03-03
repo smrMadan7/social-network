@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { AiOutlineReload } from "react-icons/ai";
+import { BiMenu } from "react-icons/bi";
 import { MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
@@ -54,7 +56,21 @@ const Explore = () => {
         </div>
       </div>
 
-      <div className=" gap-6 mt-12 flex bg-white w-full px-5">
+      <div className="flex gap-9 items-center text-gray-700 px-5 mt-6">
+        <button className="flex gap-2 items-center p-2 rounded-lg bg-bgActive">
+          <BiMenu fontSize={20} />
+          Timeline
+        </button>
+        <button
+          className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
+          onClick={() => getAllFeeds()}
+        >
+          <AiOutlineReload fontSize={23} />
+          Reload
+        </button>
+      </div>
+
+      <div className=" gap-6 mt-6 flex bg-white w-full px-5">
         <div className="w-full md:w-70 border rounded-lg ">
           {posts?.map((post: any, index: number) => {
             return <Post post={post} key={index + uuidv4()} />;
