@@ -134,7 +134,7 @@ const Team = () => {
                 });
                 setTimeout(() => {
                   navigate("/home");
-                }, 3000);
+                }, 1000);
               }
             });
         } else {

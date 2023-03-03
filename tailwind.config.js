@@ -22,6 +22,7 @@ module.exports = {
         55: "55%",
       },
       backgroundColor: {
+        bgHover: "rgb(221 214 254)",
         blackOverlay: "rgba(0, 0 ,0 ,0.3)",
         grayOverlay: "rgba(0, 0 ,0 ,0.7)",
       },

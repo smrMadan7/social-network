@@ -226,7 +226,7 @@ const SecureLayout = () => {
                         <div className="flex flex-col gap-3 font-medium">
                           <div className="px-5 py-4">
                             <button
-                              className="text-xl border-black flex border gap-2 rounded-lg justify-between w-full px-4 py-2 hover:bg-gray-300"
+                              className="text-xl border-black flex border gap-2 rounded-lg justify-between w-full px-4 py-2 hover:bg-bgHover"
                               onClick={signUser}
                             >
                               Sign-In
@@ -242,7 +242,7 @@ const SecureLayout = () => {
                         <div className="flex flex-col gap-3 font-medium">
                           <div className="px-5 py-4">
                             <button
-                              className="text-xl border-black flex border gap-2 rounded-lg justify-between w-full px-4 py-3 hover:bg-gray-300"
+                              className="text-xl border-black flex border gap-2 rounded-lg justify-between w-full px-4 py-3 hover:bg-bgHover"
                               onClick={borwserWalletHandler}
                             >
                               Browser Wallet
@@ -252,7 +252,7 @@ const SecureLayout = () => {
                         </div>
                       </>
                     )}
-                  </div> 
+                  </div>
                 </>
               </div>
             </div>
