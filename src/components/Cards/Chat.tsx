@@ -71,14 +71,15 @@ const Chat = (post: any) => {
                 </div>
               </div>
             </div>
-
-            <div className="description-container">{postDetails?.content}</div>
+            <div
+              className="description-container"
+              dangerouslySetInnerHTML={{ __html: postDetails?.content }}
+            ></div>
             {postDetails?.media[0]?.file && (
               <div className="description-container" style={{ width: "200px", height: "200px" }}>
                 <img src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100"></img>
               </div>
             )}
-
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div className=" px-2 py-2 ">
                 <TbMessage fontSize={18} className="text-indigo-200  " />{" "}

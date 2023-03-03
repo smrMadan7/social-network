@@ -2,7 +2,7 @@ import React from "react";
 
 const Loading = () => {
   return (
-    <div className="absolute  w-full top-0">
+    <div className="absolute z-10  w-full top-0">
       <div className=" z-10 flex items-center justify-center absolute text-white right-0 left-0 top-5">
         <div className="z-10">
           <button

@@ -93,10 +93,7 @@ const Post = (post: any) => {
 
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div className=" px-2 py-2 ">
-                <TbMessage
-                  fontSize={18}
-                  className="text-indigo-300 hover:bg-slate-300 rounded-full"
-                />{" "}
+                <TbMessage fontSize={18} className="text-indigo-300  rounded-full" />{" "}
               </div>
               <div className="flex items-center">
                 <div className=" px-2 py-2 ">
