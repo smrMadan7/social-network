@@ -1,14 +1,10 @@
-import { uuidV4 } from "ethers/types/utils";
-import React, { useEffect, useState } from "react";
-import { HiOutlineCurrencyDollar } from "react-icons/hi";
+import { useEffect, useState } from "react";
 import { MdOutlineScience } from "react-icons/md";
+import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
-import Chat from "../components/Cards/Chat";
 import Notification from "../components/Cards/Notification";
 import Post from "../components/Cards/Post";
 import { getFeeds } from "../constants/AppConstants";
-import { IChat } from "../Types/interface";
-import { v4 as uuidv4 } from "uuid";
 import banner from "./../assets/Explore/banner.png";
 
 const Explore = () => {
@@ -45,7 +41,7 @@ const Explore = () => {
   };
 
   return (
-    <div className="home-container flex flex-col w-full overflow-y-auto">
+    <div className="home-container flex flex-col w-full overflow-y-auto ">
       <div style={{ height: "90px" }}></div>
       <div className=" featured w-full border-b">
         <div className="m-auto flex w-full px-5 py-8 text-center sm:py-20 sm:text-left">
@@ -58,17 +54,14 @@ const Explore = () => {
         </div>
       </div>
 
-      <div className=" gap-6 mt-12 flex bg-white w-full px-5 ">
-        <div
-          className="w-full md:w-70 border rounded-lg overflow-y-auto"
-          style={{ height: "84vh" }}
-        >
+      <div className=" gap-6 mt-12 flex bg-white w-full px-5">
+        <div className="w-full md:w-70 border rounded-lg ">
           {posts?.map((post: any, index: number) => {
             return <Post post={post} key={index + uuidv4()} />;
           })}
         </div>
-        <div className="flex-col hidden md:flex md:w-30 ">
-          <div className="border-orange-300	text-yellow-600 w-full bg-amber-100  rounded-lg">
+        <div className="flex-col hidden md:flex md:w-30">
+          <div className="border-orange-300	text-yellow-600 w-full bg-amber-100 rounded-lg">
             <Notification
               headerImg={<MdOutlineScience />}
               title={"Beta Warning"}

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { BiMenu, BiMessageAltEdit } from "react-icons/bi";
 import { FaThList, FaUserAlt } from "react-icons/fa";
-import { HiLightBulb } from "react-icons/hi";
 import { Outlet } from "react-router-dom";
 
 import { create } from "ipfs-http-client";
 import { useCallback } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import { AiFillStar, AiOutlineFileGif } from "react-icons/ai";
+import { AiFillStar, AiOutlineReload } from "react-icons/ai";
 import { GrFormClose } from "react-icons/gr";
 import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
@@ -17,7 +16,6 @@ import Warning from "../components/Cards/Warning";
 import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
 import getCroppedImage from "../utils/crop";
-import { AiOutlineReload } from "react-icons/ai";
 
 import Chat from "../components/Cards/Chat";
 
@@ -276,13 +274,11 @@ const Home = () => {
                 <div className="p-7 flex justify-center bg-white border rounded-lg ">
                   <div className="flex flex-col items-center gap-2 text-violet-700 ">
                     <FaThList fontSize={20} />
-                    <h1 className="font-semibold text-md text-black">
-                      You haven't posted anything yet!
-                    </h1>
+                    <h1 className=" text-md text-slate-400">You haven't posted anything yet!</h1>
                   </div>
                 </div>
               ) : (
-                <div className=" overflow-y-auto mb-2" style={{ height: "50vh" }}>
+                <div className=" mb-2">
                   {posts?.map((post: any, index: any) => {
                     return (
                       <>
