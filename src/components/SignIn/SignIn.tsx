@@ -3,8 +3,17 @@ import logo from "./.././.././assets/Navbar/logo.svg";
 
 import ipfsLogo from "./.././.././assets/Auth/ipfs-logo.svg";
 import fileCoinLogo from "./../././.././assets/Auth/filecoin-logo.svg";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const SignIn = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("isRegistered")) {
+      navigate("/");
+    }
+  }, []);
   return (
     <>
       <div className="flex justify-start items-center flex-col h-screen">

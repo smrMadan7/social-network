@@ -4,13 +4,11 @@ import { GrFormClose } from "react-icons/gr";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Web3 from "web3";
 import Loading from "../components/Loading/Loading";
-
 import Navbar from "../components/Navbar/Navbar";
 import { chainId, getUser, network, verifyUser } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
 import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
 import logo from "./../assets/Navbar/logo.svg";
-
 import fileCoinLogo from "./../assets/Auth/filecoin-logo.svg";
 import ipfsLogo from "./../assets/Auth/ipfs-logo.svg";
 
@@ -30,20 +28,20 @@ const SecureLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [warningMessage, setWarningMessage] = useState("Please Install MetaMask");
   const [isaddress, setIsAddress] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState("");
   const [isWallet, setIsWallet] = useState(false);
 
+  console.log();
+
   useEffect(() => {
-    setCurrentLocation(location.pathname);
+    localStorage.setItem("currentLocation", location.pathname);
     setLoading(true);
     getCurrentUser();
   }, []);
 
-  const provider: any = window.ethereum;
-  const web3: any = new Web3(provider);
-
   const getCurrentUser = async () => {
     if (window.ethereum) {
+      const provider: any = window.ethereum;
+      const web3: any = new Web3(provider);
       const userAccount = await web3.eth.getAccounts();
       const address = userAccount[0];
 
@@ -109,6 +107,8 @@ const SecureLayout = () => {
       headers: myHeaders,
       redirect: "follow",
     };
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
     const userAccount = await web3.eth.getAccounts();
     const address = userAccount[0];
     fetch(`${getUser}${address}`, requestOptions)
@@ -120,7 +120,7 @@ const SecureLayout = () => {
             user,
           });
           setLoading(false);
-          navigate(currentLocation);
+          navigate(localStorage.getItem("currentLocation")!);
           localStorage.setItem("isRegistered", "yes");
         } else {
           setLoading(false);
