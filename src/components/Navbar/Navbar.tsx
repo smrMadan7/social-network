@@ -9,6 +9,7 @@ import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
 import defaultUser from "./.././.././assets/Form/default-user.png";
 import logo from "./.././.././assets/Navbar/nav-logo.svg";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -117,11 +118,11 @@ const Navbar = () => {
               <ul className="flex gap-6 font-semibold ">
                 <NavLink to={"/home"}>
                   <li
-                    className="cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
+                    className="cursor-pointer hover:bg-bgHover hover:rounded-lg px-3 py-2 "
                     style={
                       routerStatus === "home"
                         ? {
-                            background: "#C5C5C5",
+                            background: "rgb(196 181 253)",
                             color: "black",
                             borderRadius: "10px",
                           }
@@ -134,11 +135,11 @@ const Navbar = () => {
 
                 <NavLink to={"/explore"}>
                   <li
-                    className="cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
+                    className="cursor-pointer hover:bg-bgHover hover:rounded-lg px-3 py-2 "
                     style={
                       routerStatus === "explore"
                         ? {
-                            background: "#C5C5C5",
+                            background: "rgb(196 181 253)",
                             color: "black",
                             borderRadius: "10px",
                           }
@@ -150,29 +151,51 @@ const Navbar = () => {
                 </NavLink>
                 <div>
                   <li
-                    className="flex flex-col cursor-pointer hover:bg-gray-300 hover:rounded-lg px-3 py-2 "
-                    onClick={(e: React.SyntheticEvent) => {
+                    className="flex flex gap-2 items-center justify-center cursor-pointer hover:bg-bgHover hover:rounded-lg px-3 py-2 "
+                    onMouseOver={(e: React.SyntheticEvent) => {
                       setMoreStatus(true);
+                      e.stopPropagation();
+                    }}
+                    onMouseLeave={(e: React.SyntheticEvent) => {
+                      setMoreStatus(false);
                       e.stopPropagation();
                     }}
                   >
                     More
+                    {moreStatus ? (
+                      <div>
+                        <MdKeyboardArrowDown size={20} className="mt-1" />
+                      </div>
+                    ) : (
+                      <div>
+                        <MdKeyboardArrowUp size={20} className="mt-1" />
+                      </div>
+                    )}
                   </li>
                   {moreStatus && (
-                    <div className="fixed border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white ">
+                    <div
+                      className="fixed border mt-1 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white "
+                      onMouseOver={(e: React.SyntheticEvent) => {
+                        setMoreStatus(true);
+                        e.stopPropagation();
+                      }}
+                      onMouseLeave={(e: React.SyntheticEvent) => {
+                        setMoreStatus(false);
+                        e.stopPropagation();
+                      }}
+                    >
                       <a
                         href="mailto:spaceport-admin@protocol.ai"
-                        className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-gray-300"
-                        onClick={() => setMoreStatus(false)}
+                        className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-bgHover"
                       >
                         <IoIosContact color="gray" />
-                        Contact
+                        Contact Us
                       </a>
                       <a
                         rel="noreferrer"
                         href="https://github.com/memser-spaceport/pl-network-hub"
                         target="_blank"
-                        className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
+                        className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-bgHover"
                         onClick={() => setMoreStatus(false)}
                       >
                         <AiFillBug color="gray" />
@@ -186,7 +209,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="flex gap-9 items-center justify-center">
+        <div className="flex gap-6 items-center justify-center">
           {/* <button
             className="bg-violet-700 hover:bg-violet-900 px-3 py-2 text-white font-bold py-2 px-3 rounded-lg"
             onClick={logoutHandler}
@@ -204,7 +227,8 @@ const Navbar = () => {
 
           <div
             className="border rounded-full cursor-pointer flex flex-col"
-            onClick={() => setProfileStatus(true)}
+            onMouseOver={() => setProfileStatus(true)}
+            onMouseOut={() => setProfileStatus(false)}
           >
             {image !== defaultUser && (
               <img
@@ -216,12 +240,18 @@ const Navbar = () => {
               ></img>
             )}
             {profileStatus && (
-              <div className="fixed z-40 border mt-2 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-8 top-14 ">
+              <div
+                className="fixed z-40 border mt-1 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-4"
+                style={{ marginTop: "47px" }}
+              >
                 <div
-                  style={routerStatus === "profile" ? { background: "gray" } : { background: "" }}
-                  className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-gray-300"
+                  style={
+                    routerStatus === "profile"
+                      ? { background: "rgb(196 181 253)" }
+                      : { background: "" }
+                  }
+                  className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-bgHover"
                   onClick={() => {
-                    setMoreStatus(false);
                     setProfileStatus(false);
                     navigate(profileRoute);
                   }}
@@ -233,7 +263,7 @@ const Navbar = () => {
                 </div>
 
                 <div
-                  className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-gray-300"
+                  className="p-2 flex gap-3 items-center cursor-pointer font-light rounded-lg hover:bg-bgHover"
                   onClick={() => {
                     logoutHandler();
                     setMoreStatus(false);

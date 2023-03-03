@@ -42,7 +42,7 @@ const Register = () => {
               <div className="py-4 flex flex-col gap-2">
                 <div className="px-5 py-1">
                   <button
-                    className="border-black flex border rounded-lg justify-between w-full px-4 py-3 hover:text-white hover:bg-black font-semibold"
+                    className="border-black flex border rounded-lg justify-between w-full px-4 py-3 hover:bg-bgHover font-semibold"
                     onClick={(e) => registrationHandler(e, "member")}
                   >
                     As a Member
@@ -57,7 +57,7 @@ const Register = () => {
                 </div>
                 <div className="px-5">
                   <button
-                    className="border-black flex border rounded-lg justify-between w-full px-4 py-3 hover:text-white hover:bg-black font-semibold"
+                    className="border-black flex border rounded-lg justify-between w-full px-4 py-3  hover:bg-bgHover font-semibold"
                     onClick={(e) => registrationHandler(e, "team")}
                   >
                     As a Team

@@ -230,7 +230,9 @@ const Home = () => {
                 <button
                   className="flex gap-2 items-center p-2 rounded-lg hover:bg-violte-200"
                   style={
-                    filterStatus === "timeline" ? { background: "#cfc6f0" } : { background: "" }
+                    filterStatus === "timeline"
+                      ? { background: "rgb(196 181 253)" }
+                      : { background: "" }
                   }
                   onClick={() => setFilterStatus("timeline")}
                 >
@@ -239,9 +241,6 @@ const Home = () => {
                 </button>
                 <button
                   className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
-                  style={
-                    filterStatus === "highlight" ? { background: "#cfc6f0" } : { background: "" }
-                  }
                   onClick={() => getAllPosts()}
                 >
                   <AiOutlineReload fontSize={23} />
@@ -426,7 +425,7 @@ const Home = () => {
                       <div>
                         <button
                           type="button"
-                          className="flex gap-2 items-center border rounded-lg  px-2 py-1 text-white bg-violet-700"
+                          className="cursor-default flex gap-2 items-center border rounded-lg  px-2 py-1 text-white bg-violet-700"
                         >
                           <AiFillStar color="white" className="mt-1" />
                           Beta
