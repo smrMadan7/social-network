@@ -305,11 +305,9 @@ const Home = () => {
                 <div className=" mb-2">
                   {posts?.map((post: any, index: any) => {
                     return (
-                      <>
-                        <div key={uuidv4() + index}>
-                          <Chat post={post} />
-                        </div>
-                      </>
+                      <div key={uuidv4()}>
+                        <Chat post={post} />
+                      </div>
                     );
                   })}
                 </div>
