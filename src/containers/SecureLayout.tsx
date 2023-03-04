@@ -38,6 +38,15 @@ const SecureLayout = () => {
     getCurrentUser();
   }, []);
 
+  useEffect(() => {
+    const listen = async () => {
+      window?.ethereum?.on("accountsChanged", async function () {
+        window.location.reload();
+      });
+    };
+    listen();
+  }, []);
+
   const getCurrentUser = async () => {
     if (window.ethereum) {
       const provider: any = window.ethereum;
