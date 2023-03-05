@@ -5,7 +5,7 @@ import { MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
 import Notification from "../components/Cards/Notification";
-import Post from "../components/Cards/Post";
+import Post from "../components/Cards/Feeds";
 import { getFeeds } from "../constants/AppConstants";
 import banner from "./../assets/Explore/banner.png";
 

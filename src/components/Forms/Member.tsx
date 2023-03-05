@@ -388,7 +388,7 @@ const Member = () => {
                             id="first-name"
                             type="text"
                             name="firstName"
-                            placeholder="first name"
+                            placeholder="First Name"
                           ></input>
                         </div>
 
@@ -404,7 +404,7 @@ const Member = () => {
                             id="last-name"
                             name="lastName"
                             type="text"
-                            placeholder="last name"
+                            placeholder="Last Name"
                           ></input>
                         </div>
                       </div>
@@ -420,7 +420,7 @@ const Member = () => {
                           id="display-name"
                           name="displayName"
                           type="text"
-                          placeholder="display name"
+                          placeholder="Display Name"
                         ></input>
                       </div>
 
@@ -433,7 +433,7 @@ const Member = () => {
 
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Handle
+                          Handle:
                         </label>
                         <input
                           required
@@ -441,7 +441,7 @@ const Member = () => {
                           id="handle"
                           name="handle"
                           type="text"
-                          placeholder="handle"
+                          placeholder="Handle"
                           min={3}
                           onChange={checkHandle}
                         ></input>
@@ -456,7 +456,7 @@ const Member = () => {
                         <div className="w-60 sm:w-75 md:w-full relative cursor-pointer ">
                           <select
                             id="isWork"
-                            className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-gray-500 cursor-pointer"
+                            className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 cursor-pointer"
                             name="open"
                           >
                             <option>No</option>
@@ -513,7 +513,7 @@ const Member = () => {
                         form="member"
                         name="bio"
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                        placeholder="write your thoughts here..."
+                        placeholder="Write your thoughts here..."
                       ></textarea>
                     </div>
                   </div>
@@ -529,7 +529,7 @@ const Member = () => {
                           className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full"
                           onClick={() => {
                             setFormStatus("role");
-                            setInputPlaceholder(`enter your role`);
+                            setInputPlaceholder(`Enter your role`);
                           }}
                         >
                           <div className="text-gray-700 flex gap-2 ">
@@ -570,7 +570,7 @@ const Member = () => {
                             className="font-bold text-xl cursor-pointer"
                             onClick={() => {
                               setFormStatus("role");
-                              setInputPlaceholder(`enter your role`);
+                              setInputPlaceholder(`Enter your role`);
                             }}
                           >
                             <GrFormAdd
@@ -591,7 +591,7 @@ const Member = () => {
                         <div
                           className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
                           onClick={() => {
-                            setInputPlaceholder("enter your organization");
+                            setInputPlaceholder("Enter your organization");
                             setFormStatus("organization");
                           }}
                         >
@@ -636,7 +636,7 @@ const Member = () => {
                             onClick={() => {
                               setFormStatus("organization");
 
-                              setInputPlaceholder("enter your organization");
+                              setInputPlaceholder("Enter your organization");
                             }}
                           >
                             <GrFormAdd
@@ -660,7 +660,7 @@ const Member = () => {
                         className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
                         onClick={() => {
                           setFormStatus("skill");
-                          setInputPlaceholder("enter your skill");
+                          setInputPlaceholder("Enter your skill");
                         }}
                       >
                         <div className="text-gray-700 flex gap-2 role-container">
@@ -700,7 +700,7 @@ const Member = () => {
                         <div
                           className="font-bold text-xl cursor-pointer"
                           onClick={() => {
-                            setInputPlaceholder("enter your skill");
+                            setInputPlaceholder("Enter your skill");
                             setFormStatus("skill");
                           }}
                         >

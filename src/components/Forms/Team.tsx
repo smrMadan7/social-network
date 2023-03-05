@@ -287,13 +287,13 @@ const Team = () => {
 
                         <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                           <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                            Handle
+                            Handle:
                           </label>
                           <input
                             className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="handle"
                             name="handle"
-                            placeholder="handle"
+                            placeholder="Handle"
                             min={3}
                             onChange={checkHandle}
                           ></input>
@@ -311,7 +311,7 @@ const Team = () => {
                             id="website"
                             name="website"
                             type="url"
-                            placeholder="website"
+                            placeholder="Website"
                           ></input>
                         </div>
                       </div>
@@ -332,7 +332,7 @@ const Team = () => {
                       {/* Twitter */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Twitter
+                          Twitter:
                         </label>
                         <input
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -345,7 +345,7 @@ const Team = () => {
                       {/* Discord */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Discord
+                          Discord:
                         </label>
                         <input
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
