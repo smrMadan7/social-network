@@ -17,8 +17,8 @@ import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants"
 import { useUserContext } from "../context/UserContextProvider";
 import getCroppedImage from "../utils/crop";
 import { Tooltip } from "react-tooltip";
-import Chat from "../components/Cards/Chat";
 import Loading from "../components/Loading/Loading";
+import Post from "../components/Cards/Post";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -306,7 +306,7 @@ const Home = () => {
                   {posts?.map((post: any, index: any) => {
                     return (
                       <div key={uuidv4()}>
-                        <Chat post={post} />
+                        <Post post={post} />
                       </div>
                     );
                   })}
