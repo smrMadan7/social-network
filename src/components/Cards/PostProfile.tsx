@@ -11,7 +11,6 @@ const PostProfile = ({ postDetails, post }: any) => {
   useEffect(() => {
     setIsLoading(false);
     fetchUser();
-    console.log("worked");
   }, []);
 
   const fetchUser = async () => {

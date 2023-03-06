@@ -13,9 +13,7 @@ const useFetch = (url: string, method: string, headers: any, body: any, redirect
     };
     fetch(url, requestOptions)
       .then((response) => response.json())
-      .then((result) => {
-        console.log("result is +++++++++=", result);
-      });
+      .then((result) => {});
   }, [url]);
 };
 

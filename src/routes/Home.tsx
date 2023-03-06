@@ -101,8 +101,6 @@ const Home = () => {
       content = content;
     }
 
-    console.log("content is ", content);
-
     if (content !== "") {
       try {
         ipfsClient(uploadImage)
