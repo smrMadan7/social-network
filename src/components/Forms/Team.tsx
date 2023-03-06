@@ -36,7 +36,7 @@ const Team = () => {
   const [warning, setWarning] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [handle, setHandle] = useState(false);
-  const [handleStatus, setHandleStatus] = useState(false);
+  const [handleStatus, setHandleStatus] = useState(true);
 
   const navigate = useNavigate();
 
@@ -46,7 +46,6 @@ const Team = () => {
     setUserImage(defaultProfile);
     setToast(false);
     setCropStatus(false);
-    setHandleStatus(false);
     setHandle(false);
   }, []);
   const ipfs = create({ url: ipfsPostUrl });
@@ -61,7 +60,7 @@ const Team = () => {
   };
 
   const checkHandle = (event: any) => {
-    if (event.target.value.length > 3) {
+    if (event.target.value.length > 1) {
       var requestOptions: any = {
         method: "GET",
         redirect: "follow",
@@ -314,7 +313,6 @@ const Team = () => {
                             id="handle"
                             name="handle"
                             placeholder="Handle"
-                            min={3}
                             onChange={checkHandle}
                           ></input>
                         </div>

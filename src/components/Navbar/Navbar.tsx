@@ -4,7 +4,7 @@ import { AiFillBug } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { IoIosContact } from "react-icons/io";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ipfsGateway } from "../../constants/AppConstants";
+import { ipfsGateway, roles } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
 import defaultUser from "./.././.././assets/Form/default-user.png";
@@ -35,7 +35,7 @@ const Navbar = () => {
 
   var profileRoute = "";
 
-  if (appState?.action?.user?.firstName) {
+  if (appState?.action?.user?.type === roles[0]) {
     profileRoute = "/member-profile";
   } else {
     profileRoute = "/team-profile";

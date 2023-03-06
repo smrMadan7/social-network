@@ -51,6 +51,7 @@ const Feeds = (post: any) => {
     fetch(likeApi, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        debugger;
         setLike(post?.post?.likes + likeCount);
       })
       .catch((error) => {});
@@ -64,8 +65,8 @@ const Feeds = (post: any) => {
             {postProfile && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div className=" w-70 md:w-50 h-3/6 border rounded-lg text-black bg-white">
-                    <div className="flex justify-between p-3 ">
+                  <div className=" w-70 md:w-50 border rounded-lg text-black bg-white">
+                    <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">User Details</p>
                       <div
                         className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -76,9 +77,9 @@ const Feeds = (post: any) => {
                         <GrFormClose color="black" fontSize={25} />
                       </div>
                     </div>
-                    <div className="border"></div>
+
+                    <PostProfile postDetails={postDetails} post={post} />
                   </div>
-                  <PostProfile postDetails={postDetails} post={post} />
                 </div>
               </div>
             )}
@@ -91,7 +92,7 @@ const Feeds = (post: any) => {
                   src={userImageUrl}
                   height={50}
                   width={50}
-                  className=" rounded-full"
+                  className=" rounded-full cursor-pointer"
                   onClick={() => setPostProfile(true)}
                 ></img>
                 <div className="flex flex-col">
@@ -166,6 +167,8 @@ const Feeds = (post: any) => {
             margin-top: 20px;
 
         }
+
+        
 `}
             </style>
           </div>

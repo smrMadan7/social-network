@@ -160,7 +160,13 @@ const Member = () => {
     event.preventDefault();
 
     if (uploadFile) {
-      if (bio && selectedRoles && selectedOrganization && selectedSkills && handleStatus) {
+      if (
+        bio &&
+        selectedRoles.length > 0 &&
+        selectedOrganization.length > 0 &&
+        selectedSkills.length > 0 &&
+        handleStatus
+      ) {
         setIsLoading(true);
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
