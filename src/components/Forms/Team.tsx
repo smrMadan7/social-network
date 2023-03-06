@@ -78,7 +78,7 @@ const Team = () => {
           }
         })
         .catch((error) => {
-          console.log("Error while checking handle");
+          console.log("Error while checking handle", error);
         });
     }
   };
@@ -86,9 +86,6 @@ const Team = () => {
   const formSubmitHandler = (event: React.SyntheticEvent) => {
     event.preventDefault();
     if (uploadedImage) {
-      console.log(uploadImage);
-      console.log("image present");
-
       if (description && handle) {
         setIsLoading(true);
         ipfsClient(uploadImage).then(async (path) => {

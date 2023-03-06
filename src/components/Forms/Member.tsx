@@ -158,8 +158,6 @@ const Member = () => {
   };
   const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    debugger;
-
     if (uploadFile) {
       if (bio && selectedRoles && selectedOrganization && selectedSkills && handle) {
         setIsLoading(true);

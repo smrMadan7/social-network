@@ -37,7 +37,6 @@ const Feeds = (post: any) => {
 
   const incrementLike = (e: any, postData: any) => {
     setLikeCount(likeCount + 1);
-    console.log("like count is ", likeCount);
     const postIdData = {
       postId: postData?.post?.postId,
     };
@@ -51,7 +50,6 @@ const Feeds = (post: any) => {
     fetch(likeApi, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        debugger;
         setLike(post?.post?.likes + likeCount);
       })
       .catch((error) => {});
