@@ -31,7 +31,7 @@ const Member = () => {
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userImage, setUserImage] = useState<any>(defaultProfile);
-  const [uplodFile, setUploadFile] = useState<any>();
+  const [uploadFile, setUploadFile] = useState<any>();
 
   const [selectedOrganization, setSelectedOrganization] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -45,8 +45,10 @@ const Member = () => {
   const [uploadedImage, setUploadedImage] = useState<string>();
   const { appState, appStatedispatch }: any = useUserContext();
   const [toast, setToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [warning, setWarning] = useState(false);
   const [handle, setHandle] = useState(false);
+  const [handleStatus, setHandleStatus] = useState(false);
 
   const navigate = useNavigate();
 
@@ -58,6 +60,7 @@ const Member = () => {
     setUserImage(defaultProfile);
     setCropStatus(false);
     setToast(false);
+    setHandleStatus(false);
     setWarning(false);
     setHandle(false);
   }, []);
@@ -145,7 +148,9 @@ const Member = () => {
         .then((result) => {
           if (result.status === true) {
             setHandle(false);
+            setHandleStatus(true);
           } else {
+            setHandleStatus(false);
             setHandle(true);
           }
         });
@@ -154,83 +159,96 @@ const Member = () => {
   const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    if (uploadedImage) {
-      setIsLoading(true);
-      ipfsClient(uplodFile).then(async (path) => {
-        if (path !== undefined && handle === false) {
-          const target = event.target as typeof event.target & {
-            firstName: { value: string };
-            lastName: { value: string };
-            displayName: { value: string };
-            open: { value: string };
-            handle: { value: string };
-          };
+    if (uploadFile) {
+      if (bio && selectedRoles && selectedOrganization && selectedSkills && handleStatus) {
+        setIsLoading(true);
+        ipfsClient(uploadFile).then(async (path) => {
+          if (path !== undefined) {
+            const target = event.target as typeof event.target & {
+              firstName: { value: string };
+              lastName: { value: string };
+              displayName: { value: string };
+              open: { value: string };
+              handle: { value: string };
+            };
 
-          const provider: any = window.ethereum;
-          const web3: any = new Web3(provider);
+            const provider: any = window.ethereum;
+            const web3: any = new Web3(provider);
 
-          const userAccount = await web3.eth.getAccounts();
-          const address = userAccount[0];
+            const userAccount = await web3.eth.getAccounts();
+            const address = userAccount[0];
 
-          const user = {
-            firstName: target.firstName.value,
-            lastName: target.lastName.value,
-            handle: target.handle.value,
-            displayName: target.displayName.value,
-            bio: bio,
-            role: selectedRoles,
-            organization: selectedOrganization,
-            skill: selectedSkills,
-            openForWork: target.open.value,
-            address: address,
-            profilePictureUrl: path,
-          };
+            const user = {
+              firstName: target.firstName.value,
+              lastName: target.lastName.value,
+              handle: target.handle.value,
+              displayName: target.displayName.value,
+              bio: bio,
+              role: selectedRoles,
+              organization: selectedOrganization,
+              skill: selectedSkills,
+              openForWork: target.open.value,
+              address: address,
+              profilePictureUrl: path,
+            };
 
-          var requestOptions: any = {
-            method: "POST",
-            mode: "cors",
-            redirect: "follow",
-          };
-          setIsLoading(true);
+            var requestOptions: any = {
+              method: "POST",
+              mode: "cors",
+              redirect: "follow",
+            };
+            setIsLoading(true);
 
-          var raw = JSON.stringify(user);
-          var myHeaders = new Headers();
-          myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify(user);
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
-          var requestOptions: any = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow",
-          };
+            var requestOptions: any = {
+              method: "POST",
+              headers: myHeaders,
+              body: raw,
+              redirect: "follow",
+            };
 
-          fetch(addMember, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-              if (result.status !== false) {
-                localStorage.setItem("registered", "true");
-                const user = result.data;
-                appStatedispatch({
-                  user,
-                });
-                setTimeout(() => {
-                  navigate("/home");
-                }, 1000);
-              }
-            });
-        } else {
-          setWarning(true);
-          setIsLoading(false);
+            fetch(addMember, requestOptions)
+              .then((response) => response.json())
+              .then((result) => {
+                if (result.status !== false) {
+                  localStorage.setItem("registered", "true");
+                  const user = result.data;
+                  appStatedispatch({
+                    user,
+                  });
+                  setTimeout(() => {
+                    setIsLoading(false);
+                    setToastMessage("");
+                    navigate("/home");
+                  }, 1000);
+                }
+              });
+          } else {
+            setWarning(true);
+            setIsLoading(false);
 
-          setTimeout(() => {
-            setWarning(false);
-          }, 3000);
-        }
-      });
+            setTimeout(() => {
+              setWarning(false);
+            }, 3000);
+          }
+        });
+      } else {
+        setToastMessage("All fields are required");
+        setToast(true);
+        setTimeout(() => {
+          setToastMessage("");
+          setToast(false);
+        }, 2000);
+      }
     } else {
+      setToastMessage("Upload profile picture");
       setToast(true);
 
       setTimeout(() => {
+        setToastMessage("");
         setToast(false);
       }, 3000);
     }
@@ -276,7 +294,7 @@ const Member = () => {
     <>
       <div className="relative w-full h-screen">
         {warning && <Warning message="Something went wrong. Please try again!"></Warning>}
-        {toast && <Warning message="Upload Profile "></Warning>}
+        {toast && <Warning message={toastMessage}></Warning>}
         {cropStatus ? (
           <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center sm:w-full">
             <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>

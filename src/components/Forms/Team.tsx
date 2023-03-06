@@ -34,7 +34,9 @@ const Team = () => {
   const [uploadedImage, setUploadedImage] = useState<string>();
   const { appState, appStatedispatch }: any = useUserContext();
   const [warning, setWarning] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [handle, setHandle] = useState(false);
+  const [handleStatus, setHandleStatus] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,6 +46,7 @@ const Team = () => {
     setUserImage(defaultProfile);
     setToast(false);
     setCropStatus(false);
+    setHandleStatus(false);
     setHandle(false);
   }, []);
   const ipfs = create({ url: ipfsPostUrl });
@@ -69,86 +72,102 @@ const Team = () => {
         .then((result) => {
           if (result.status === true) {
             setHandle(false);
+            setHandleStatus(true);
           } else {
+            setHandleStatus(false);
             setHandle(true);
           }
+        })
+        .catch((error) => {
+          console.log("Error while checking handle");
         });
     }
   };
 
   const formSubmitHandler = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    setIsLoading(true);
-
     if (uploadedImage) {
-      setToast(false);
+      console.log(uploadImage);
+      console.log("image present");
 
-      ipfsClient(uploadImage).then(async (path) => {
-        if (path !== undefined) {
-          const target = event.target as typeof event.target & {
-            organizationName: { value: string };
-            website: { value: string };
-            contactEmail: { value: string };
-            twitter: { value: string };
-            discord: { value: string };
-            handle: { value: string };
-          };
-          const provider: any = window.ethereum;
-          const web3: any = new Web3(provider);
+      if (description && handleStatus) {
+        setIsLoading(true);
+        ipfsClient(uploadImage).then(async (path) => {
+          if (path !== undefined) {
+            const target = event.target as typeof event.target & {
+              organizationName: { value: string };
+              website: { value: string };
+              contactEmail: { value: string };
+              twitter: { value: string };
+              discord: { value: string };
+              handle: { value: string };
+            };
+            const provider: any = window.ethereum;
+            const web3: any = new Web3(provider);
 
-          const userAccount = await web3.eth.getAccounts();
-          const address = userAccount[0];
+            const userAccount = await web3.eth.getAccounts();
+            const address = userAccount[0];
 
-          const user = {
-            organizationName: target.organizationName.value,
-            website: target.website.value,
-            contact: target.contactEmail.value,
-            social: {
-              twitter: target.twitter.value,
-              discord: target.twitter.value,
-            },
-            desc: description,
-            profilePictureUrl: path,
-            handle: target.handle.value,
-            address: address,
-          };
+            const user = {
+              organizationName: target.organizationName.value,
+              website: target.website.value,
+              contact: target.contactEmail.value,
+              social: {
+                twitter: target.twitter.value,
+                discord: target.twitter.value,
+              },
+              desc: description,
+              profilePictureUrl: path,
+              handle: target.handle.value,
+              address: address,
+            };
 
-          var raw = JSON.stringify(user);
-          var myHeaders = new Headers();
-          myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify(user);
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
-          var requestOptions: any = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow",
-          };
+            var requestOptions: any = {
+              method: "POST",
+              headers: myHeaders,
+              body: raw,
+              redirect: "follow",
+            };
 
-          fetch(addTeam, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-              if (result.status !== false) {
-                const user = result.data;
-                appStatedispatch({
-                  user,
-                });
-                setTimeout(() => {
-                  navigate("/home");
-                }, 1000);
-              }
-            });
-        } else {
-          setWarning(true);
-          setIsLoading(false);
-          setTimeout(() => {
-            setWarning(false);
-          }, 3000);
-        }
-      });
+            fetch(addTeam, requestOptions)
+              .then((response) => response.json())
+              .then((result) => {
+                if (result.status !== false) {
+                  const user = result.data;
+                  appStatedispatch({
+                    user,
+                  });
+                  setTimeout(() => {
+                    navigate("/home");
+                  }, 1000);
+                }
+              });
+          } else {
+            setWarning(true);
+            setIsLoading(false);
+            setTimeout(() => {
+              setWarning(false);
+            }, 3000);
+          }
+        });
+      } else {
+        setToast(true);
+        setToastMessage("All fields are required");
+        setTimeout(() => {
+          setToastMessage("");
+          setToast(false);
+        }, 2000);
+      }
     } else {
+      setToastMessage("Upload profile picture");
       setToast(true);
       setIsLoading(false);
       setTimeout(() => {
+        setToastMessage("");
         setToast(false);
       }, 3000);
     }
@@ -194,7 +213,7 @@ const Team = () => {
     <>
       <div className="relative w-full h-screen">
         {warning && <Warning message="Something went wrong. Please try again?"></Warning>}
-        {toast && <Warning message="Upload Profile "></Warning>}
+        {toast && <Warning message={toastMessage}></Warning>}
 
         {cropStatus ? (
           <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center sm:w-full">
@@ -290,6 +309,7 @@ const Team = () => {
                             Handle:
                           </label>
                           <input
+                            required
                             className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="handle"
                             name="handle"
