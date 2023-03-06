@@ -47,8 +47,8 @@ const Member = () => {
   const [toast, setToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [warning, setWarning] = useState(false);
-  const [handle, setHandle] = useState(false);
-  const [handleStatus, setHandleStatus] = useState(false);
+  const [handleWarning, setHandleWarning] = useState(false);
+  const [handle, setHandle] = useState(true);
 
   const navigate = useNavigate();
 
@@ -59,10 +59,10 @@ const Member = () => {
     setBio("");
     setUserImage(defaultProfile);
     setCropStatus(false);
+    setHandleWarning(false);
     setToast(false);
-    setHandleStatus(false);
     setWarning(false);
-    setHandle(false);
+    setHandle(true);
   }, []);
 
   const inputFormSubmitHandler = (event: React.SyntheticEvent) => {
@@ -147,20 +147,21 @@ const Member = () => {
         .then((response) => response.json())
         .then((result) => {
           if (result.status === true) {
-            setHandle(false);
-            setHandleStatus(true);
-          } else {
-            setHandleStatus(false);
             setHandle(true);
+            setHandleWarning(false);
+          } else {
+            setHandleWarning(true);
+            setHandle(false);
           }
         });
     }
   };
   const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    debugger;
 
     if (uploadFile) {
-      if (bio && selectedRoles && selectedOrganization && selectedSkills && handleStatus) {
+      if (bio && selectedRoles && selectedOrganization && selectedSkills && handle) {
         setIsLoading(true);
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
@@ -443,7 +444,7 @@ const Member = () => {
                       </div>
 
                       {/* Handle  */}
-                      {handle && (
+                      {handleWarning && (
                         <div className=" text-red-700 flex justify-end px-5 py-1">
                           *handle already taken
                         </div>

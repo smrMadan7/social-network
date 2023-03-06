@@ -129,10 +129,10 @@ const TeamProfile = () => {
                       Description:
                     </label>
                     <textarea
+                      readOnly
                       id="desacription"
                       name="description"
                       className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                      placeholder="Write your thoughts here..."
                       value={appState?.action?.user?.desc}
                     ></textarea>
                   </div>
