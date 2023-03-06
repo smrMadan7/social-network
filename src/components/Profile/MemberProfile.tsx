@@ -117,12 +117,12 @@ const MemberProfile = () => {
                       Bio:
                     </label>
                     <textarea
+                      readOnly
                       id="message"
                       form="member"
                       name="bio"
                       value={appState?.action?.user?.bio}
                       className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                      placeholder="Write your thoughts here..."
                     ></textarea>
                   </div>
                 </div>
@@ -137,21 +137,19 @@ const MemberProfile = () => {
                       <div className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full">
                         <div className="text-gray-700 flex gap-2 ">
                           <>
-                            <p className="flex gap-3 flex-wrap">
+                            <div className="flex gap-3 flex-wrap">
                               {appState?.action?.user?.role.map((role: string, index: number) => {
                                 return (
-                                  <>
-                                    <div
-                                      key={index}
-                                      className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      {role}
-                                    </div>
-                                  </>
+                                  <div
+                                    key={index}
+                                    className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {role}
+                                  </div>
                                 );
                               })}
-                            </p>
+                            </div>
                           </>
                         </div>
                       </div>
@@ -167,23 +165,21 @@ const MemberProfile = () => {
                       <div className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer">
                         <div className="text-gray-700 flex gap-2 role-container">
                           <>
-                            <p className="flex gap-3 flex-wrap">
+                            <div className="flex gap-3 flex-wrap">
                               {appState?.action?.user?.organization.map(
                                 (organization: string, index: number) => {
                                   return (
-                                    <>
-                                      <div
-                                        key={index}
-                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        {organization}
-                                      </div>
-                                    </>
+                                    <div
+                                      key={index}
+                                      className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {organization}
+                                    </div>
                                   );
                                 }
                               )}
-                            </p>
+                            </div>
                           </>
                         </div>
                       </div>
@@ -201,21 +197,19 @@ const MemberProfile = () => {
                     <div className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer">
                       <div className="text-gray-700 flex gap-2 role-container">
                         <>
-                          <p className="flex gap-3 flex-wrap">
+                          <div className="flex gap-3 flex-wrap">
                             {appState?.action?.user?.skill.map((skill: string, index: number) => {
                               return (
-                                <>
-                                  <div
-                                    key={index}
-                                    className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    {skill}
-                                  </div>
-                                </>
+                                <div
+                                  key={index}
+                                  className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {skill}
+                                </div>
                               );
                             })}
-                          </p>
+                          </div>
                         </>
                       </div>
                     </div>
