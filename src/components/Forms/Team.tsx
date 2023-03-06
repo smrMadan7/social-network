@@ -35,8 +35,8 @@ const Team = () => {
   const { appState, appStatedispatch }: any = useUserContext();
   const [warning, setWarning] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [handle, setHandle] = useState(false);
-  const [handleStatus, setHandleStatus] = useState(true);
+  const [handle, setHandle] = useState(true);
+  const [handleWarning, setHandleWarning] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,7 +46,7 @@ const Team = () => {
     setUserImage(defaultProfile);
     setToast(false);
     setCropStatus(false);
-    setHandle(false);
+    setHandle(true);
   }, []);
   const ipfs = create({ url: ipfsPostUrl });
 
@@ -70,11 +70,11 @@ const Team = () => {
         .then((response) => response.json())
         .then((result) => {
           if (result.status === true) {
-            setHandle(false);
-            setHandleStatus(true);
-          } else {
-            setHandleStatus(false);
             setHandle(true);
+            setHandleWarning(false);
+          } else {
+            setHandle(false);
+            setHandleWarning(true);
           }
         })
         .catch((error) => {
@@ -89,7 +89,7 @@ const Team = () => {
       console.log(uploadImage);
       console.log("image present");
 
-      if (description && handleStatus) {
+      if (description && handle) {
         setIsLoading(true);
         ipfsClient(uploadImage).then(async (path) => {
           if (path !== undefined) {
@@ -297,7 +297,7 @@ const Team = () => {
                         </div>
 
                         {/* handle */}
-                        {handle && (
+                        {handleWarning && (
                           <div className=" text-red-700 flex justify-end px-5 py-1">
                             *handle already taken
                           </div>
