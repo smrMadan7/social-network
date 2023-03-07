@@ -10,7 +10,7 @@ const Comment = ({ post, postDetails }: any) => {
   return (
     <div className="p-3">
       {comments.map((comment: any, index: number) => {
-        return <div></div>;
+        return <div key={index}></div>;
       })}
     </div>
   );
