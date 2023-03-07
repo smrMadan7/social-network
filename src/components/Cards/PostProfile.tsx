@@ -49,15 +49,24 @@ const PostProfile = ({ postDetails, post }: any) => {
     <>
       {isMember && (
         <div className="w-full flex flex-col text-black font-2xl">
-          <div className="text-black flex flex-col md:flex-row justify-between px-5 mt-5">
-            <div className="w-70">
+          <div className="w-full text-black flex flex-col md:flex-row justify-between px-5 mt-5">
+            <div className="w-20">
+              <img
+                height="100px"
+                width="100px"
+                className="rounded-full border"
+                src={profileUrl}
+              ></img>
+            </div>
+            <div className="w-80">
               {/* display Name */}
               <div className="flex  w-full items-center gap-3 ">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">
+                <label className=" w-45 block tracking-wide text-gray-700 font-bold ">
                   Display Name (handle):
                 </label>
                 <div className="w-50 bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
-                  {`${details?.firstName} (${details?.handle})`}
+                  {`${details?.firstName}`}
+                  <span className="handle"> @{details?.handle}</span>
                 </div>
               </div>
               {/* Role */}
@@ -122,16 +131,6 @@ const PostProfile = ({ postDetails, post }: any) => {
                 </div>
               </div>
             </div>
-            <div>
-              <div>
-                <img
-                  height="100px"
-                  width="100px"
-                  className="rounded-full border"
-                  src={profileUrl}
-                ></img>
-              </div>
-            </div>
           </div>
           {/* Bio */}
           <div className="flex  mx-1 w-100 mt-2">
@@ -145,7 +144,6 @@ const PostProfile = ({ postDetails, post }: any) => {
                 id="bio"
                 name="bio"
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                placeholder="Write your thoughts here..."
               ></textarea>
             </div>
           </div>
@@ -155,46 +153,7 @@ const PostProfile = ({ postDetails, post }: any) => {
       {isTeam && (
         <div className="w-full flex flex-col text-black font-2xl">
           <div className="text-black flex flex-col md:flex-row justify-between px-5 mt-5">
-            <div className="w-70">
-              {/* Organization Name */}
-              <div className="flex  w-full items-center gap-3 ">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">
-                  Org Name:
-                </label>
-                <div className="w-50 bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
-                  {`${details?.organizationName} (${details?.handle})`}
-                </div>
-              </div>
-
-              {/* Social */}
-
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">
-                  Twitter:
-                </label>
-                <a
-                  href={details?.social?.twitter}
-                  target="_blank"
-                  className="w-50 overflow-hidden whitespace-nowrap bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2"
-                >
-                  {`${details?.social?.twitter}`}
-                </a>
-              </div>
-
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">
-                  Discord:
-                </label>
-                <a
-                  href={details?.social?.discord}
-                  target="_blank"
-                  className="w-50 overflow-hidden whitespace-nowrap bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2"
-                >
-                  {`${details?.social?.discord}`}
-                </a>
-              </div>
-            </div>
-            <div>
+            <div className="w-20">
               <div>
                 <img
                   height="100px"
@@ -202,6 +161,46 @@ const PostProfile = ({ postDetails, post }: any) => {
                   className="rounded-full border"
                   src={profileUrl}
                 ></img>
+              </div>
+            </div>
+            <div className="w-80">
+              {/* Organization Name */}
+              <div className="flex  w-full items-center gap-3 ">
+                <label className="w-25 block tracking-wide text-gray-700 font-bold ">
+                  Org Name:
+                </label>
+                <div className="w-75 bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
+                  {`${details?.organizationName}`}
+                  <span className="handle"> @{details?.handle}</span>
+                </div>
+              </div>
+
+              {/* Social */}
+
+              <div className="flex  w-full items-center gap-3 mt-2">
+                <label className="w-25 block tracking-wide text-gray-700 font-bold ">
+                  Twitter:
+                </label>
+                <a
+                  href={details?.social?.twitter}
+                  target="_blank"
+                  className="w-75 overflow-hidden whitespace-nowrap bg-black appearance-none block  bg-gray-200 text-indigo-500 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2"
+                >
+                  {`${details?.social?.twitter}`}
+                </a>
+              </div>
+
+              <div className="flex  w-full items-center gap-3 mt-2">
+                <label className="w-25 block tracking-wide text-gray-700 font-bold ">
+                  Discord:
+                </label>
+                <a
+                  href={details?.social?.discord}
+                  target="_blank"
+                  className="w-75 text-indigo-500 overflow-hidden whitespace-nowrap bg-black appearance-none block  bg-gray-200 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2"
+                >
+                  {`${details?.social?.discord}`}
+                </a>
               </div>
             </div>
           </div>
@@ -217,7 +216,6 @@ const PostProfile = ({ postDetails, post }: any) => {
                 id="bio"
                 name="bio"
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                placeholder="Write your thoughts here..."
               ></textarea>
             </div>
           </div>
@@ -232,6 +230,12 @@ const PostProfile = ({ postDetails, post }: any) => {
 
       <style>
         {`
+        .handle{
+          background: rgb(203,66,252);
+          background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+       }
           ::-webkit-scrollbar {
             height:2px;
             width: 4px;
