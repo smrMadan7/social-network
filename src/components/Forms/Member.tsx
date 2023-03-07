@@ -158,8 +158,15 @@ const Member = () => {
   };
   const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+
     if (uploadFile) {
-      if (bio && selectedRoles && selectedOrganization && selectedSkills && handle) {
+      if (
+        bio &&
+        selectedRoles.length >= 1 &&
+        selectedOrganization.length >= 1 &&
+        selectedSkills.length >= 1 &&
+        handle
+      ) {
         setIsLoading(true);
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {

@@ -77,8 +77,9 @@ const Feeds = (post: any) => {
                         <GrFormClose color="black" fontSize={25} />
                       </div>
                     </div>
-
-                    <Comment post={post} postDetails={postDetails} />
+                    <div className="h-2/3 overflow-y-auto mt-2 ">
+                      <Comment post={post} postDetails={postDetails} />
+                    </div>
                     <div className="absolute w-full bottom-2 px-4 flex gap-2">
                       <input
                         className="p-2 w-full border outline-none"
