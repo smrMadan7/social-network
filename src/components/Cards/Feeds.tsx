@@ -125,7 +125,7 @@ const Feeds = (post: any) => {
                   height={50}
                   width={50}
                   className=" rounded-full cursor-pointer"
-                  // onClick={() => setPostProfileStatus(true)}
+                  onClick={() => setPostProfileStatus(true)}
                 ></img>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
