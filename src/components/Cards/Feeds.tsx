@@ -162,7 +162,7 @@ const Feeds = (post: any) => {
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div
                 className="rounded-full hover:bg-indigo-200  px-2 py-2 "
-                onClick={() => setCommentStatus(true)}
+                // onClick={() => setCommentStatus(true)}
               >
                 <TbMessage fontSize={18} className="text-indigo-500  rounded-full" />{" "}
               </div>
