@@ -29,7 +29,7 @@ const Post = (post: any) => {
       .catch((error) => {
         console.log("error in new post is ", error);
       });
-  });
+  }, []);
 
   return (
     <>

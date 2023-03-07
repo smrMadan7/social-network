@@ -5,16 +5,17 @@ import { GrFormClose } from "react-icons/gr";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
 import { ipfsGateway, likeApi } from "../../constants/AppConstants";
+import Comment from "./Comment";
 import PostProfile from "./PostProfile";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
   const [like, setLike] = useState(post?.post?.likes);
-  const [postProfile, setPostProfile] = useState(false);
+  const [postProfileStatus, setPostProfileStatus] = useState(false);
+  const [commentStatus, setCommentStatus] = useState(false);
   const [likeCount, setLikeCount] = useState(1);
 
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
 
@@ -22,7 +23,8 @@ const Feeds = (post: any) => {
   myHeaders.append("Content-Type", "application/json");
 
   useEffect(() => {
-    setPostProfile(false);
+    setPostProfileStatus(false);
+    setCommentStatus(false);
     fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
       .then((response) => response.json())
       .then((result) => {
@@ -60,7 +62,38 @@ const Feeds = (post: any) => {
       {postDetails ? (
         <>
           <div className="">
-            {postProfile && (
+            {commentStatus && (
+              <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+                <div className="text-white flex items-center justify-center flex m-auto h-screen">
+                  <div className="relative w-70 md:w-50 border h-4/6 rounded-lg text-black bg-white">
+                    <div className="flex justify-between p-3 border-b ">
+                      <p className="text-xl font-bold">Comments</p>
+                      <div
+                        className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                        onClick={() => {
+                          setCommentStatus(false);
+                        }}
+                      >
+                        <GrFormClose color="black" fontSize={25} />
+                      </div>
+                    </div>
+
+                    <Comment post={post} postDetails={postDetails} />
+                    <div className="absolute w-full bottom-2 px-4 flex gap-2">
+                      <input
+                        className="p-2 w-full border outline-none"
+                        placeholder="Add Comment..."
+                      ></input>
+                      <button className="border rounded-lg bg-violet-700 hover:bg-violet-900 p-2 hover:text-white">
+                        ADD
+                      </button>
+                      {/* </div> */}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div className=" w-70 md:w-50 border rounded-lg text-black bg-white">
@@ -69,7 +102,7 @@ const Feeds = (post: any) => {
                       <div
                         className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                         onClick={() => {
-                          setPostProfile(false);
+                          setPostProfileStatus(false);
                         }}
                       >
                         <GrFormClose color="black" fontSize={25} />
@@ -91,7 +124,7 @@ const Feeds = (post: any) => {
                   height={50}
                   width={50}
                   className=" rounded-full cursor-pointer"
-                  onClick={() => setPostProfile(true)}
+                  onClick={() => setPostProfileStatus(true)}
                 ></img>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
@@ -126,8 +159,11 @@ const Feeds = (post: any) => {
             )}
 
             <div className=" flex gap-7 bottom-menu-container items-center">
-              <div className=" px-2 py-2 ">
-                <TbMessage fontSize={18} className="text-indigo-300  rounded-full" />{" "}
+              <div
+                className="rounded-full hover:bg-indigo-200  px-2 py-2 "
+                onClick={() => setCommentStatus(true)}
+              >
+                <TbMessage fontSize={18} className="text-indigo-500  rounded-full" />{" "}
               </div>
               <div className="flex items-center">
                 <div className=" px-2 py-2 ">
