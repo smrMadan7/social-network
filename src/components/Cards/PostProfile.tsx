@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { AiFillTwitterCircle } from "react-icons/ai";
+import { BsDiscord } from "react-icons/bs";
+import { TbWorld } from "react-icons/tb";
 import { getUser, roles, ipfsGateway } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
 
@@ -8,6 +11,7 @@ const PostProfile = ({ postDetails, post }: any) => {
   const [isTeam, setIsTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [profileUrl, setProfileUrl] = useState("");
+
   useEffect(() => {
     setIsLoading(false);
     fetchUser();
@@ -177,30 +181,19 @@ const PostProfile = ({ postDetails, post }: any) => {
 
               {/* Social */}
 
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-25 block tracking-wide text-gray-700 font-bold ">
-                  Twitter:
-                </label>
-                <a
-                  href={details?.social?.twitter}
-                  target="_blank"
-                  className="w-75 overflow-hidden whitespace-nowrap bg-black appearance-none block  bg-gray-200 text-indigo-500 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2"
-                >
-                  {`${details?.social?.twitter}`}
-                </a>
-              </div>
-
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-25 block tracking-wide text-gray-700 font-bold ">
-                  Discord:
-                </label>
-                <a
-                  href={details?.social?.discord}
-                  target="_blank"
-                  className="w-75 text-indigo-500 overflow-hidden whitespace-nowrap bg-black appearance-none block  bg-gray-200 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2"
-                >
-                  {`${details?.social?.discord}`}
-                </a>
+              <div className="flex  w-full items-center gap-3 mt-3">
+                <label className="w-25 block tracking-wide text-gray-700 font-bold ">Social:</label>
+                <div className="flex gap-3 w-75">
+                  <a href={details?.social?.twitter} target="_blank">
+                    <AiFillTwitterCircle size={30} color="blue" />
+                  </a>
+                  <a href={details?.social?.discord} target="_blank">
+                    <BsDiscord size={30} color="blue" />
+                  </a>
+                  <a href={details?.website} target="_blank">
+                    <TbWorld size={30} />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -208,7 +201,7 @@ const PostProfile = ({ postDetails, post }: any) => {
           <div className="flex  mx-1 w-100 mt-2">
             <div className="w-full md:w-full px-3  md:mb-0">
               <label className="px-1 text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                Bio:
+                Description:
               </label>
               <textarea
                 readOnly

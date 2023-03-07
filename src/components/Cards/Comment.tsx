@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BiLike } from "react-icons/bi";
+import { BsHeart } from "react-icons/bs";
 
 const Comment = ({ post, postDetails }: any) => {
   const [isComment, setIsComment] = useState(false);
@@ -29,15 +30,16 @@ const Comment = ({ post, postDetails }: any) => {
               {/* User anme */}
               <div className="flex flex-col gap-1">
                 <div className="text-md font-bold">
-                  White <span className="font-normal"> 1 year ago</span>
+                  White <span className="font-normal text-gray"> 1 year ago</span>
                 </div>
                 {/* comment content */}
-                <div>
-                  Good morning to everyone this is going to the test comment. and no need to test.
+                <div className="text-black">
+                  Good morning to everyone this is going to the test comment.
                 </div>
                 {/* like  */}
-                <div className="flex gap-1">
-                  <BiLike className="cursor-pointer mt-1 " />
+                <div className="flex gap-1 items-center ">
+                  <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
+
                   <span className="mb-1">2</span>
                 </div>
               </div>
