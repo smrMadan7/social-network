@@ -125,7 +125,7 @@ const Feeds = (post: any) => {
                   height={50}
                   width={50}
                   className=" rounded-full cursor-pointer"
-                  onClick={() => setPostProfileStatus(true)}
+                  // onClick={() => setPostProfileStatus(true)}
                 ></img>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
@@ -162,7 +162,7 @@ const Feeds = (post: any) => {
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div
                 className="rounded-full hover:bg-indigo-200  px-2 py-2 "
-                onClick={() => setCommentStatus(true)}
+                // onClick={() => setCommentStatus(true)}
               >
                 <TbMessage fontSize={18} className="text-indigo-500  rounded-full" />{" "}
               </div>
