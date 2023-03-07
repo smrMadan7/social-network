@@ -16,7 +16,6 @@ const Feeds = (post: any) => {
   const [likeCount, setLikeCount] = useState(1);
 
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-  debugger;
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
 
