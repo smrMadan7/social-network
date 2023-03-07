@@ -12,10 +12,32 @@ const PostProfile = ({ postDetails, post }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [profileUrl, setProfileUrl] = useState("");
 
+  const [moreOrg, setMoreOrg] = useState<any>();
+  const [moreOrgStatus, setMoreOrgStatus] = useState(false);
+  const organizations: any = [];
+
+  const [moreSkills, setMoreSkills] = useState<any>();
+  const [moreSkillsStatus, setMoreSkillsStatus] = useState(false);
+  const skills: any = [];
+
+  const [moreRoles, setMoreRoles] = useState<any>();
+  const [moreRolesStatus, setMoreRolesStatus] = useState(false);
+  const role: any = [];
+
+  var orgCharLength = 0;
+  var skillCharLength = 0;
+  var roleCharLength = 0;
+
   useEffect(() => {
     setIsLoading(false);
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    setMoreOrg(organizations);
+    setMoreSkills(skills);
+    setMoreRoles(role);
+  }, [isLoading]);
 
   const fetchUser = async () => {
     setIsLoading(true);
@@ -53,163 +75,230 @@ const PostProfile = ({ postDetails, post }: any) => {
     <>
       {isMember && (
         <div className="w-full flex flex-col text-black font-2xl">
-          <div className="w-full text-black flex flex-col md:flex-row justify-between px-5 mt-5">
-            <div className="w-20">
+          <div className="w-full text-black flex px-5 mt-5 gap-4">
+            <div>
               <img
-                height="100px"
-                width="100px"
-                className="rounded-full border"
+                height="70px"
+                width="70px"
+                className="rounded-full border bg-black"
                 src={profileUrl}
               ></img>
             </div>
-            <div className="w-80">
+            <div className="flex flex-col gap-3 w-full">
               {/* display Name */}
-              <div className="flex  w-full items-center gap-3 ">
-                <label className=" w-45 block tracking-wide text-gray-700 font-bold ">
-                  Display Name (handle):
-                </label>
-                <div className="w-50 bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
+              <div className="flex  w-full gap-3 ">
+                <div className="appearance-none block leading-tight focus:outline-none focus:bg-white">
                   {`${details?.firstName}`}
                   <span className="handle"> @{details?.handle}</span>
                 </div>
               </div>
               {/* Role */}
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">Role:</label>
-                <div className="w-50 flex gap-2 overflow-x-scroll bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
-                  {details?.role?.map((role: any, index: any) => {
-                    return (
-                      <div
-                        key={index}
-                        className="whitespace-nowrap border border-black rounded-lg  px-3 flex "
-                      >
-                        <p className="mb-1">{role}</p>
-                      </div>
-                    );
+              <div className="flex  w-100 items-center gap-3">
+                <div className="relative w-full flex gap-2 appearance-none block leading-tight focus:outline-none focus:bg-white">
+                  {details?.role?.map((roleObj: any, index: any) => {
+                    roleCharLength = roleCharLength + roleObj.length;
+
+                    if (roleCharLength <= 27) {
+                      return (
+                        <>
+                          <div
+                            key={index}
+                            className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex "
+                          >
+                            <p className="mb-1">{roleObj}</p>
+                          </div>
+                        </>
+                      );
+                    } else {
+                      role.push(roleObj);
+                    }
                   })}
-                </div>
-              </div>
-              {/* Organization */}
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">
-                  Organization:
-                </label>
-                <div className="w-50 flex gap-2 overflow-x-scroll bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
-                  {details?.organization?.map((organization: any, index: any) => {
-                    return (
-                      <div
-                        key={index}
-                        className="whitespace-nowrap border border-black rounded-lg  px-3 flex"
+
+                  {moreRoles.length > 0 && (
+                    <div
+                      style={
+                        moreRoles.length >= 10
+                          ? { height: "60px", width: "60px" }
+                          : { height: "30px", width: "30px" }
+                      }
+                      className="rounded-full border flex items-center justify-center"
+                    >
+                      <span
+                        className="p-2 cursor-pointer"
+                        onMouseEnter={() => setMoreRolesStatus(true)}
+                        onMouseLeave={() => setMoreRolesStatus(false)}
                       >
-                        <p className="mb-1">{organization}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* Skills */}
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">Skill:</label>
-                <div className="w-50 flex gap-2 overflow-x-scroll bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
-                  {details?.skill?.map((skill: any, index: any) => {
-                    return (
-                      <div
-                        key={index}
-                        className="whitespace-nowrap border border-black rounded-lg  px-3 flex"
-                      >
-                        <p className="mb-1">{skill}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* open for work */}
-              <div className="flex  w-full items-center gap-3 mt-2">
-                <label className="w-45 block tracking-wide text-gray-700 font-bold ">
-                  Open for work:
-                </label>
-                <div className="w-50 flex gap-2 overflow-x-scroll bg-black appearance-none block bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
-                  <div className="rounded-lg  px-3 flex">
-                    <p className="mb-1">{details?.openForWork}</p>
-                  </div>
+                        +{moreRoles?.length}
+                      </span>
+                    </div>
+                  )}
+
+                  {moreRolesStatus && (
+                    <div className="absolute  right-0 top-6 md:right-2 border p-2 rounded-lg bg-white z-10 font-light">
+                      {moreRoles?.map((role: any, index: any) => {
+                        return <div key={index}>{role}</div>;
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-          {/* Bio */}
-          <div className="flex  mx-1 w-100 mt-2">
-            <div className="w-full md:w-full px-3  md:mb-0">
-              <label className="px-1 text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                Bio:
-              </label>
-              <textarea
-                value={details?.bio}
-                readOnly
-                id="bio"
-                name="bio"
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              ></textarea>
+
+          {/* Skills */}
+          <div className="text-md px-5 mt-2 font-medium flex items-center w-full">
+            Skills:
+            <div className="flex  w-full items-center gap-3 mt-2">
+              <div className="relative w-full px-3 flex gap-1 appearance-none block leading-tight focus:outline-none focus:bg-white ">
+                {details?.skill.map((skill: any, index: any) => {
+                  skillCharLength = skillCharLength + skill.length;
+                  if (skillCharLength <= 27) {
+                    return (
+                      <div
+                        key={index}
+                        className="whitespace-nowrap border border-gray-300 font-light rounded-full px-3 flex"
+                      >
+                        <p className="mb-1">{skill}</p>
+                      </div>
+                    );
+                  } else {
+                    skills.push(skill);
+                  }
+                })}
+                {moreSkills.length > 0 && (
+                  <div
+                    style={
+                      moreOrg.length >= 10
+                        ? { height: "60px", width: "60px" }
+                        : { height: "30px", width: "30px" }
+                    }
+                    className="rounded-full border flex items-center justify-center"
+                  >
+                    <span
+                      className="p-2 cursor-pointer"
+                      onMouseEnter={() => setMoreSkillsStatus(true)}
+                      onMouseLeave={() => setMoreSkillsStatus(false)}
+                    >
+                      +{moreSkills?.length}
+                    </span>
+                  </div>
+                )}
+
+                {moreSkillsStatus && (
+                  <div className="absolute font-light right-0 md:right-9 top-6 border p-2 rounded-lg bg-white z-10">
+                    {moreSkills?.map((skill: any, index: any) => {
+                      return <div key={index}>{skill}</div>;
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
+          </div>
+
+          {/* Organization */}
+          <div className="text-md w-full font-medium px-5 mt-2 flex items-center">
+            Organization:
+            <div className="flex  w-full items-center gap-3 mt-2">
+              <div className="relative w-full px-3 flex gap-1 appearance-none block leading-tight focus:outline-none focus:bg-white">
+                {details?.organization?.map((organization: any, index: any) => {
+                  orgCharLength = orgCharLength + organization.length;
+                  if (orgCharLength <= 27) {
+                    return (
+                      <div
+                        key={index}
+                        className="whitespace-nowrap border border-gray-300 font-light rounded-full px-3 flex"
+                      >
+                        <p className="mb-1">{organization}</p>
+                      </div>
+                    );
+                  } else {
+                    organizations.push(organization);
+                  }
+                })}
+                {moreOrg.length > 0 && (
+                  <div
+                    style={
+                      moreOrg.length >= 10
+                        ? { height: "60px", width: "60px" }
+                        : { height: "30px", width: "30px" }
+                    }
+                    className="rounded-full border flex items-center justify-center"
+                  >
+                    <span
+                      className="p-2 cursor-pointer"
+                      onMouseEnter={() => setMoreOrgStatus(true)}
+                      onMouseLeave={() => setMoreOrgStatus(false)}
+                    >
+                      +{moreOrg?.length}
+                    </span>
+                  </div>
+                )}
+                {moreOrgStatus && (
+                  <div className="absolute right-0 top-8 border p-2 rounded-lg z-10 font-light">
+                    {moreOrg?.map((org: any, index: any) => {
+                      return <div key={index}>{org}</div>;
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* open for work */}
+          <div className="text-md font-medium px-5 mt-2 flex gap-3">
+            Open For Work:
+            <span className="font-light ">{details?.openForWork}</span>
+          </div>
+          {/* About*/}
+
+          <div className="text-md font-medium px-5 mt-2 flex items-center mb-3">
+            About:
+            <p className="px-7 font-light">{details?.bio}</p>
           </div>
         </div>
       )}
 
       {isTeam && (
         <div className="w-full flex flex-col text-black font-2xl">
-          <div className="text-black flex flex-col md:flex-row justify-between px-5 mt-5">
-            <div className="w-20">
-              <div>
-                <img
-                  height="100px"
-                  width="100px"
-                  className="rounded-full border"
-                  src={profileUrl}
-                ></img>
-              </div>
+          <div className="text-black flex flex-col md:flex-row px-5 mt-5 gap-3">
+            <div>
+              <img
+                height="70px"
+                width="70px"
+                className="rounded-full border"
+                src={profileUrl}
+              ></img>
             </div>
-            <div className="w-80">
+
+            <div>
               {/* Organization Name */}
-              <div className="flex  w-full items-center gap-3 ">
-                <label className="w-25 block tracking-wide text-gray-700 font-bold ">
-                  Org Name:
-                </label>
-                <div className="w-75 bg-black appearance-none block  bg-gray-200 text-gray-700 border  rounded px-4 leading-tight focus:outline-none focus:bg-white py-2">
+              <div className="flex  w-full gap-3 font-light">
+                <div className="appearance-none block leading-tight focus:outline-none focus:bg-white">
                   {`${details?.organizationName}`}
                   <span className="handle"> @{details?.handle}</span>
                 </div>
               </div>
 
-              {/* Social */}
-
-              <div className="flex  w-full items-center gap-3 mt-3">
-                <label className="w-25 block tracking-wide text-gray-700 font-bold ">Social:</label>
-                <div className="flex gap-3 w-75">
-                  <a href={details?.social?.twitter} target="_blank">
-                    <AiFillTwitterCircle size={30} color="blue" />
-                  </a>
-                  <a href={details?.social?.discord} target="_blank">
-                    <BsDiscord size={30} color="blue" />
-                  </a>
-                  <a href={details?.website} target="_blank">
-                    <TbWorld size={30} />
-                  </a>
-                </div>
+              {/* about */}
+              <div className="text-md font-medium mt-3 flex items-center gap-2">
+                About:
+                <p className=" font-light">{details?.desc}</p>
               </div>
             </div>
           </div>
-          {/* Description */}
-          <div className="flex  mx-1 w-100 mt-2">
-            <div className="w-full md:w-full px-3  md:mb-0">
-              <label className="px-1 text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                Description:
-              </label>
-              <textarea
-                readOnly
-                value={details?.bio}
-                id="bio"
-                name="bio"
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              ></textarea>
+          {/* Social */}
+
+          <div className="flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3">
+            <div className="flex gap-3">
+              <a href={details?.social?.twitter} target="_blank">
+                <AiFillTwitterCircle size={30} color="blue" />
+              </a>
+              <a href={details?.social?.discord} target="_blank">
+                <BsDiscord size={30} color="blue" />
+              </a>
+              <a href={details?.website} target="_blank">
+                <TbWorld size={30} />
+              </a>
             </div>
           </div>
         </div>

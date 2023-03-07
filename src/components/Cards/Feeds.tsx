@@ -97,7 +97,7 @@ const Feeds = (post: any) => {
             {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div className=" w-70 md:w-50 border rounded-lg text-black bg-white">
+                  <div className=" w-70 md:w-40 border rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">Profile Details</p>
                       <div
@@ -125,7 +125,7 @@ const Feeds = (post: any) => {
                   height={50}
                   width={50}
                   className=" rounded-full cursor-pointer"
-                  onClick={() => setPostProfileStatus(true)}
+                  // onClick={() => setPostProfileStatus(true)}
                 ></img>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
