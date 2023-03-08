@@ -8,9 +8,10 @@ import Notification from "../components/Cards/Notification";
 import Post from "../components/Cards/Feeds";
 import { getFeeds } from "../constants/AppConstants";
 import banner from "./../assets/Explore/banner.png";
+import { useFeedsContext } from "../context/FeedsContextProvider";
 
 const Explore = () => {
-  const [posts, setPosts] = useState([]);
+  const { feeds, setFeeds }: any = useFeedsContext();
 
   useEffect(() => {
     getAllFeeds();
@@ -34,7 +35,11 @@ const Explore = () => {
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
-          setPosts(result.data);
+          const feeds = result.data;
+          console.log("result is ", result.data);
+          setFeeds({
+            feeds,
+          });
         }
       })
       .catch((error) => {
@@ -72,7 +77,7 @@ const Explore = () => {
 
       <div className=" gap-6 mt-6 flex bg-white w-full px-5">
         <div className="w-full md:w-70 border rounded-lg ">
-          {posts?.map((post: any, index: number) => {
+          {feeds?.action?.feeds?.map((post: any, index: number) => {
             return <Post post={post} key={index + uuidv4()} />;
           })}
         </div>

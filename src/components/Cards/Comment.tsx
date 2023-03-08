@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { BiLike } from "react-icons/bi";
 import { BsHeart } from "react-icons/bs";
+import { FaThList } from "react-icons/fa";
 import Loading from "../Loading/Loading";
 
-const Comment = ({ post, postDetails }: any) => {
-  // const [isComment, setIsComment] = useState(false);
-  const [comments, setComments] = useState<any>();
-
-  useEffect(() => {
-    // setIsComment(false);
-  }, []);
-
-  setTimeout(() => {
-    const comment = [{}, {}, {}, {}, {}, {}, {}];
-
-    setComments(comment);
-  }, 5000);
+const Comment = ({ comments }: any) => {
   return (
     <>
       {comments ? (
@@ -42,9 +31,7 @@ const Comment = ({ post, postDetails }: any) => {
                       White <span className="font-normal text-gray"> 1 year ago</span>
                     </div>
                     {/* comment content */}
-                    <div className="text-black">
-                      Good morning to everyone this is going to the test comment.
-                    </div>
+                    <div className="text-black">{comment?.comment}</div>
                     {/* like  */}
                     <div className="flex gap-1 items-center ">
                       <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
@@ -57,9 +44,16 @@ const Comment = ({ post, postDetails }: any) => {
             );
           })}
         </div>
-      ) : (
-        <div className="relative ">
+      ) : comments?.length > 0 ? (
+        <div className="relative">
           <Loading />
+        </div>
+      ) : (
+        <div className="p-7 flex justify-center bg-white  rounded-lg ">
+          <div className="flex flex-col items-center gap-2 text-violet-700 ">
+            <FaThList fontSize={20} />
+            <h1 className=" text-md text-slate-400">No Comments!</h1>
+          </div>
         </div>
       )}
     </>

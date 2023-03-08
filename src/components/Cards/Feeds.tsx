@@ -4,9 +4,11 @@ import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { GrFormClose } from "react-icons/gr";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { ipfsGateway, likeApi } from "../../constants/AppConstants";
+import { v4 as uuidv4 } from "uuid";
+import { comment, ipfsGateway, likeApi } from "../../constants/AppConstants";
 import Comment from "./Comment";
 import PostProfile from "./PostProfile";
+import Warning from "./Warning";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -14,7 +16,8 @@ const Feeds = (post: any) => {
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
   const [likeCount, setLikeCount] = useState(1);
-
+  const [commentValue, setCommentValue] = useState("");
+  const [isSucessfull, setIsSuccessfull] = useState(false);
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
@@ -57,6 +60,42 @@ const Feeds = (post: any) => {
       .catch((error) => {});
   };
 
+  // Add a new comment
+  const addComment = (e: any) => {
+    e.preventDefault();
+    const currentTimeStamp = Math.floor(Date.now() / 1000);
+    const commentObj = {
+      postId: post?.post?.postId,
+      commentId: uuidv4(),
+      commenter: post?.post?.createdBy,
+      comment: e.target.comment.value,
+      tage: ["@madan"],
+      timestamp: currentTimeStamp,
+    };
+
+    var requestOptions: any = {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify(commentObj),
+      redirect: "follow",
+    };
+
+    fetch(`${comment}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status !== false) {
+          setCommentValue("");
+          setIsSuccessfull(true);
+          setTimeout(() => {
+            setIsSuccessfull(false);
+          }, 2000);
+        }
+      })
+      .catch((error) => {
+        console.log("error in new post is ", error);
+      });
+  };
+
   return (
     <>
       {postDetails ? (
@@ -64,6 +103,11 @@ const Feeds = (post: any) => {
           <div className="">
             {commentStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+                {isSucessfull && (
+                  <div className="relative">
+                    <Warning message="Success" />
+                  </div>
+                )}
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div className="relative w-70 md:w-50 border h-4/6 rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
@@ -78,16 +122,24 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Comment post={post} postDetails={postDetails} />
+                      <Comment comments={post?.post?.comments} />
                     </div>
                     <div className="absolute w-full bottom-2 px-4 flex gap-2">
-                      <input
-                        className="p-2 w-full border outline-none"
-                        placeholder="Add A Comment..."
-                      ></input>
-                      <button className="border rounded-lg bg-violet-700 hover:bg-violet-900 p-2 hover:text-white">
-                        ADD
-                      </button>
+                      <form onSubmit={addComment} className="flex w-full gap-2">
+                        <input
+                          className="p-2 w-full border outline-none"
+                          name="comment"
+                          value={commentValue}
+                          onChange={(e) => setCommentValue(e.target.value)}
+                          placeholder="Add A Comment..."
+                        ></input>
+                        <button
+                          className="border rounded-lg bg-violet-700 hover:bg-violet-900 p-2 hover:text-white"
+                          type="submit"
+                        >
+                          ADD
+                        </button>
+                      </form>
                       {/* </div> */}
                     </div>
                   </div>
@@ -163,10 +215,20 @@ const Feeds = (post: any) => {
 
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div
-                className="rounded-full hover:bg-indigo-200  px-2 py-2 "
-                onClick={() => setCommentStatus(true)}
+                className=" flex text-indigo-500 items-center gap-2 "
+                onClick={() => {
+                  if (post?.post?.comments?.length > 0) {
+                    setCommentStatus(true);
+                  }
+                }}
               >
-                <TbMessage fontSize={18} className="text-indigo-500  rounded-full" />{" "}
+                <div
+                  style={{ height: "35px", width: "35px" }}
+                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1"
+                >
+                  <TbMessage fontSize={18} className="text-indigo-500 " />
+                  <span>{post?.post?.comments?.length}</span>
+                </div>
               </div>
               <div className="flex items-center">
                 <div className=" px-2 py-2 ">
@@ -177,10 +239,11 @@ const Feeds = (post: any) => {
 
               <div className="flex items-center text-center">
                 <div
-                  className="rounded-full hover:bg-fuchsia-200 px-2  py-2 flex items-center gap-1 text-fuchsia-500"
+                  style={{ height: "35px", width: "35px" }}
+                  className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500"
                   onClick={(e) => incrementLike(e, post)}
                 >
-                  <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
+                  <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
                   {like}
                 </div>
                 {/* <p className="text-sm text-fuchsia-700 ">{like}</p> */}

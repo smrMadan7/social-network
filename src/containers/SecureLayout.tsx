@@ -30,8 +30,6 @@ const SecureLayout = () => {
   const [isaddress, setIsAddress] = useState(false);
   const [isWallet, setIsWallet] = useState(false);
 
-  console.log();
-
   useEffect(() => {
     localStorage.setItem("currentLocation", location.pathname);
     setLoading(true);
