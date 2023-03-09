@@ -25,10 +25,16 @@ const Register = () => {
         <div className="relative w-full h-full">
           <div className=" absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 text-center ">
             <div className="p-5 flex justify-between items-center  gap-10 top-0">
-              <img alt="ipfs logo" src={ipfsLogo} width="48px" height="48px"></img>
+              <img alt="ipfs logo" src={ipfsLogo} width="48px" height="48px" loading="lazy"></img>
 
-              <img alt="app logo" src={logo} width="100px" height="100px"></img>
-              <img alt="filecoin logo" src={fileCoinLogo} width="38px" height="38px"></img>
+              <img alt="app logo" src={logo} width="100px" height="100px" loading="lazy"></img>
+              <img
+                alt="filecoin logo"
+                src={fileCoinLogo}
+                width="38px"
+                height="38px"
+                loading="lazy"
+              ></img>
             </div>
             {/* register card */}
             <div className="border flex flex-col bg-white w-300  rounded-lg">

@@ -501,7 +501,9 @@ const Home = () => {
                     </div>
 
                     <div className=" overflow-y-auto " style={{ height: "230px" }}>
-                      {filePath && !cropStatus && <img alt="uploaded Image" src={filePath}></img>}
+                      {filePath && !cropStatus && (
+                        <img alt="uploaded Image" src={filePath} loading="lazy"></img>
+                      )}
                     </div>
 
                     <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">

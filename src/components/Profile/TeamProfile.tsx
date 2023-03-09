@@ -108,6 +108,7 @@ const TeamProfile = () => {
                           className="border rounded-full"
                           height="140px"
                           width="140px"
+                          loading="lazy"
                         ></img>
                       </div>
                     </div>

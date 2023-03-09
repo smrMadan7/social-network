@@ -33,12 +33,17 @@ const Comment = ({ comments }: any) => {
                   {/* User anme */}
                   <div className="flex flex-col gap-1">
                     <div className="text-md font-bold">
-                      White <span className="font-normal text-gray"> {convertedDate}</span>
+                      <p className="flex gap-2">
+                        {comment?.commenterDisplayName}{" "}
+                        <span className="handle">@{comment?.commenterHandle}</span>
+                      </p>
+
+                      <span className="font-normal text-gray"> {convertedDate}</span>
                     </div>
                     {/* comment content */}
                     <div className="text-black">{comment?.comment}</div>
                     {/* like  */}
-                    <div className="flex gap-1 items-center ">
+                    <div className="flex gap-1 items-center text-fuchsia-500 cursor-pointer">
                       <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
 
                       <span className="mb-1">2</span>
@@ -57,6 +62,16 @@ const Comment = ({ comments }: any) => {
           </div>
         </div>
       )}
+
+      <style>
+        {`
+        .handle {
+            background: rgb(203,66,252);
+            background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+        }`}
+      </style>
     </>
   );
 };

@@ -207,6 +207,7 @@ const Feeds = (post: any) => {
                   src={userImageUrl}
                   height={50}
                   width={50}
+                  loading="lazy"
                   className=" rounded-full cursor-pointer"
                   onClick={() => setPostProfileStatus(true)}
                 ></img>
@@ -242,7 +243,11 @@ const Feeds = (post: any) => {
             ></div>
             {postDetails?.media[0]?.file && (
               <div className="description-container" style={{ width: "200px", height: "200px" }}>
-                <img src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100"></img>
+                <img
+                  src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
+                  height="100"
+                  loading="lazy"
+                ></img>
               </div>
             )}
 

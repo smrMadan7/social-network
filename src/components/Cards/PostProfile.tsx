@@ -83,6 +83,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                   width="70px"
                   className="rounded-full border bg-black"
                   src={profileUrl}
+                  loading="lazy"
                 ></img>
               </div>
               <div className="flex flex-col gap-3 w-full">
@@ -268,6 +269,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                   width="70px"
                   className="rounded-full border"
                   src={profileUrl}
+                  loading="lazy"
                 ></img>
               </div>
 

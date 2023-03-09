@@ -216,10 +216,22 @@ const SecureLayout = () => {
             <div className=" absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 text-center ">
               {(isaddress || isWallet) && (
                 <div className="p-5 flex justify-between items-center  gap-10 top-0">
-                  <img src={ipfsLogo} alt="ipfs-logo" width="48px" height="48px"></img>
+                  <img
+                    src={ipfsLogo}
+                    alt="ipfs-logo"
+                    width="48px"
+                    height="48px"
+                    loading="lazy"
+                  ></img>
 
-                  <img alt="app-logo" src={logo} width="100px" height="100px"></img>
-                  <img alt="file coin logo" src={fileCoinLogo} width="38px" height="38px"></img>
+                  <img alt="app-logo" src={logo} width="100px" height="100px" loading="lazy"></img>
+                  <img
+                    alt="file coin logo"
+                    src={fileCoinLogo}
+                    width="38px"
+                    height="38px"
+                    loading="lazy"
+                  ></img>
                 </div>
               )}
               {localStorage.getItem("isRegistered") && <Loading />}
@@ -241,7 +253,7 @@ const SecureLayout = () => {
                               onClick={signUser}
                             >
                               Sign-In
-                              <img src={logo} width="35px" height="35px"></img>
+                              <img src={logo} width="35px" height="35px" loading="lazy"></img>
                             </button>
                           </div>
                         </div>
@@ -257,7 +269,12 @@ const SecureLayout = () => {
                               onClick={borwserWalletHandler}
                             >
                               Browser Wallet
-                              <img src={metamaskLogo} width="30px" height="20px"></img>
+                              <img
+                                src={metamaskLogo}
+                                width="30px"
+                                height="20px"
+                                loading="lazy"
+                              ></img>
                             </button>
                           </div>
                         </div>

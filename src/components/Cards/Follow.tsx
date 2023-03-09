@@ -30,6 +30,7 @@ const Follow = () => {
           height={50}
           width={50}
           className=" rounded-full"
+          loading="lazy"
         ></img>
         <div>
           <p className="font-semibold ">Alan</p>

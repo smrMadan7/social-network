@@ -237,6 +237,7 @@ const Navbar = () => {
                 width="45px"
                 src={image}
                 className="rounded-full"
+                loading="lazy"
               ></img>
             )}
             {profileStatus && (

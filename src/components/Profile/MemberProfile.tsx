@@ -96,6 +96,7 @@ const MemberProfile = () => {
                           height="140px"
                           width="140px"
                           src={imageUrl}
+                          loading="lazy"
                         ></img>
                       </div>
                     </div>

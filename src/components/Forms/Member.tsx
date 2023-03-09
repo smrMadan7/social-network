@@ -509,6 +509,7 @@ const Member = () => {
                             height="140px"
                             width="140px"
                             src={userImage}
+                            loading="lazy"
                           ></img>
                         </div>
                       </div>

@@ -44,6 +44,7 @@ const Post = (post: any) => {
                   height={50}
                   width={50}
                   className=" rounded-full"
+                  loading="lazy"
                 ></img>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
@@ -81,6 +82,7 @@ const Post = (post: any) => {
                   alt="post-image"
                   src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
                   height="100"
+                  loading="lazy"
                 ></img>
               </div>
             )}
