@@ -36,6 +36,14 @@ const Feeds = (post: any) => {
     getPostComments();
   }, []);
 
+  useEffect(() => {
+    console.log("comment value is ", commentValue);
+    if (commentValue.includes("@")) {
+      const index = commentValue.indexOf(" @");
+      console.log("index is ", index);
+    }
+  }, [commentValue]);
+
   // Get post details
   const getPostDetails = () => {
     fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
@@ -56,7 +64,11 @@ const Feeds = (post: any) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
-          setPostComents(result.data);
+          setPostComents(
+            result.data.sort((firstComment: any, secondComment: any) => {
+              return firstComment.timestamp - secondComment.timestamp;
+            })
+          );
         }
       })
       .catch((error) => {
