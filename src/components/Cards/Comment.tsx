@@ -2,14 +2,19 @@ import React, { useEffect, useState } from "react";
 import { BiLike } from "react-icons/bi";
 import { BsHeart } from "react-icons/bs";
 import { FaThList } from "react-icons/fa";
+import { ipfsGateway } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
 
 const Comment = ({ comments }: any) => {
   return (
     <>
-      {comments ? (
+      {comments?.length > 0 ? (
         <div className="p-3 ">
           {comments.map((comment: any, index: number) => {
+            const date = new Date(comment?.timestamp);
+            const convertedDate = date.toLocaleString();
+
+            const imageUrl = `${ipfsGateway}${comment?.commenterProfilePic}`;
             return (
               <div key={index} className="mb-5">
                 <div className="flex gap-3">
@@ -20,7 +25,7 @@ const Comment = ({ comments }: any) => {
                       height="50px"
                       width="50px"
                       className="border rounded-full"
-                      src="http://44.214.42.39:8080/ipfs/QmNPLd1Lnd8aBXAqQj45DSptYUr7JryXmzZcH9ho9FK2yi"
+                      src={imageUrl}
                       loading="lazy"
                     ></img>
                   </div>
@@ -28,7 +33,7 @@ const Comment = ({ comments }: any) => {
                   {/* User anme */}
                   <div className="flex flex-col gap-1">
                     <div className="text-md font-bold">
-                      White <span className="font-normal text-gray"> 1 year ago</span>
+                      White <span className="font-normal text-gray"> {convertedDate}</span>
                     </div>
                     {/* comment content */}
                     <div className="text-black">{comment?.comment}</div>
@@ -43,10 +48,6 @@ const Comment = ({ comments }: any) => {
               </div>
             );
           })}
-        </div>
-      ) : comments?.length > 0 ? (
-        <div className="relative">
-          <Loading />
         </div>
       ) : (
         <div className="p-7 flex justify-center bg-white  rounded-lg ">

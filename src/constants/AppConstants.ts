@@ -35,6 +35,7 @@ export const createPost = `${baseUrl}/api/post/create`;
 export const getPostById = `${baseUrl}/api/post/getPostByWallet/`;
 export const getFeeds = `${baseUrl}/api/feed/getFeed/`;
 export const likeApi = `${baseUrl}/api/post/like`;
-export const comment = `${baseUrl}/api/post/comment`;
+export const postComment = `${baseUrl}/api/post/comment`;
+export const getComment = `${baseUrl}/api/post/getComments/`;
 
 export const roles = ["member", "team"];

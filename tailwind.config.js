@@ -24,6 +24,9 @@ module.exports = {
         30: "30%",
         55: "55%",
       },
+      mariginTop: {
+        133: "133px",
+      },
       backgroundColor: {
         bgHover: "rgb(221 214 254)",
         bgActive: "rgb(196 181 253)",

@@ -98,7 +98,7 @@ const Navbar = () => {
         <div></div>
       )}
 
-      <div className="fixed flex  items-center px-4 py-2 nav-container w-full border justify-between bg-white ">
+      <div className="fixed z-10 flex  items-center px-4 py-2 nav-container w-full border justify-between bg-white ">
         <div className="flex gap-11">
           <div className="flex cursor-pointer rounded-lg" onClick={logoOnClickHandler}>
             <img
