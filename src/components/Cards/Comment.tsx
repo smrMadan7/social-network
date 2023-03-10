@@ -46,7 +46,7 @@ const Comment = ({ comments }: any) => {
                     <div className="flex gap-1 items-center text-fuchsia-500 cursor-pointer">
                       <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
 
-                      <span className="mb-1">2</span>
+                      <span className="mb-1">0</span>
                     </div>
                   </div>
                 </div>

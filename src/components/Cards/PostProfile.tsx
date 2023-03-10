@@ -102,14 +102,12 @@ const PostProfile = ({ postDetails, post }: any) => {
 
                       if (roleCharLength <= 27) {
                         return (
-                          <>
-                            <div
-                              key={index}
-                              className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex "
-                            >
-                              <p className="mb-1">{roleObj}</p>
-                            </div>
-                          </>
+                          <div
+                            key={index}
+                            className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex "
+                          >
+                            <p className="mb-1">{roleObj}</p>
+                          </div>
                         );
                       } else {
                         role.push(roleObj);

@@ -11,6 +11,7 @@ import { postComment, ipfsGateway, likeApi, getComment } from "../../constants/A
 import Comment from "./Comment";
 import PostProfile from "./PostProfile";
 import Warning from "./Warning";
+import { MentionsInput, Mention } from "react-mentions";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -21,6 +22,7 @@ const Feeds = (post: any) => {
   const [likeCount, setLikeCount] = useState(1);
   const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
+  const [isTagPopup, setIsTagPopup] = useState(false);
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
@@ -31,7 +33,8 @@ const Feeds = (post: any) => {
   useEffect(() => {
     setPostProfileStatus(false);
     setCommentStatus(false);
-
+    setCommentValue("");
+    setIsTagPopup(false);
     getPostDetails();
     getPostComments();
   }, []);
@@ -39,11 +42,22 @@ const Feeds = (post: any) => {
   useEffect(() => {
     console.log("comment value is ", commentValue);
     if (commentValue.includes("@")) {
-      const index = commentValue.indexOf(" @");
+      const index = commentValue.indexOf("@");
       console.log("index is ", index);
     }
   }, [commentValue]);
 
+  // insert comment
+  const insertComment = (event: any) => {
+    console.log("event is ", event?.nativeEvent?.data);
+
+    // if (event?.nativeEvent?.data === "@") {
+    //   setIsTagPopup(true);
+    // } else {
+    //   setIsTagPopup(false);
+    // }
+    setCommentValue(event.target.value);
+  };
   // Get post details
   const getPostDetails = () => {
     fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
@@ -139,6 +153,11 @@ const Feeds = (post: any) => {
       });
   };
 
+  const items = [
+    { id: 1, displayKeys: 2, name: "abc" },
+    { id: 2, displayKeys: 3, name: "abcd" },
+  ];
+
   return (
     <>
       {postDetails ? (
@@ -153,12 +172,31 @@ const Feeds = (post: any) => {
                 )}
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div className="relative w-70 md:w-50 border h-4/6 rounded-lg text-black bg-white">
+                    {/* {isTagPopup && (
+                      <div className="border z-3 bg-white text-xl font-semibold absolute w-50 top-0 right-0 left-0 bottom-0 flex justify-center m-auto h-3/6  rounded-lg">
+                        <div className="w-full ">
+                          <div className="border-b flex justify-between">
+                            <h1 className=" w-full flex justify-center py-2">Members</h1>
+                            <div
+                              className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                              onClick={() => {
+                                setIsTagPopup(false);
+                              }}
+                            >
+                              <GrFormClose fontSize={25} />
+                            </div>
+                          </div>
+                        </div>
+                        <div> abc </div>
+                      </div>
+                    )} */}
                     <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">Comments</p>
                       <div
                         className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                         onClick={() => {
                           setCommentStatus(false);
+                          setCommentValue("");
                           getPostComments();
                         }}
                       >
@@ -170,13 +208,21 @@ const Feeds = (post: any) => {
                     </div>
                     <div className="absolute w-full bottom-2 px-5 py-3 flex gap-2">
                       <form onSubmit={addComment} className="flex w-full gap-2">
-                        <input
-                          className="p-2 w-full border outline-none rounded-lg"
+                        {/* <input
+                          className="p-2 w-full outline-none"
                           name="comment"
                           value={commentValue}
-                          onChange={(e) => setCommentValue(e.target.value)}
+                          onChange={insertComment}
                           placeholder="Add A Comment..."
-                        ></input>
+                        ></input> */}
+                        <MentionsInput
+                          value={commentValue}
+                          onChange={insertComment}
+                          placeholder="Add a comment..."
+                          className="w-full border outline-none rounded-lg p-2 items-center"
+                        >
+                          <Mention trigger="@" data={items} />
+                        </MentionsInput>
                         <button
                           className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
                           type="submit"
