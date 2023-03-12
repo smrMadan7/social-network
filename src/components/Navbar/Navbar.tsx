@@ -11,6 +11,8 @@ import defaultUser from "./.././.././assets/Form/default-user.png";
 import logo from "./.././.././assets/Navbar/nav-logo.svg";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import Notification from "../Cards/Notification";
+import UserNotification from "../UserNotification/UserNotification";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ const Navbar = () => {
   const user = localStorage.getItem("signedIn");
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
-
+  const [isNotification, setIsNotification] = useState(false);
   var image;
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
@@ -221,10 +223,23 @@ const Navbar = () => {
 
           {appState?.action?.user ? (
             <>
-              <div className="cursor-pointer">
-                <IoMdNotificationsOutline size={20} />
+              <div
+                className="relative cursor-pointer prevent-select"
+                onClick={() => {
+                  if (isNotification) {
+                    setIsNotification(false);
+                  } else {
+                    setIsNotification(true);
+                  }
+                }}
+              >
+                <p className="absolute bottom-4 left-4 text-7xl text-red-500 ">.</p>
+
+                <div className="cursor-pointer  rounded-full p-1 hover:bg-bgActive bg-bgHover">
+                  <IoMdNotificationsOutline size={20} />
+                </div>
               </div>
-              <div className="font-semibold">
+              <div className="hidden md:block font-semibold prevent-select">
                 {greeting}, {appState?.action?.user?.firstName}{" "}
                 {appState?.action?.user?.organizationName}
               </div>
@@ -289,6 +304,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {isNotification && (
+        <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />
+      )}
       {isLogout && <Loading />}
     </>
   );

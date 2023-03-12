@@ -250,11 +250,11 @@ const Feeds = (post: any) => {
             </div>
 
             <div
-              className="description-container"
+              className="description-container break-words"
               dangerouslySetInnerHTML={{ __html: postDetails?.content }}
             ></div>
             {postDetails?.media[0]?.file && (
-              <div className="description-container" style={{ width: "200px", height: "200px" }}>
+              <div className="description-container w-180 md:w-320">
                 <img
                   src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
                   height="100"

@@ -230,19 +230,21 @@ const Home = () => {
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
         <div style={{ height: "90px" }}></div>
 
-        <div className="flex gap-5 " style={{ height: "78vh" }}>
+        <div className="flex gap-5" style={{ height: "78vh" }}>
           <div className="flex gap-5 flex-col w-full md:w-65 ">
             {/* Enter message  */}
-            <div className="flex gap-4 p-7 border rounded-lg bg-white">
-              <div className="border rounded-full px-4 py-4 bg-black">
-                <FaUserAlt color="white" />
+            <div className="flex gap-4 p-7 px-2 md:px-7 border rounded-lg bg-white">
+              <div className="">
+                <div className="border rounded-full px-4 py-4 bg-black">
+                  <FaUserAlt color="white" />
+                </div>
               </div>
               <div
-                className="flex  gap-3 text-center items-center bg-gray-100 border w-full rounded-lg px-3 py-3 cursor-pointer "
+                className="flex  gap-2 md:gap-3 text-center items-center bg-gray-100 border w-full rounded-lg px-3 py-3 cursor-pointer "
                 onClick={() => setIsPost(true)}
               >
                 <BiMessageAltEdit fontSize={25} />
-                <p className="items-center">What's happening?</p>
+                <p className="items-center whitespace-nowrap">What's happening?</p>
               </div>
             </div>
 
@@ -308,7 +310,7 @@ const Home = () => {
                   </div>
                 </div>
               ) : (
-                <div className=" mb-2">
+                <div className=" mb-9 md:mb-2">
                   {posts?.map((post: any, index: any) => {
                     return (
                       <div key={uuidv4()}>

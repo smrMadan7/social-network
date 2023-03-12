@@ -38,14 +38,17 @@ const Post = (post: any) => {
           <div className="p-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             <div className="flex justify-between">
               <div className="flex gap-2">
-                <img
-                  alt="user-profile"
-                  src={userImageUrl}
-                  height={50}
-                  width={50}
-                  className=" rounded-full"
-                  loading="lazy"
-                ></img>
+                <div>
+                  <img
+                    alt="user-profile"
+                    src={userImageUrl}
+                    height={50}
+                    width={50}
+                    className=" rounded-full"
+                    loading="lazy"
+                  ></img>
+                </div>
+
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
                     <p className="text-lg">
@@ -55,7 +58,7 @@ const Post = (post: any) => {
                     <MdVerified fontSize={18} color="blue" />
                   </div>
                   <div className="flex gap-2 items-center text-center">
-                    <p className="text-sm userid-background font-bold ">
+                    <p className="text-sm userid-background font-bold hidden md:block">
                       @{appState?.action?.user?.handle} .
                     </p>
 
@@ -77,7 +80,7 @@ const Post = (post: any) => {
               dangerouslySetInnerHTML={{ __html: postDetails?.content }}
             ></div>
             {postDetails?.media[0]?.file && (
-              <div className="description-container" style={{ width: "200px", height: "200px" }}>
+              <div className="description-container w-180 md:w-320">
                 <img
                   alt="post-image"
                   src={`${ipfsGateway}${postDetails?.media[0]?.file}`}

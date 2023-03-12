@@ -11,6 +11,7 @@ import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
 import logo from "./../assets/Navbar/logo.svg";
 import fileCoinLogo from "./../assets/Auth/filecoin-logo.svg";
 import ipfsLogo from "./../assets/Auth/ipfs-logo.svg";
+import Footer from "../components/Footer/Footer";
 
 declare global {
   interface Window {
@@ -311,6 +312,7 @@ const SecureLayout = () => {
         <>
           <Navbar />
           <Outlet />
+          <Footer />
         </>
       )}
     </>
