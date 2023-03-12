@@ -9,6 +9,7 @@ import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
 import defaultUser from "./.././.././assets/Form/default-user.png";
 import logo from "./.././.././assets/Navbar/nav-logo.svg";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 const Navbar = () => {
@@ -216,11 +217,18 @@ const Navbar = () => {
           >
             Logout
           </button> */}
+          {/* Notification */}
+
           {appState?.action?.user ? (
-            <div className="font-semibold">
-              {greeting}, {appState?.action?.user?.firstName}{" "}
-              {appState?.action?.user?.organizationName}
-            </div>
+            <>
+              <div className="cursor-pointer">
+                <IoMdNotificationsOutline size={20} />
+              </div>
+              <div className="font-semibold">
+                {greeting}, {appState?.action?.user?.firstName}{" "}
+                {appState?.action?.user?.organizationName}
+              </div>
+            </>
           ) : (
             <div></div>
           )}

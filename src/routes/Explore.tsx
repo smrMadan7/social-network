@@ -66,14 +66,22 @@ const Explore = () => {
 
         <div className="flex gap-9 items-center text-gray-700 px-5 mt-6">
           <button className="flex gap-2 items-center p-2 rounded-lg bg-bgActive">
-            <BiMenu fontSize={20} />
+            <BiMenu
+              fontSize={20}
+              className="origin-center hover:rotate-45"
+              style={{ transition: "1s" }}
+            />
             Timeline
           </button>
           <button
             className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
             onClick={() => getAllFeeds()}
           >
-            <AiOutlineReload fontSize={23} />
+            <AiOutlineReload
+              fontSize={23}
+              className="origin-center hover:rotate-180"
+              style={{ transition: "1s" }}
+            />
             Reload
           </button>
         </div>

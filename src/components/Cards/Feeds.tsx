@@ -14,10 +14,12 @@ import Warning from "./Warning";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
+  const [postId, setPostId] = useState("");
   const [postComments, setPostComents] = useState<any>();
   const [like, setLike] = useState(post?.post?.likes);
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
+  const [refetch, setRefetch] = useState(false);
   const [likeCount, setLikeCount] = useState(1);
   const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
@@ -31,18 +33,15 @@ const Feeds = (post: any) => {
   useEffect(() => {
     setPostProfileStatus(false);
     setCommentStatus(false);
-
-    getPostDetails();
+    setRefetch(false);
     getPostComments();
+    getPostDetails();
   }, []);
 
   useEffect(() => {
-    console.log("comment value is ", commentValue);
-    if (commentValue.includes("@")) {
-      const index = commentValue.indexOf(" @");
-      console.log("index is ", index);
-    }
-  }, [commentValue]);
+    getPostComments();
+    setRefetch(false);
+  }, [refetch]);
 
   // Get post details
   const getPostDetails = () => {
@@ -59,16 +58,17 @@ const Feeds = (post: any) => {
   };
 
   // Get the post comments
-  const getPostComments = () => {
+  const getPostComments = async () => {
     fetch(`${getComment}${post?.post?.postId}`, {})
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
           setPostComents(
-            result.data.sort((firstComment: any, secondComment: any) => {
+            result?.data?.comments?.sort((firstComment: any, secondComment: any) => {
               return firstComment.timestamp - secondComment.timestamp;
             })
           );
+          setPostId(result?.data?.postId);
         }
       })
       .catch((error) => {
@@ -166,7 +166,7 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Comment comments={postComments} />
+                      <Comment comments={postComments} setRefetch={setRefetch} postId={postId} />
                     </div>
                     <div className="absolute w-full bottom-2 px-5 py-3 flex gap-2">
                       <form onSubmit={addComment} className="flex w-full gap-2">
