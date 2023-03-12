@@ -1,8 +1,13 @@
+import { useEffect } from "react";
+import { BiArrowBack } from "react-icons/bi";
+import { NavLink, useNavigate } from "react-router-dom";
+
 import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 
 const TeamProfile = () => {
   const { appState }: any = useUserContext();
+  const navigate = useNavigate();
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
   return (
@@ -10,18 +15,25 @@ const TeamProfile = () => {
       <div className=" p-5 md:gap-16 gap-4  w-full  flex flex-col items-center justify-center">
         <div className="bg-black" style={{ height: "20px" }}></div>
 
-        <div className="  sm:w-90 md:w-70 h-5/6 border rounded-lg">
+        <div className="  sm:w-90 md:w-70 h-5/6 border rounded-lg ">
           {/*Team */}
 
           <div className="flex flex-col bg-white border rounded-lg">
-            <div>
-              <h1 className="text-center text-xl font-bold p-3 border-b">Team Details</h1>
+            <div className="">
+              <div className="flex text-center justify-center gap-5 border-b p-2 font-bold text-xl items-center">
+                <div className="md:hidden" onClick={() => navigate(-1)}>
+                  <BiArrowBack />
+                </div>
+                <h1 className="text-center text-xl font-bold ">Team Profile</h1>
+                <div></div>
+              </div>
+
               <form className="text-sm w-100  overflow-y-auto member-form" name="member">
                 <div className=" w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                   <div className="sm:w-100 md:w-90 ">
                     <div className="flex flex-col mt-3 mx-1 ">
                       {/* OrganizationName */}
-                      <div className="flex w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
+                      <div className="flex flex-col md:flex-row w-full px-3  md:mb-0 sm:mt-3 md:items-center md:gap-3">
                         <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">
                           Org Name:
                         </label>
@@ -38,7 +50,7 @@ const TeamProfile = () => {
 
                       {/* Website */}
 
-                      <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
+                      <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-3  md:mb-0 md:items-center md:gap-3 ">
                         <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                           Website:
                         </label>
@@ -54,7 +66,7 @@ const TeamProfile = () => {
                       </div>
                     </div>
                     {/* Contact Email */}
-                    <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                    <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
                       <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                         Contact Email:
                       </label>
@@ -69,7 +81,7 @@ const TeamProfile = () => {
                       ></input>
                     </div>
                     {/* Twitter */}
-                    <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                    <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
                       <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                         Twitter
                       </label>
@@ -84,7 +96,7 @@ const TeamProfile = () => {
                       ></input>
                     </div>
                     {/* Discord */}
-                    <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                    <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
                       <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                         Discord
                       </label>

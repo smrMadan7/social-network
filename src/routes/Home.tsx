@@ -39,6 +39,7 @@ const Home = () => {
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
   const [ipfsPath, setIpfsPath] = useState<any>();
+  const [isReload, setIsReload] = useState(false);
   useEffect(() => {
     setIsLoading(false);
     setIsBold(false);
@@ -48,9 +49,11 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    setFilterStatus("timeline");
     getAllPosts();
+  }, [isReload]);
 
+  useEffect(() => {
+    setFilterStatus("timeline");
     if (!appState?.action?.user) {
       window.location.reload();
     }
@@ -270,7 +273,9 @@ const Home = () => {
                 </button>
                 <button
                   className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
-                  onClick={() => getAllPosts()}
+                  onClick={() => {
+                    setIsReload(true);
+                  }}
                 >
                   <AiOutlineReload
                     fontSize={23}
@@ -306,7 +311,9 @@ const Home = () => {
                 <div className="p-7 flex justify-center bg-white border rounded-lg ">
                   <div className="flex flex-col items-center gap-2 text-violet-700 ">
                     <FaThList fontSize={20} />
-                    <h1 className=" text-md text-slate-400">You haven't posted anything yet!</h1>
+                    <h1 className=" text-md text-slate-400 text-center">
+                      You haven't posted anything yet!
+                    </h1>
                   </div>
                 </div>
               ) : (
@@ -340,12 +347,15 @@ const Home = () => {
       {/* Add new post */}
 
       {isPost && (
-        <div className=" absolute w-full top-0 h-screen ">
+        <div className=" absolute w-full top-0 h-screen m-auto ">
           <div className=" flex top-0 bottom-0 right-0 left-0  m-auto">
-            <div className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 bg-blackOverlay">
+            <div
+              className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 bg-blackOverlay"
+              style={{ zIndex: 20 }}
+            >
               {/* new post content */}
-              <div className="relative flex flex-col  md:w-50 sm:w-70 bg-white rounded-lg overflow-y-auto h-5/6 ">
-                <div className="flex justify-between p-4">
+              <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto h-5/6 md:h-5/6">
+                <div className="flex justify-between p-4 w-100">
                   <p className="font-semibold text-xl">Create Post</p>
                   <div
                     className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -360,8 +370,8 @@ const Home = () => {
                 <div className="border-t-2  w-100 ">
                   <form onSubmit={publishPost}>
                     {cropStatus ? (
-                      <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center sm:w-full">
-                        <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>
+                      <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-full h-full m-auto justify-center ">
+                        <div className=" relative w-90 sm:w-50" style={{ height: "50vh" }}>
                           <div>
                             <Cropper
                               image={filePath}
@@ -374,7 +384,7 @@ const Home = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex flex-col gap-4 w-50 bg-gray-700 ">
+                        <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
                           <div className="flex justify-center items-center mt-3">
                             <input
                               id="small-range"
@@ -510,13 +520,18 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className=" overflow-y-auto " style={{ height: "230px" }}>
+                    <div className=" overflow-y-auto h-150 md:h-225 ">
                       {filePath && !cropStatus && (
-                        <img alt="uploaded Image" src={filePath} loading="lazy"></img>
+                        <img
+                          alt="uploaded Image"
+                          className="h-150 md:h-225"
+                          src={filePath}
+                          loading="lazy"
+                        ></img>
                       )}
                     </div>
 
-                    <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">
+                    <div className=" px-5 flex justify-end w-full items-center gap-5 mt-3 md:mt-0 mb-2">
                       <div className="flex gap-4 text-violet-700 font-semibold">
                         <div className="relative cursor-pointer" onClick={mediaUpload}>
                           <MdOutlinePermMedia fontSize={20} />

@@ -5,16 +5,21 @@ import { MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
 import Notification from "../components/Cards/Notification";
-import Feeds from "../components/Cards/Feeds";
+import Post from "../components/Cards/Feeds";
 import { getFeeds } from "../constants/AppConstants";
 import banner from "./../assets/Explore/banner.png";
 import { useFeedsContext } from "../context/FeedsContextProvider";
+import { useUserContext } from "../context/UserContextProvider";
 
 const Explore = () => {
+  const { appState }: any = useUserContext();
   const { feeds, setFeeds }: any = useFeedsContext();
 
   useEffect(() => {
     getAllFeeds();
+    if (!appState?.action?.user) {
+      window.location.reload();
+    }
   }, []);
 
   const getAllFeeds = async () => {
@@ -86,10 +91,10 @@ const Explore = () => {
           </button>
         </div>
 
-        <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container mb-9 md:mb-1">
+        <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
           <div className="w-full md:w-70 border rounded-lg ">
             {feeds?.action?.feeds?.map((post: any, index: number) => {
-              return <Feeds post={post} key={index + uuidv4()} />;
+              return <Post post={post} key={index + uuidv4()} />;
             })}
           </div>
 

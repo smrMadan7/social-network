@@ -1,9 +1,12 @@
-import { Outlet } from "react-router";
+import { BiArrowBack } from "react-icons/bi";
+import { Outlet, useNavigate } from "react-router";
+import { NavLink } from "react-router-dom";
 import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 
 const MemberProfile = () => {
   const { appState }: any = useUserContext();
+  const navigate = useNavigate();
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
@@ -16,13 +19,19 @@ const MemberProfile = () => {
           {/* Member */}
           <div className="flex flex-col bg-white border rounded-lg">
             <div>
-              <h1 className="text-center text-xl font-bold p-3 border-b">Profile</h1>
+              <div className="flex text-center justify-center gap-5 border-b p-2 font-bold text-xl items-center">
+                <div className="md:hidden" onClick={() => navigate(-1)}>
+                  <BiArrowBack />
+                </div>
+                <h1 className="text-center text-xl font-bold ">Member Profile</h1>
+                <div></div>
+              </div>
               <form className="text-sm w-100  overflow-y-auto member-form" name="member">
                 <div className=" w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                   <div className="sm:w-100 md:w-90 ">
                     <div className="flex flex-col mt-3 mx-1 ">
                       {/* First Name */}
-                      <div className="flex w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
+                      <div className="flex flex-col md:flex-row w-full px-3  md:mb-0 sm:mt-3 md:items-center md:gap-3">
                         <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">
                           First Name:
                         </label>
@@ -39,7 +48,7 @@ const MemberProfile = () => {
 
                       {/* Last Name */}
 
-                      <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
+                      <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-3  md:mb-0 md:items-center md:gap-3 ">
                         <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                           Last Name:
                         </label>
@@ -56,7 +65,7 @@ const MemberProfile = () => {
                     </div>
 
                     {/* Display Name */}
-                    <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                    <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
                       <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                         Display Name:
                       </label>
@@ -72,7 +81,7 @@ const MemberProfile = () => {
                     </div>
 
                     {/* open to work */}
-                    <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
+                    <div className="text-sm flex-col md:flex-row flex w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
                       <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
                         Open To Work:
                       </label>
@@ -128,7 +137,7 @@ const MemberProfile = () => {
                   </div>
                 </div>
 
-                <div className="flex mb-3 sm:flex-col md:flex-row sm:gap-2 justify-between">
+                <div className="flex mb-3 flex-col md:flex-row gap-2 justify-between">
                   {/* Role Selection */}
                   <div className="md:w-50 flex mx-1 justify-between">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full  px-3  md:mb-0">
@@ -190,7 +199,7 @@ const MemberProfile = () => {
 
                 {/* Skills */}
 
-                <div className="md:w-50 flex mx-1 justify-between">
+                <div className="md:w-50 flex mx-1 justify-between mb-2">
                   <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
                     <label className="text-md font-bold block tracking-wide text-gray-700">
                       Skill:
