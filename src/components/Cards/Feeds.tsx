@@ -146,14 +146,17 @@ const Feeds = (post: any) => {
           <div className="">
             {commentStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
-                {isSucessfull && (
-                  <div className="relative">
-                    <Warning message="Success" />
-                  </div>
-                )}
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
+                      {isSucessfull && (
+                        <div
+                          className="absolute text-center  top-0 right-0 left-0 bottom-0 "
+                          style={{ zIndex: 100, height: "30px" }}
+                        >
+                          <p className="text-yellow-400 font-semibold text-xl pt-3">Success!</p>
+                        </div>
+                      )}
                       <p className="text-xl font-bold">Comments</p>
                       <div
                         className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -175,7 +178,7 @@ const Feeds = (post: any) => {
                           name="comment"
                           value={commentValue}
                           onChange={(e) => setCommentValue(e.target.value)}
-                          placeholder="Add A Comment..."
+                          placeholder="Add a comment..."
                         ></input>
                         <button
                           className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
@@ -322,9 +325,10 @@ const Feeds = (post: any) => {
           </div>
         </>
       ) : (
-        <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
-          {/* <Loading /> */}
-        </div>
+        <> </>
+        // <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
+        //   {/* <Loading /> */}
+        // </div>
       )}
     </>
   );

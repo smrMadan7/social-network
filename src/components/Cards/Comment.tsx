@@ -5,16 +5,21 @@ import Web3 from "web3";
 import { ipfsGateway, updateComment } from "../../constants/AppConstants";
 import { BiEdit } from "react-icons/bi";
 import { GrFormClose } from "react-icons/gr";
+import { BiArrowBack } from "react-icons/bi";
+import { GiCheckMark } from "react-icons/gi";
 
 const Comment = ({ comments, setRefetch, postId }: any) => {
   const [address, setAddress] = useState();
   const [isUpdatePopup, setIsUpdatePopup] = useState(false);
   const [updatedComment, setUpdatedComment] = useState("");
   const [commentDetails, setCommentDetails] = useState<any>();
+  const [commentId, setCommentId] = useState("");
+  const [isUpdated, setIsUpdated] = useState(false);
 
   useEffect(() => {
     getAddress();
     setCommentDetails({});
+    setIsUpdated(false);
   }, []);
 
   var myHeaders = new Headers();
@@ -28,12 +33,16 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
   };
 
   const commentUpdate = () => {
+    console.log("commend details", commentDetails);
     const updatedObj = {
       postId: postId,
       commentId: commentDetails?.commentId,
       comment: updatedComment,
-      tags: commentDetails?.tags,
+      commenter: address,
+      tags: [],
+      timestamp: commentDetails?.timestamp,
     };
+
     var requestOptions: any = {
       method: "POST",
       headers: myHeaders,
@@ -47,6 +56,11 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
         if (result.status !== false) {
           setRefetch(true);
           setIsUpdatePopup(false);
+          setIsUpdated(true);
+
+          setTimeout(() => {
+            setIsUpdated(false);
+          }, 3000);
         }
       })
       .catch((error) => {
@@ -55,6 +69,14 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
   };
   return (
     <>
+      {isUpdated && (
+        <div
+          className="absolute text-center  top-0 right-0 left-0 bottom-0 "
+          style={{ zIndex: 13, height: "30px" }}
+        >
+          <p className="text-yellow-400 font-semibold text-xl pt-3">Success!</p>
+        </div>
+      )}
       {comments?.length > 0 ? (
         <div
           className="relative p-3"
@@ -70,12 +92,12 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
 
             const imageUrl = `${ipfsGateway}${comment?.commenterProfilePic}`;
             return (
-              <div key={index} className="mb-5 ">
+              <div key={index} className="mb-5 relative ">
                 <div className="">
                   {/* user profile */}
                   <div className="flex gap-3 justify-between">
                     <div className="flex gap-3">
-                      <div>
+                      <div style={{ height: "50px", width: "50px" }}>
                         <img
                           alt="profile-picture"
                           height="50px"
@@ -97,15 +119,52 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
 
                         <div>
                           {" "}
-                          <div className="flex flex-col gap-1">
+                          <div className=" flex flex-col gap-1">
                             {/* comment content */}
-                            <div className="text-black">{comment?.comment}</div>
+                            {comment?.commenter === address ? (
+                              <>
+                                {isUpdatePopup && commentId === comment?.commentId ? (
+                                  <input
+                                    onClick={(e) => e.stopPropagation()}
+                                    contentEditable="true"
+                                    autoFocus
+                                    className="text-black outline-none prevent-select rounded-lg p-2"
+                                    onChange={(e) => setUpdatedComment(e.target.value)}
+                                    style={
+                                      isUpdatePopup && comment?.commentId == commentId
+                                        ? { border: "1px solid grey" }
+                                        : {}
+                                    }
+                                    value={updatedComment}
+                                  ></input>
+                                ) : (
+                                  <input
+                                    onClick={(e) => e.stopPropagation()}
+                                    contentEditable="true"
+                                    className="text-black outline-none prevent-select rounded-lg p-2"
+                                    style={
+                                      isUpdatePopup && comment?.commentId == commentId
+                                        ? { border: "1px solid grey" }
+                                        : {}
+                                    }
+                                    value={comment?.comment}
+                                  ></input>
+                                )}
+                              </>
+                            ) : (
+                              <input
+                                className="text-black outline-none"
+                                readOnly
+                                value={comment?.comment}
+                              ></input>
+                            )}
+
                             {/* like  */}
-                            <div className="flex gap-1 items-center text-fuchsia-500 cursor-pointer">
+                            {/* <div className="flex gap-1 items-center text-fuchsia-500 cursor-pointer">
                               <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
 
                               <span className="mb-1">2</span>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </div>
@@ -120,6 +179,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                               setIsUpdatePopup(false);
                             } else {
                               setIsUpdatePopup(true);
+                              setCommentId(comment?.commentId);
                               setUpdatedComment(comment?.comment);
                             }
                             setCommentDetails(comment);
@@ -131,6 +191,34 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                     )}
                   </div>
                 </div>
+                {isUpdatePopup && commentId == comment?.commentId && (
+                  <div className="absolute right-0 bottom-1 px-3">
+                    <div className="flex gap-2">
+                      <div>
+                        <button
+                          className=" p-1 rounded-full bg-bgHover hover:bg-bgActive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsUpdatePopup(false);
+                          }}
+                        >
+                          <BiArrowBack fontSize={20} />
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className="p-1 rounded-full text-black bg-bgHover hover:bg-bgActive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            commentUpdate();
+                          }}
+                        >
+                          <GiCheckMark fontSize={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -153,11 +241,11 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
             -webkit-background-clip: text;
         }`}
       </style>
-      {isUpdatePopup && (
-        <div className="absolute flex flex-col top-0 bottom-0 right-0 left-0 flex  w-90 md:w-50 h-2/6 border rounded-lg bg-white z-4 m-auto">
+      {/* {isUpdatePopup && (
+        <div className="absolute flex flex-col top-0 bottom-0 right-0 left-0 flex  w-50 md:w-50 h-2/6 border rounded-lg bg-white z-4 m-auto">
           <div className="w-full">
             <div className="flex justify-between  p-3 items-center border-b">
-              <h1 className="text-xl font-semibold ">Update</h1>
+              <h1 className="text-xl font-semibold ">Edit</h1>
               <div
                 className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                 onClick={() => {
@@ -170,9 +258,9 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
           </div>
 
           <div className="w-full flex gap-3 p-3">
-            <div>
+            <div className="w-full">
               <input
-                className="outline-none border rounded-lg p-2"
+                className="outline-none border rounded-lg p-2 w-full"
                 value={updatedComment}
                 onChange={(e) => setUpdatedComment(e.target.value)}
               ></input>
@@ -187,7 +275,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

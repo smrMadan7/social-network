@@ -40,6 +40,7 @@ const Home = () => {
   const [posts, setPosts] = useState<any>([]);
   const [ipfsPath, setIpfsPath] = useState<any>();
   const [isReload, setIsReload] = useState(false);
+
   useEffect(() => {
     setIsLoading(false);
     setIsBold(false);
@@ -49,7 +50,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log("worked");
     getAllPosts();
   }, [isReload]);
 
@@ -95,15 +95,16 @@ const Home = () => {
 
     const contentElement: any = document.getElementById("content");
     var content = contentElement.innerHTML;
-    if (isBold) {
+    if (isBold && content) {
       content = `<span class="font-bold">${content}</span>`;
-    } else if (isItalic) {
+    } else if (isItalic && content) {
       content = `<span class="italic">${content}</span>`;
-    } else if (isBold && isItalic) {
+    } else if (isBold && isItalic && content) {
       content = `<span class="font-bold italic">${content}</span>`;
     } else {
       content = content;
     }
+    console.log("content is ", content);
 
     if (content !== "") {
       try {
@@ -115,14 +116,11 @@ const Home = () => {
             } else {
               setIsLoading(true);
             }
-
             const provider: any = window.ethereum;
             const web3: any = new Web3(provider);
             const userAccount = await web3.eth.getAccounts();
             const address = userAccount[0];
-
             const currentTimeStamp = Math.floor(Date.now() / 1000);
-
             const uri: any = {
               version: "1.0.0",
               description: "",
@@ -141,27 +139,25 @@ const Home = () => {
               address: address,
               postData: uri,
             };
-
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-
             var requestOptions: any = {
               method: "POST",
               headers: myHeaders,
               body: JSON.stringify(post),
               redirect: "follow",
             };
-            fetch(createPost, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  setIsPost(false);
-                  setIsLoading(false);
-                  setFilePath("");
-                  getAllPosts();
-                }
-              })
-              .catch((error) => {});
+            // fetch(createPost, requestOptions)
+            //   .then((response) => response.json())
+            //   .then((result) => {
+            //     if (result.status !== false) {
+            //       setIsPost(false);
+            //       setIsLoading(false);
+            //       setFilePath("");
+            //       getAllPosts();
+            //     }
+            //   })
+            //   .catch((error) => {});
           })
           .catch((error) => {
             setWarningMessage("Something went wrong!");
@@ -487,10 +483,49 @@ const Home = () => {
                     />
                     <div className="w-full border-t-2">
                       <div className="mt-3 p-4">
+                        {/* <input
+                          placeholder="Share something!"
+                          value={content}
+                          onChange={(e) => {
+                            setContent(e.target.value);
+                            if (e.target.value.includes("http")) {
+                              const firstIndex = e.target.value.indexOf("http");
+                              const lastIndex = e.target.value.indexOf(" ", firstIndex);
+                              console.log("first index is", firstIndex, "last index is", lastIndex);
+                            }
+                          }}
+                          className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
+                          style={
+                            isBold
+                              ? { fontWeight: "bold" }
+                              : isCode
+                              ? { background: "gray" }
+                              : isItalic
+                              ? { fontStyle: "italic" }
+                              : isBold && isCode && isItalic
+                              ? {
+                                  fontWeight: "bold",
+                                  background: "grap",
+                                  fontStyle: "italic",
+                                }
+                              : isCode && isItalic
+                              ? {
+                                  background: "gray",
+                                  fontStyle: "italic",
+                                }
+                              : isBold && isItalic
+                              ? {
+                                  fontStyle: "italic",
+                                  fontWeight: "bold",
+                                }
+                              : {}
+                          }
+                        ></input> */}
                         <div
                           className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
                           contentEditable="true"
                           id="content"
+                          onKeyDown={(e: any) => {}}
                           data-placeholder="What's happening?"
                           style={
                             isBold
