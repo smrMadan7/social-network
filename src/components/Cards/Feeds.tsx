@@ -11,21 +11,24 @@ import { postComment, ipfsGateway, likeApi, getComment } from "../../constants/A
 import Comment from "./Comment";
 import PostProfile from "./PostProfile";
 import Warning from "./Warning";
+import { AiTwotoneHeart } from "react-icons/ai";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
   const [postId, setPostId] = useState("");
   const [postComments, setPostComents] = useState<any>();
-  const [like, setLike] = useState(post?.post?.likes);
+  const [like, setLike] = useState(post?.post?.likes.length);
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [likeCount, setLikeCount] = useState(1);
+  const [isLiked, setIsLiked] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
+  const [address, setAddress] = useState();
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -36,7 +39,15 @@ const Feeds = (post: any) => {
     setRefetch(false);
     getPostComments();
     getPostDetails();
+    getAddress();
   }, []);
+
+  const getAddress = async () => {
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
+    const userAccount = await web3.eth.getAccounts();
+    setAddress(userAccount[0]);
+  };
 
   useEffect(() => {
     getPostComments();
@@ -81,6 +92,8 @@ const Feeds = (post: any) => {
     setLikeCount(likeCount + 1);
     const postIdData = {
       postId: postData?.post?.postId,
+      address: address,
+      action: "like",
     };
     var requestOptions: any = {
       method: "POST",
@@ -93,7 +106,8 @@ const Feeds = (post: any) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === true) {
-          setLike(post?.post?.likes + likeCount);
+          setIsLiked(true);
+          setLike(post?.post?.likes?.length + likeCount);
         }
       })
       .catch((error) => {});
@@ -196,7 +210,7 @@ const Feeds = (post: any) => {
             {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div className=" w-90 md:w-40 border rounded-lg text-black bg-white">
+                  <div className="border rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">Profile Details</p>
                       <div
@@ -289,15 +303,31 @@ const Feeds = (post: any) => {
                 <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
               </div>
 
-              <div className="flex items-center text-center">
-                <div
-                  style={{ height: "40px", width: "40px" }}
-                  className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                  onClick={(e) => incrementLike(e, post)}
-                >
-                  <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
-                  {like}
-                </div>
+              <div className="flex items-center text-center prevent-select">
+                {post?.post?.likes?.includes(address) || isLiked ? (
+                  <div
+                    style={{ height: "40px", width: "40px" }}
+                    className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                    onClick={(e) => {
+                      if (post?.post?.likes?.includes(address)) {
+                      } else {
+                        incrementLike(e, post);
+                      }
+                    }}
+                  >
+                    <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
+                    {like}
+                  </div>
+                ) : (
+                  <div
+                    style={{ height: "40px", width: "40px" }}
+                    className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                    onClick={(e) => incrementLike(e, post)}
+                  >
+                    <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
+                    {like}
+                  </div>
+                )}
               </div>
             </div>
             <style>
