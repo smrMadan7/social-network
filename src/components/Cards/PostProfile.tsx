@@ -73,7 +73,10 @@ const PostProfile = ({ postDetails, post }: any) => {
 
   return (
     <>
-      <div className="overflow-y-auto" style={isMember ? { height: "250px" } : { height: "150px" }}>
+      <div
+        className="overflow-y-auto h-250 md:h-150"
+        style={isMember ? { height: "250px" } : { height: "150px" }}
+      >
         {isMember && (
           <div className="w-full flex flex-col text-black font-2xl">
             <div className="w-full text-black flex px-5 mt-5 gap-4">
@@ -148,7 +151,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             </div>
 
             {/* Skills */}
-            <div className="text-md px-5 mt-2 font-medium flex items-center w-full">
+            <div className="text-md px-5 mt-2 font-medium flex flex-col md:flex-row md:items-center w-full">
               Skills:
               <div className="flex  w-full items-center gap-3 mt-2">
                 <div className="relative w-full px-3 flex gap-1 appearance-none block leading-tight focus:outline-none focus:bg-white ">
@@ -198,7 +201,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             </div>
 
             {/* Organization */}
-            <div className="text-md w-full font-medium px-5 mt-2 flex items-center">
+            <div className="text-md w-full font-medium px-5 mt-2 flex flex-col md:flex-row md:items-center">
               Organization:
               <div className="flex  w-full items-center gap-3 mt-2">
                 <div className="relative w-full px-3 flex gap-1 appearance-none block leading-tight focus:outline-none focus:bg-white">
@@ -247,13 +250,13 @@ const PostProfile = ({ postDetails, post }: any) => {
             </div>
 
             {/* open for work */}
-            <div className="text-md font-medium px-5 mt-2 flex gap-3">
+            <div className="text-md font-medium px-5 mt-2 flex flex-col md:flex-row  md:gap-3">
               Open For Work:
-              <span className="font-light ">{details?.openForWork}</span>
+              <span className="font-light px-5 md:px-0">{details?.openForWork}</span>
             </div>
             {/* About*/}
 
-            <div className="text-md font-medium px-5 mt-2 flex items-center mb-3">
+            <div className="text-md font-medium px-5 mt-2 flex flex-col md:flex-row md:items-center mb-3">
               About:
               <p className="px-4 font-light">{details?.bio}</p>
             </div>
@@ -291,7 +294,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             </div>
             {/* Social */}
 
-            <div className="flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3">
+            <div className="flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3 ">
               <div className="flex gap-3">
                 <a href={details?.social?.twitter} target="_blank">
                   <AiFillTwitterCircle size={30} color="blue" />
