@@ -21,13 +21,14 @@ const Feeds = (post: any) => {
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
   const [refetch, setRefetch] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
   const [address, setAddress] = useState();
+  const [isLiked, setIsLiked] = useState<any>(false);
+  const [isDisLiked, setIsDisLiked] = useState<any>(false);
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -45,11 +46,8 @@ const Feeds = (post: any) => {
     const provider: any = window.ethereum;
     const web3: any = new Web3(provider);
     const userAccount = await web3.eth.getAccounts();
-    // if (post?.post?.likes.inclueds(userAccount[0]))
     setAddress(userAccount[0]);
   };
-
-  console.log("is liked", isLiked);
 
   useEffect(() => {
     getPostComments();
@@ -223,7 +221,7 @@ const Feeds = (post: any) => {
             {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div className=" w-90 md:w-40 border rounded-lg text-black bg-white">
+                  <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">Profile Details</p>
                       <div
@@ -317,30 +315,56 @@ const Feeds = (post: any) => {
               </div>
 
               <div className="flex items-center text-center prevent-select">
-                {post?.post?.likes?.includes(address) || isLiked ? (
-                  <div
-                    style={{ height: "40px", width: "40px" }}
-                    className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                    onClick={(e) => {
-                      if (post?.post?.likes?.includes(address) || isLiked) {
-                        setIsLiked(false);
-                        incrementAndDecrementLike(e, post, "unlike");
-                      } else {
-                        setIsLiked(true);
-                        incrementAndDecrementLike(e, post, "like");
-                      }
-                    }}
-                  >
-                    <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
-                    {like}
-                  </div>
+                {post?.post?.likes?.includes(address) ? (
+                  <>
+                    <div
+                      style={{ height: "40px", width: "40px" }}
+                      className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                      onClick={(e) => {
+                        if (!isDisLiked) {
+                          console.log("works1");
+                          setIsLiked(true);
+                          setIsDisLiked(true);
+                          incrementAndDecrementLike(e, post, "unlike");
+                        } else {
+                          setIsLiked(false);
+                          setIsDisLiked(false);
+                          incrementAndDecrementLike(e, post, "like");
+                        }
+                      }}
+                    >
+                      <>
+                        {post?.post?.likes?.includes(address) && !isDisLiked ? (
+                          <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
+                        ) : (
+                          <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
+                        )}
+                      </>
+                      {like}
+                    </div>
+                  </>
                 ) : (
                   <>
-                    {!isLiked && (
+                    {isLiked ? (
                       <div
                         style={{ height: "40px", width: "40px" }}
                         className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                        onClick={(e) => incrementAndDecrementLike(e, post, "like")}
+                        onClick={(e) => {
+                          setIsLiked(false);
+                          incrementAndDecrementLike(e, post, "unlike");
+                        }}
+                      >
+                        <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
+                        {like}
+                      </div>
+                    ) : (
+                      <div
+                        style={{ height: "40px", width: "40px" }}
+                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                        onClick={(e) => {
+                          setIsLiked(true);
+                          incrementAndDecrementLike(e, post, "like");
+                        }}
                       >
                         <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
                         {like}

@@ -14,6 +14,7 @@ import { useUserContext } from "../context/UserContextProvider";
 const Explore = () => {
   const { appState }: any = useUserContext();
   const { feeds, setFeeds }: any = useFeedsContext();
+  const [address, setAddress] = useState();
 
   useEffect(() => {
     getAllFeeds();
@@ -27,6 +28,7 @@ const Explore = () => {
     const web3: any = new Web3(provider);
     const userAccount = await web3.eth.getAccounts();
     const address = userAccount[0];
+    setAddress(address);
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -94,7 +96,7 @@ const Explore = () => {
         <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
           <div className="w-full md:w-70 border rounded-lg ">
             {feeds?.action?.feeds?.map((post: any, index: number) => {
-              return <Post post={post} key={index + uuidv4()} />;
+              return <Post post={post} address={address} key={index + uuidv4()} />;
             })}
           </div>
 

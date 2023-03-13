@@ -556,7 +556,7 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className=" overflow-y-auto h-150 md:h-225 ">
+                    <div className=" overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
                       {filePath && !cropStatus && (
                         <img
                           alt="uploaded Image"
@@ -567,7 +567,7 @@ const Home = () => {
                       )}
                     </div>
 
-                    <div className=" px-5 flex justify-end w-full items-center gap-5 mt-3 md:mt-0 mb-2">
+                    <div className="absolute bottom-3 right-3 bpx-5 flex justify-end w-full items-center gap-5 mt-3 md:mt-0 mb-2">
                       <div className="flex gap-4 text-violet-700 font-semibold">
                         <div className="relative cursor-pointer" onClick={mediaUpload}>
                           <MdOutlinePermMedia fontSize={20} />
