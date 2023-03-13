@@ -21,7 +21,6 @@ const Feeds = (post: any) => {
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
   const [refetch, setRefetch] = useState(false);
-  const [likeCount, setLikeCount] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
@@ -46,8 +45,11 @@ const Feeds = (post: any) => {
     const provider: any = window.ethereum;
     const web3: any = new Web3(provider);
     const userAccount = await web3.eth.getAccounts();
+    // if (post?.post?.likes.inclueds(userAccount[0]))
     setAddress(userAccount[0]);
   };
+
+  console.log("is liked", isLiked);
 
   useEffect(() => {
     getPostComments();
@@ -88,12 +90,20 @@ const Feeds = (post: any) => {
   };
 
   // Increment like
-  const incrementLike = (e: any, postData: any) => {
-    setLikeCount(likeCount + 1);
+  const incrementAndDecrementLike = (e: any, postData: any, mode: string) => {
+    if (mode === "like") {
+      setLike(like + 1);
+      setIsLiked(true);
+    } else {
+      if (like >= post?.post?.likes.length) {
+        setLike(like - 1);
+        setIsLiked(false);
+      }
+    }
     const postIdData = {
       postId: postData?.post?.postId,
       address: address,
-      action: "like",
+      action: mode,
     };
     var requestOptions: any = {
       method: "POST",
@@ -106,8 +116,11 @@ const Feeds = (post: any) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.status === true) {
-          setIsLiked(true);
-          setLike(post?.post?.likes?.length + likeCount);
+          if (mode === "like") {
+            setIsLiked(true);
+          } else {
+            setIsLiked(false);
+          }
         }
       })
       .catch((error) => {});
@@ -210,7 +223,7 @@ const Feeds = (post: any) => {
             {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div className="border rounded-lg text-black bg-white">
+                  <div className=" w-90 md:w-40 border rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">Profile Details</p>
                       <div
@@ -309,9 +322,12 @@ const Feeds = (post: any) => {
                     style={{ height: "40px", width: "40px" }}
                     className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
                     onClick={(e) => {
-                      if (post?.post?.likes?.includes(address)) {
+                      if (post?.post?.likes?.includes(address) || isLiked) {
+                        setIsLiked(false);
+                        incrementAndDecrementLike(e, post, "unlike");
                       } else {
-                        incrementLike(e, post);
+                        setIsLiked(true);
+                        incrementAndDecrementLike(e, post, "like");
                       }
                     }}
                   >
@@ -319,14 +335,18 @@ const Feeds = (post: any) => {
                     {like}
                   </div>
                 ) : (
-                  <div
-                    style={{ height: "40px", width: "40px" }}
-                    className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                    onClick={(e) => incrementLike(e, post)}
-                  >
-                    <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
-                    {like}
-                  </div>
+                  <>
+                    {!isLiked && (
+                      <div
+                        style={{ height: "40px", width: "40px" }}
+                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                        onClick={(e) => incrementAndDecrementLike(e, post, "like")}
+                      >
+                        <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
+                        {like}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
