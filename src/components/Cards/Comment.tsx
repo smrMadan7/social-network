@@ -74,7 +74,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
           className="absolute text-center  top-0 right-0 left-0 bottom-0 "
           style={{ zIndex: 13, height: "30px" }}
         >
-          <p className="text-yellow-400 font-semibold text-xl pt-3">Success!</p>
+          <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
         </div>
       )}
       {comments?.length > 0 ? (
@@ -125,6 +125,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                               <>
                                 {isUpdatePopup && commentId === comment?.commentId ? (
                                   <input
+                                    type="text"
                                     onClick={(e) => e.stopPropagation()}
                                     contentEditable="true"
                                     autoFocus
@@ -139,9 +140,10 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                                   ></input>
                                 ) : (
                                   <input
+                                    type="text"
                                     onClick={(e) => e.stopPropagation()}
                                     contentEditable="true"
-                                    className="text-black outline-none prevent-select rounded-lg p-2"
+                                    className="text-black outline-none prevent-select rounded-lg p-2 break-words"
                                     style={
                                       isUpdatePopup && comment?.commentId == commentId
                                         ? { border: "1px solid grey" }
@@ -153,6 +155,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                               </>
                             ) : (
                               <input
+                                type="text"
                                 className="text-black outline-none"
                                 readOnly
                                 value={comment?.comment}

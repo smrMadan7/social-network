@@ -154,7 +154,7 @@ const Feeds = (post: any) => {
                           className="absolute text-center  top-0 right-0 left-0 bottom-0 "
                           style={{ zIndex: 100, height: "30px" }}
                         >
-                          <p className="text-yellow-400 font-semibold text-xl pt-3">Success!</p>
+                          <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
                         </div>
                       )}
                       <p className="text-xl font-bold">Comments</p>
