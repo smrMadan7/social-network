@@ -1,5 +1,6 @@
 import React from "react";
 import { GrFormClose } from "react-icons/gr";
+import commingSoon from "./../././../assets/Notification/coming-soon.png";
 
 const UserNotification = ({ isNotification, setIsNotification }: any) => {
   return (
@@ -21,6 +22,9 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
             >
               <GrFormClose color="black" fontSize={25} />
             </div>
+          </div>
+          <div className="mt-2">
+            <img src={commingSoon} height="100px"></img>
           </div>
         </div>
       )}
