@@ -49,6 +49,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    console.log("worked");
     getAllPosts();
   }, [isReload]);
 

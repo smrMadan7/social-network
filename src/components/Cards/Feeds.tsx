@@ -152,7 +152,7 @@ const Feeds = (post: any) => {
                   </div>
                 )}
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div className="relative w-70 md:w-50 border h-4/6 rounded-lg text-black bg-white">
+                  <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
                       <p className="text-xl font-bold">Comments</p>
                       <div
@@ -212,7 +212,7 @@ const Feeds = (post: any) => {
             )}
             <div className=""></div>
           </div>
-          <div className="p-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
+          <div className="mb-9 md:mb-0 p-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             <div className="flex justify-between">
               <div className="flex gap-2">
                 <img

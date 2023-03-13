@@ -13,8 +13,6 @@ const MemberProfile = () => {
   return (
     <>
       <div className=" p-5 md:gap-16 gap-4  w-full  flex flex-col items-center justify-center">
-        <div className="bg-black" style={{ height: "20px" }}></div>
-
         <div className="  sm:w-90 md:w-70 h-5/6 border rounded-lg">
           {/* Member */}
           <div className="flex flex-col bg-white border rounded-lg">

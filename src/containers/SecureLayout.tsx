@@ -289,21 +289,38 @@ const SecureLayout = () => {
 
           {/* is meta mask is not installed */}
           {warning && (
-            <div className="z-10 absolute top-2 items-center flex justify-center w-full right-0 left-0 ">
-              <div
-                className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative w-300"
-                role="alert"
-              >
-                <div>
-                  <strong className="font-bold">{warningMessage}</strong>
-                </div>
-
+            <div className="prevent-select">
+              <div className="z-10 absolute top-2 items-center flex justify-center w-full right-0 left-0 ">
                 <div
-                  className=" cursor-pointer px-2 py-2 rounded-full hover:bg-white hover:animate-none"
-                  onClick={() => setWarning(false)}
+                  className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative w-300"
+                  role="alert"
                 >
-                  <GrFormClose fontSize={25} />
+                  <div>
+                    <strong className="font-bold">{warningMessage}</strong>
+                  </div>
+
+                  <div
+                    className=" cursor-pointer px-2 py-2 rounded-full hover:bg-white hover:animate-none"
+                    // onClick={() => setWarning(false)}
+                  >
+                    <GrFormClose fontSize={25} />
+                  </div>
                 </div>
+              </div>
+              <div
+                className="absolute p-5 flex justify-between items-center  gap-10 top-0 bottom-0 right-0 left-0 m-auto"
+                style={{ zIndex: 14, width: "300px", height: "300px" }}
+              >
+                <img src={ipfsLogo} alt="ipfs-logo" width="48px" height="48px" loading="lazy"></img>
+
+                <img alt="app-logo" src={logo} width="100px" height="100px" loading="lazy"></img>
+                <img
+                  alt="file coin logo"
+                  src={fileCoinLogo}
+                  width="38px"
+                  height="38px"
+                  loading="lazy"
+                ></img>
               </div>
             </div>
           )}
