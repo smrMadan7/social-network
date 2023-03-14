@@ -146,17 +146,17 @@ const Home = () => {
               body: JSON.stringify(post),
               redirect: "follow",
             };
-            // fetch(createPost, requestOptions)
-            //   .then((response) => response.json())
-            //   .then((result) => {
-            //     if (result.status !== false) {
-            //       setIsPost(false);
-            //       setIsLoading(false);
-            //       setFilePath("");
-            //       getAllPosts();
-            //     }
-            //   })
-            //   .catch((error) => {});
+            fetch(createPost, requestOptions)
+              .then((response) => response.json())
+              .then((result) => {
+                if (result.status !== false) {
+                  setIsPost(false);
+                  setIsLoading(false);
+                  setFilePath("");
+                  getAllPosts();
+                }
+              })
+              .catch((error) => {});
           })
           .catch((error) => {
             setWarningMessage("Something went wrong!");
