@@ -31,9 +31,10 @@ const Feeds = (post: any) => {
   const [isLiked, setIsLiked] = useState<any>(false);
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
-
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+
+  debugger;
 
   useEffect(() => {
     setPostProfileStatus(false);
@@ -298,8 +299,10 @@ const Feeds = (post: any) => {
                     className="flex items-center gap-1 text-center"
                     onClick={() => setPostProfileStatus(true)}
                   >
+                    <p className="text-lg  font-semibold">{post?.post?.displayName}</p>
+
                     <p className="text-lg handle">@{post?.post?.handle}</p>
-                    <MdVerified fontSize={18} color="blue" />
+                    {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
                   <div className="flex gap-2 items-center text-center">
                     {/* <p className="text-sm userid-background font-bold ">@{post?.post?.handle} .</p> */}
