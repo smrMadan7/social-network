@@ -102,7 +102,7 @@ const Post = (post: any) => {
 
               <div className="flex items-center text-center">
                 <div className="rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto">
-                  {post?.post?.likes > 0 ? (
+                  {post?.post?.likes.length > 0 ? (
                     <>
                       <AiTwotoneHeart fontSize={15} className="text-fuchsia-500 mt-1" />
                     </>
@@ -111,7 +111,7 @@ const Post = (post: any) => {
                       <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
                     </>
                   )}
-                  <p>{post?.post?.likes}</p>
+                  <p>{post?.post?.likes.length}</p>
                 </div>
                 <p className="text-sm text-fuchsia-700 ">{post?.chat?.likes}</p>
               </div>
@@ -139,9 +139,10 @@ const Post = (post: any) => {
           </div>
         </>
       ) : (
-        <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
-          {/* <Loading /> */}
-        </div>
+        // <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
+        //   {/* <Loading /> */}
+        // </div>
+        <> </>
       )}
     </>
   );

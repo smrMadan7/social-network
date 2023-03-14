@@ -12,6 +12,7 @@ import Comment from "./Comment";
 import PostProfile from "./PostProfile";
 import Warning from "./Warning";
 import { AiTwotoneHeart } from "react-icons/ai";
+import LikedProfile from "./LikedProfile";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -29,6 +30,7 @@ const Feeds = (post: any) => {
   const [address, setAddress] = useState();
   const [isLiked, setIsLiked] = useState<any>(false);
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
+  const [likedProfileStatus, setLikedProfileStatus] = useState(false);
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -36,6 +38,7 @@ const Feeds = (post: any) => {
   useEffect(() => {
     setPostProfileStatus(false);
     setCommentStatus(false);
+    setLikedProfileStatus(false);
     setRefetch(false);
     getPostComments();
     getPostDetails();
@@ -238,6 +241,45 @@ const Feeds = (post: any) => {
                 </div>
               </div>
             )}
+            {likedProfileStatus && (
+              <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+                <div className="text-white flex items-center justify-center flex m-auto h-screen">
+                  <div
+                    className="relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
+                    style={{
+                      maxHeight: "300px",
+                      height: "300px",
+                      maxWidth: "250px",
+                      width: "250px",
+                    }}
+                  >
+                    <div className="flex justify-between p-3 border-b ">
+                      {isSucessfull && (
+                        <div
+                          className="absolute text-center  top-0 right-0 left-0 bottom-0 "
+                          style={{ zIndex: 100, height: "30px" }}
+                        >
+                          <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
+                        </div>
+                      )}
+                      <p className="text-xl font-bold">Liked Profiles</p>
+                      <div
+                        className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                        onClick={() => {
+                          setLikedProfileStatus(false);
+                        }}
+                      >
+                        <GrFormClose color="black" fontSize={25} />
+                      </div>
+                    </div>
+                    <div className="h-2/3 overflow-y-auto mt-2 ">
+                      <LikedProfile post={post} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className=""></div>
           </div>
           <div className="mb-9 md:mb-0 p-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
@@ -256,7 +298,7 @@ const Feeds = (post: any) => {
                     className="flex items-center gap-1 text-center"
                     onClick={() => setPostProfileStatus(true)}
                   >
-                    <p className="text-lg userid-background">@{post?.post?.handle}</p>
+                    <p className="text-lg handle">@{post?.post?.handle}</p>
                     <MdVerified fontSize={18} color="blue" />
                   </div>
                   <div className="flex gap-2 items-center text-center">
@@ -371,16 +413,16 @@ const Feeds = (post: any) => {
                     )}
                   </>
                 )}
+                {post?.post?.likes?.length > 0 && (
+                  <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
+                    Likes
+                  </div>
+                )}
               </div>
             </div>
             <style>
               {`
-        .userid-background {
-            background: rgb(203,66,252);
-            background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
-            -webkit-text-fill-color: transparent;
-            -webkit-background-clip: text;
-        }
+
 
         .description-container {
             margin-left: 60px;

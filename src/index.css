@@ -40,3 +40,11 @@ code {
   -md-user-select:none;
   user-select:none;
 }
+
+.handle {
+    background: rgb(203,66,252);
+    background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+
+}
