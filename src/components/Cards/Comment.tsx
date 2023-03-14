@@ -7,6 +7,7 @@ import { BiEdit } from "react-icons/bi";
 import { GrFormClose } from "react-icons/gr";
 import { BiArrowBack } from "react-icons/bi";
 import { GiCheckMark } from "react-icons/gi";
+import PostProfile from "./PostProfile";
 
 const Comment = ({ comments, setRefetch, postId }: any) => {
   const [address, setAddress] = useState();
@@ -15,6 +16,8 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
   const [commentDetails, setCommentDetails] = useState<any>();
   const [commentId, setCommentId] = useState("");
   const [isUpdated, setIsUpdated] = useState(false);
+  const [postProfileStatus, setPostProfileStatus] = useState(false);
+  const [commentedProfileAddress, setCommentedProfileAddress] = useState(false);
 
   useEffect(() => {
     getAddress();
@@ -69,6 +72,28 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
   };
   return (
     <>
+      {postProfileStatus && (
+        <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+          <div className="text-white flex items-center justify-center flex m-auto h-screen">
+            <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white">
+              <div className="flex justify-between p-3 border-b ">
+                <p className="text-xl font-bold">Profile Details</p>
+                <div
+                  className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                  onClick={() => {
+                    setPostProfileStatus(false);
+                    setRefetch(true);
+                  }}
+                >
+                  <GrFormClose color="black" fontSize={25} />
+                </div>
+              </div>
+              <PostProfile post={commentedProfileAddress} />
+            </div>
+          </div>
+        </div>
+      )}
+
       {isUpdated && (
         <div
           className="absolute text-center  top-0 right-0 left-0 bottom-0 "
@@ -98,7 +123,14 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
 
                   <div className="flex gap-3 justify-between">
                     <div className="flex gap-3">
-                      <div style={{ height: "50px", width: "50px" }}>
+                      <div
+                        style={{ height: "50px", width: "50px" }}
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setCommentedProfileAddress(comment?.commenter);
+                          setPostProfileStatus(true);
+                        }}
+                      >
                         <img
                           alt="profile-picture"
                           height="50px"
