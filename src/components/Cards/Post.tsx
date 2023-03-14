@@ -74,7 +74,7 @@ const Post = (post: any) => {
               }}
             >
               <div className="flex justify-between p-3 border-b ">
-                <p className="text-xl font-bold">Liked Profiles</p>
+                <p className="text-xl font-bold">Liked By</p>
                 <div
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                   onClick={() => {
@@ -109,7 +109,7 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <Comment comment={postComments} />
+                <Comment comments={postComments} postId={post?.post?.postId} />
               </div>
             </div>
           </div>
@@ -173,10 +173,11 @@ const Post = (post: any) => {
             )}
             <div className=" flex gap-7 bottom-menu-container items-center">
               <div
-                className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex "
+                className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 "
                 onClick={() => setCommentStatus(true)}
               >
-                <TbMessage fontSize={18} />{" "}
+                <TbMessage fontSize={18} />
+                <p>{postComments?.length}</p>
               </div>
 
               <div className="flex items-center">
@@ -197,12 +198,17 @@ const Post = (post: any) => {
                     </>
                   ) : (
                     <>
-                      <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
+                      <BsHeart
+                        fontSize={15}
+                        className="text-fuchsia-500 mt-1 "
+                        onClick={() => setLikedProfileStatus(true)}
+                      />
                     </>
                   )}
-                  <p onClick={() => setLikedProfileStatus(true)}>{post?.post?.likes.length}</p>
+                  <p className="prevent-default" onClick={() => setLikedProfileStatus(true)}>
+                    {post?.post?.likes.length}
+                  </p>
                 </div>
-                <p className="text-sm text-fuchsia-700 ">{post?.chat?.likes}</p>
               </div>
             </div>
             <style>

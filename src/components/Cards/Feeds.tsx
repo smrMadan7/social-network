@@ -34,8 +34,6 @@ const Feeds = (post: any) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  debugger;
-
   useEffect(() => {
     setPostProfileStatus(false);
     setCommentStatus(false);
@@ -263,7 +261,7 @@ const Feeds = (post: any) => {
                           <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
                         </div>
                       )}
-                      <p className="text-xl font-bold">Liked Profiles</p>
+                      <p className="text-xl font-bold">Liked By</p>
                       <div
                         className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                         onClick={() => {
@@ -299,9 +297,9 @@ const Feeds = (post: any) => {
                     className="flex items-center gap-1 text-center"
                     onClick={() => setPostProfileStatus(true)}
                   >
-                    <p className="text-lg  font-semibold">{post?.post?.displayName}</p>
+                    <p className="text-md  font-semibold">{post?.post?.displayName}</p>
 
-                    <p className="text-lg handle">@{post?.post?.handle}</p>
+                    <p className="text-md handle">@{post?.post?.handle}</p>
                     {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
                   <div className="flex gap-2 items-center text-center">
@@ -416,7 +414,7 @@ const Feeds = (post: any) => {
                     )}
                   </>
                 )}
-                {post?.post?.likes?.length > 0 && (
+                {(post?.post?.likes?.length > 0 || isLiked) && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
                     likes
                   </div>

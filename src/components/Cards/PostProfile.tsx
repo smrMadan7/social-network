@@ -11,6 +11,7 @@ const PostProfile = ({ postDetails, post }: any) => {
   const [isTeam, setIsTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [profileUrl, setProfileUrl] = useState("");
+  const [profileAddress, setProfileAddress] = useState();
 
   const [moreOrg, setMoreOrg] = useState<any>();
   const [moreOrgStatus, setMoreOrgStatus] = useState(false);
@@ -30,8 +31,16 @@ const PostProfile = ({ postDetails, post }: any) => {
 
   useEffect(() => {
     setIsLoading(false);
-    fetchUser();
+    if (post?.post?.createdBy) {
+      setProfileAddress(post?.post?.createdBy);
+    } else {
+      setProfileAddress(post);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [profileAddress]);
 
   useEffect(() => {
     setMoreOrg(organizations);
@@ -51,11 +60,11 @@ const PostProfile = ({ postDetails, post }: any) => {
       redirect: "follow",
     };
 
-    fetch(`${getUser}${post?.post?.createdBy}`, requestOptions)
+    fetch(`${getUser}${profileAddress}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        setIsLoading(false);
         if (result.status === true) {
+          setIsLoading(false);
           setDetails(result.data);
           setProfileUrl(`${ipfsGateway}${result?.data?.profilePictureUrl}`);
           if (result?.data?.type === roles[0]) {
@@ -74,8 +83,8 @@ const PostProfile = ({ postDetails, post }: any) => {
   return (
     <>
       <div
-        className="overflow-y-auto h-250 md:h-150"
-        style={isMember ? { height: "250px" } : { height: "150px" }}
+        className="overflow-y-auto relative "
+        style={isMember ? { height: "250px" } : { height: "250px" }}
       >
         {isMember && (
           <div className="w-full flex flex-col text-black font-2xl">
@@ -254,7 +263,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             </div>
             {/* About*/}
 
-            <div className="text-md font-medium px-5 mt-2 flex flex-col md:flex-row md:items-center mb-3">
+            <div className="text-md font-medium px-5 mt-2 flex flex-col md:flex-row  mb-3">
               About:
               <p className="px-4 font-light">{details?.bio}</p>
             </div>
@@ -279,12 +288,12 @@ const PostProfile = ({ postDetails, post }: any) => {
                 <div className="flex  w-full gap-3 font-light">
                   <div className="appearance-none block leading-tight focus:outline-none focus:bg-white">
                     {`${details?.organizationName}`}
-                    <span className="handle"> @{details?.handle}</span>
+                    <span className="handle font-bold"> @{details?.handle}</span>
                   </div>
                 </div>
 
                 {/* about */}
-                <div className="text-md font-medium mt-3 flex items-center gap-2">
+                <div className="text-md font-medium mt-3 flex  gap-2">
                   About:
                   <p className=" font-light">{details?.desc}</p>
                 </div>
@@ -292,7 +301,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             </div>
             {/* Social */}
 
-            <div className="flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3 ">
+            <div className="absolute bottom-0 flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3 ">
               <div className="flex gap-3">
                 <a href={details?.social?.twitter} target="_blank">
                   <AiFillTwitterCircle size={30} color="blue" />

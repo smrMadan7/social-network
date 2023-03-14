@@ -137,7 +137,7 @@ const Member = () => {
   };
 
   const checkHandle = (event: any) => {
-    if (event.target.value.length > 3) {
+    if (event.target.value.length > 1) {
       var requestOptions: any = {
         method: "GET",
         redirect: "follow",
@@ -529,7 +529,7 @@ const Member = () => {
                   <div className="flex  mx-1 mt-3  ">
                     <div className="w-full md:w-full px-3  md:mb-0">
                       <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                        Bio:
+                        Bio:*
                       </label>
                       <textarea
                         onChange={(e) => setBio(e.target.value)}
