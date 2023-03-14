@@ -198,10 +198,16 @@ const Post = (post: any) => {
                     </>
                   ) : (
                     <>
-                      <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
+                      <BsHeart
+                        fontSize={15}
+                        className="text-fuchsia-500 mt-1 "
+                        onClick={() => setLikedProfileStatus(true)}
+                      />
                     </>
                   )}
-                  <p onClick={() => setLikedProfileStatus(true)}>{post?.post?.likes.length}</p>
+                  <p className="prevent-default" onClick={() => setLikedProfileStatus(true)}>
+                    {post?.post?.likes.length}
+                  </p>
                 </div>
               </div>
             </div>
