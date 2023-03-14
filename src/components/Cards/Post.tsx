@@ -5,14 +5,17 @@ import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { GrFormClose } from "react-icons/gr";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { ipfsGateway } from "../../constants/AppConstants";
+import { getComment, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import Comment from "./Comment";
 import LikedProfile from "./LikedProfile";
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
   const { appState }: any = useUserContext();
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
+  const [postComments, setPostComments] = useState<any>();
+  const [commentStatus, setCommentStatus] = useState(false);
 
   const userImageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
@@ -22,6 +25,7 @@ const Post = (post: any) => {
   myHeaders.append("Content-Type", "application/json");
 
   useEffect(() => {
+    setCommentStatus(false);
     setLikedProfileStatus(false);
     fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
       .then((response) => response.json())
@@ -33,7 +37,27 @@ const Post = (post: any) => {
       .catch((error) => {
         console.log("error in new post is ", error);
       });
+
+    getPostComments();
   }, []);
+
+  // Get the post comments
+  const getPostComments = async () => {
+    fetch(`${getComment}${post?.post?.postId}`, {})
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status !== false) {
+          setPostComments(
+            result?.data?.comments?.sort((firstComment: any, secondComment: any) => {
+              return firstComment.timestamp - secondComment.timestamp;
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        console.log("Erro while getting comments ", error);
+      });
+  };
 
   return (
     <>
@@ -62,6 +86,30 @@ const Post = (post: any) => {
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
                 <LikedProfile post={post} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {commentStatus && (
+        <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+          <div className="text-white flex items-center justify-center flex m-auto h-screen">
+            <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
+              <div className="flex justify-between p-3 border-b ">
+                <p className="text-xl font-bold">Comments</p>
+                <div
+                  className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                  onClick={() => {
+                    setCommentStatus(false);
+                    getPostComments();
+                  }}
+                >
+                  <GrFormClose color="black" fontSize={25} />
+                </div>
+              </div>
+              <div className="h-2/3 overflow-y-auto mt-2 ">
+                <Comment comment={postComments} />
               </div>
             </div>
           </div>
@@ -124,16 +172,19 @@ const Post = (post: any) => {
               </div>
             )}
             <div className=" flex gap-7 bottom-menu-container items-center">
-              <div className=" px-2 py-2 ">
-                <TbMessage fontSize={18} className="text-indigo-200  " />{" "}
+              <div
+                className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex "
+                onClick={() => setCommentStatus(true)}
+              >
+                <TbMessage fontSize={18} />{" "}
               </div>
+
               <div className="flex items-center">
                 <div className=" px-2 py-2 ">
                   <BsArrowLeftRight fontSize={18} className="text-violet-200" />
                 </div>
                 <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
               </div>
-
               <div className="flex items-center text-center">
                 <div className="rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto">
                   {post?.post?.likes.length > 0 ? (
