@@ -104,7 +104,9 @@ const LikedProfile = ({ post }: any) => {
                   ></img>
                 </div>
                 <div className="flex flex-col">
-                  <div>{likedProfile?.displayName} </div>
+                  <div>
+                    {likedProfile?.displayName} {likedProfile?.organizationName}{" "}
+                  </div>
 
                   <div>
                     <span className="handle font-bold">@{likedProfile?.handle}</span>
