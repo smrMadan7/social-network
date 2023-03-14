@@ -415,7 +415,7 @@ const Feeds = (post: any) => {
                 )}
                 {post?.post?.likes?.length > 0 && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
-                    Likes
+                    likes
                   </div>
                 )}
               </div>
