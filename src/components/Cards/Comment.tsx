@@ -36,7 +36,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
   };
 
   const commentUpdate = () => {
-    console.log("commend details", commentDetails);
     const updatedObj = {
       postId: postId,
       commentId: commentDetails?.commentId,

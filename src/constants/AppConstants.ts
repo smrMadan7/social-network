@@ -38,6 +38,7 @@ export const getPostById = `${baseUrl}/api/post/getPostByWallet/`;
 export const getFeeds = `${baseUrl}/api/feed/getFeed/`;
 export const likeApi = `${baseUrl}/api/post/like`;
 export const postComment = `${baseUrl}/api/post/comment`;
+export const getPostByPostId = `${baseUrl}/api/post/get/`;
 
 export const getComment = `${baseUrl}/api/post/comments/get/`;
 export const updateComment = `${baseUrl}/api/post/comments/edit`;

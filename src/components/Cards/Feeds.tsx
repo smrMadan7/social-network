@@ -261,7 +261,7 @@ const Feeds = (post: any) => {
                           <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
                         </div>
                       )}
-                      <p className="text-xl font-bold">Liked Profiles</p>
+                      <p className="text-xl font-bold">Liked By</p>
                       <div
                         className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                         onClick={() => {
@@ -414,7 +414,7 @@ const Feeds = (post: any) => {
                     )}
                   </>
                 )}
-                {post?.post?.likes?.length > 0 && (
+                {(post?.post?.likes?.length > 0 || isLiked) && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
                     likes
                   </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { getLikedUsers, ipfsGateway } from "../../constants/AppConstants";
+import { getLikedUsers, getPostByPostId, ipfsGateway } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
 import PostProfile from "./PostProfile";
 
@@ -8,18 +8,18 @@ const LikedProfile = ({ post }: any) => {
   const [likedProfiles, setLikedProfiles] = useState<any>();
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [likedProfileAddress, setLikedProfileAddress] = useState();
-
+  const [isEmpty, setIsEmpty] = useState(false);
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   useEffect(() => {
     setPostProfileStatus(false);
-    getLikedProfiles();
+    getPost();
   }, []);
 
-  const getLikedProfiles = () => {
+  const getLikedProfiles = (likes: any) => {
     const postIdData = {
-      address: post?.post?.likes,
+      address: likes,
     };
     var requestOptions: any = {
       method: "POST",
@@ -40,6 +40,23 @@ const LikedProfile = ({ post }: any) => {
       });
   };
 
+  const getPost = () => {
+    fetch(`${getPostByPostId}${post?.post?.postId}`, {})
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status !== false) {
+          if (result.data?.data?.likes.length > 0) {
+            getLikedProfiles(result.data?.data?.likes);
+          } else {
+            setIsEmpty(true);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("Error occured while getting liked profiles", error);
+      });
+  };
+
   return (
     <>
       {postProfileStatus && (
@@ -52,7 +69,7 @@ const LikedProfile = ({ post }: any) => {
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                   onClick={() => {
                     setPostProfileStatus(false);
-                    getLikedProfiles();
+                    getPost();
                   }}
                 >
                   <GrFormClose color="black" fontSize={25} />
@@ -67,7 +84,6 @@ const LikedProfile = ({ post }: any) => {
         <>
           {likedProfiles?.map((likedProfile: any, index: number) => {
             const imageUrl = `${ipfsGateway}${likedProfile.profilePictureUrl}`;
-            console.log("liked profile is ", likedProfile);
 
             return (
               <div key={index} className="flex p-3 text-sm gap-3 items-center">
@@ -99,8 +115,8 @@ const LikedProfile = ({ post }: any) => {
         </>
       ) : (
         <>
-          <div className="absolute h-full w-full flex items-center justify-center m-auto">
-            {!postProfileStatus && <Loading />}
+          <div className="absolute w-full flex items-center justify-center m-auto">
+            {isEmpty ? <div className="absolute top-0 ">No Likes Yet!</div> : <Loading />}
           </div>
         </>
       )}

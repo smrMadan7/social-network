@@ -203,7 +203,6 @@ const Post = (post: any) => {
                   )}
                   <p onClick={() => setLikedProfileStatus(true)}>{post?.post?.likes.length}</p>
                 </div>
-                <p className="text-sm text-fuchsia-700 ">{post?.chat?.likes}</p>
               </div>
             </div>
             <style>
