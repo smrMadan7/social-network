@@ -322,7 +322,6 @@ const Feeds = (post: any) => {
                       className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
                       onClick={(e) => {
                         if (!isDisLiked) {
-                          console.log("works1");
                           setIsLiked(true);
                           setIsDisLiked(true);
                           incrementAndDecrementLike(e, post, "unlike");

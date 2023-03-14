@@ -567,24 +567,22 @@ const Member = () => {
                                 <p className="flex gap-3 flex-wrap">
                                   {selectedRoles?.map((role: string, index: number) => {
                                     return (
-                                      <>
-                                        <div
-                                          key={uuidv4() + index}
-                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          {role}
-                                          <IoIosClose
-                                            fontSize={20}
-                                            color="black"
-                                            className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              cancelEnteredValue(e, role, "role");
-                                            }}
-                                          />
-                                        </div>
-                                      </>
+                                      <div
+                                        key={uuidv4() + index}
+                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {role}
+                                        <IoIosClose
+                                          fontSize={20}
+                                          color="black"
+                                          className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            cancelEnteredValue(e, role, "role");
+                                          }}
+                                        />
+                                      </div>
                                     );
                                   })}
                                 </p>
@@ -631,24 +629,22 @@ const Member = () => {
                                   {selectedOrganization?.map(
                                     (organization: string, index: number) => {
                                       return (
-                                        <>
-                                          <div
-                                            key={uuidv4()}
-                                            className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            {organization}
-                                            <IoIosClose
-                                              fontSize={20}
-                                              color="black"
-                                              className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                cancelEnteredValue(e, organization, "organization");
-                                              }}
-                                            />
-                                          </div>
-                                        </>
+                                        <div
+                                          key={uuidv4()}
+                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          {organization}
+                                          <IoIosClose
+                                            fontSize={20}
+                                            color="black"
+                                            className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              cancelEnteredValue(e, organization, "organization");
+                                            }}
+                                          />
+                                        </div>
                                       );
                                     }
                                   )}
@@ -698,24 +694,22 @@ const Member = () => {
                               <p className="flex gap-3 flex-wrap">
                                 {selectedSkills?.map((skill: string, index: number) => {
                                   return (
-                                    <>
-                                      <div
-                                        key={uuidv4()}
-                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        {skill}
-                                        <IoIosClose
-                                          fontSize={20}
-                                          color="black"
-                                          className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            cancelEnteredValue(e, skill, "skill");
-                                          }}
-                                        />
-                                      </div>
-                                    </>
+                                    <div
+                                      key={uuidv4()}
+                                      className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {skill}
+                                      <IoIosClose
+                                        fontSize={20}
+                                        color="black"
+                                        className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          cancelEnteredValue(e, skill, "skill");
+                                        }}
+                                      />
+                                    </div>
                                   );
                                 })}
                               </p>

@@ -95,6 +95,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
               <div key={index} className="mb-5 relative ">
                 <div className="">
                   {/* user profile */}
+
                   <div className="flex gap-3 justify-between">
                     <div className="flex gap-3">
                       <div style={{ height: "50px", width: "50px" }}>
@@ -115,60 +116,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                           </p>
 
                           <span className="font-normal text-gray"> {convertedDate}</span>
-                        </div>
-
-                        <div>
-                          {" "}
-                          <div className=" flex flex-col gap-1">
-                            {/* comment content */}
-                            {comment?.commenter === address ? (
-                              <>
-                                {isUpdatePopup && commentId === comment?.commentId ? (
-                                  <input
-                                    type="text"
-                                    onClick={(e) => e.stopPropagation()}
-                                    contentEditable="true"
-                                    autoFocus
-                                    className="text-black outline-none prevent-select rounded-lg p-2"
-                                    onChange={(e) => setUpdatedComment(e.target.value)}
-                                    style={
-                                      isUpdatePopup && comment?.commentId == commentId
-                                        ? { border: "1px solid grey" }
-                                        : {}
-                                    }
-                                    value={updatedComment}
-                                  ></input>
-                                ) : (
-                                  <input
-                                    type="text"
-                                    onClick={(e) => e.stopPropagation()}
-                                    contentEditable="true"
-                                    className="text-black outline-none prevent-select rounded-lg p-2 break-words"
-                                    style={
-                                      isUpdatePopup && comment?.commentId == commentId
-                                        ? { border: "1px solid grey" }
-                                        : {}
-                                    }
-                                    value={comment?.comment}
-                                  ></input>
-                                )}
-                              </>
-                            ) : (
-                              <input
-                                type="text"
-                                className="text-black outline-none"
-                                readOnly
-                                value={comment?.comment}
-                              ></input>
-                            )}
-
-                            {/* like  */}
-                            {/* <div className="flex gap-1 items-center text-fuchsia-500 cursor-pointer">
-                              <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
-
-                              <span className="mb-1">2</span>
-                            </div> */}
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -192,6 +139,59 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                         </button>{" "}
                       </div>
                     )}
+                  </div>
+                  <div>
+                    {" "}
+                    <div className=" flex flex-col gap-1 whitespace-nowrap ml-14 md:ml-16">
+                      {/* comment content */}
+                      {comment?.commenter === address ? (
+                        <>
+                          {isUpdatePopup && commentId === comment?.commentId ? (
+                            <textarea
+                              onClick={(e) => e.stopPropagation()}
+                              contentEditable="true"
+                              autoFocus
+                              className="resize-none text-black outline-none prevent-select rounded-lg p-2"
+                              onChange={(e) => setUpdatedComment(e.target.value)}
+                              style={
+                                isUpdatePopup && comment?.commentId == commentId
+                                  ? {
+                                      border: "1px solid grey",
+                                    }
+                                  : {}
+                              }
+                              value={updatedComment}
+                            ></textarea>
+                          ) : (
+                            <textarea
+                              onClick={(e) => e.stopPropagation()}
+                              contentEditable="true"
+                              className="resize-none text-black outline-none prevent-select rounded-lg p-2 break-words"
+                              style={
+                                isUpdatePopup && comment?.commentId == commentId
+                                  ? { border: "1px solid grey" }
+                                  : {}
+                              }
+                              value={comment?.comment.substring(0, 110)}
+                            ></textarea>
+                          )}
+                        </>
+                      ) : (
+                        <input
+                          type="text"
+                          className="resize-none text-black prevent-select outline-none"
+                          readOnly
+                          value={comment?.comment}
+                        ></input>
+                      )}
+
+                      {/* like  */}
+                      {/* <div className="flex gap-1 items-center text-fuchsia-500 cursor-pointer">
+                              <BsHeart fontSize={15} className="text-fuchsia-500 cursor-pointer " />
+
+                              <span className="mb-1">2</span>
+                            </div> */}
+                    </div>
                   </div>
                 </div>
                 {isUpdatePopup && commentId == comment?.commentId && (

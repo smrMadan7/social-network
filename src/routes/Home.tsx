@@ -104,7 +104,6 @@ const Home = () => {
     } else {
       content = content;
     }
-    console.log("content is ", content);
 
     if (content !== "") {
       try {
