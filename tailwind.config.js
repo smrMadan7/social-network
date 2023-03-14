@@ -4,8 +4,12 @@ module.exports = {
   theme: {
     extend: {
       width: {
+        180: "180px",
+        250: "250px",
         300: "300px",
+        320: "320px",
         20: "20%",
+        23: "23%",
         25: "25%",
         30: "30%",
         40: "40%",
@@ -22,7 +26,14 @@ module.exports = {
       },
       height: {
         30: "30%",
+        100: "100px",
+        150: "150px",
+        200: "200px",
+        225: "225px",
         55: "55%",
+      },
+      mariginTop: {
+        133: "133px",
       },
       backgroundColor: {
         bgHover: "rgb(221 214 254)",

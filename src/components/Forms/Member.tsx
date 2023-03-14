@@ -302,8 +302,8 @@ const Member = () => {
         {warning && <Warning message="Something went wrong. Please try again!"></Warning>}
         {toast && <Warning message={toastMessage}></Warning>}
         {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center sm:w-full">
-            <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>
+          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center w-90 md:w-50">
+            <div className=" relative w-90 md:w-50" style={{ height: "50vh" }}>
               <div>
                 <Cropper
                   image={uploadedImage}
@@ -318,7 +318,7 @@ const Member = () => {
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-4 w-50 bg-gray-700 ">
+            <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
               <div className="flex justify-center items-center mt-3">
                 <input
                   id="small-range"
@@ -358,7 +358,7 @@ const Member = () => {
             {/* Member */}
 
             {formStatus !== "" && (
-              <div className="absolute flex items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center">
+              <div className="absolute flex items-center top-0 right-0 left-0 bottom-0 w-100 md:w-50 h-full m-auto justify-center">
                 <div className="relative z-10 border p-9 bg-white flex flex-col gap-4 w-70 rounded-lg items-center">
                   <form name="inputForm" onSubmit={inputFormSubmitHandler}>
                     <input
@@ -509,6 +509,7 @@ const Member = () => {
                             height="140px"
                             width="140px"
                             src={userImage}
+                            loading="lazy"
                           ></img>
                         </div>
                       </div>
@@ -542,11 +543,11 @@ const Member = () => {
                     </div>
                   </div>
 
-                  <div className="flex mb-3 sm:flex-col md:flex-row sm:gap-2 justify-between">
+                  <div className="flex mb-3 flex-col md:flex-row gap-2 justify-between md:gap-1">
                     {/* Role Selection */}
                     <div className="md:w-50 flex mx-1 justify-between">
                       <div className="md:flex md:items-center md:gap-4 w-full md:w-full  px-3  md:mb-0">
-                        <label className="text-md font-bold block tracking-wide text-gray-700 sm:mb-2">
+                        <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700 sm:mb-2">
                           Role:
                         </label>
                         <div
@@ -566,24 +567,22 @@ const Member = () => {
                                 <p className="flex gap-3 flex-wrap">
                                   {selectedRoles?.map((role: string, index: number) => {
                                     return (
-                                      <>
-                                        <div
-                                          key={uuidv4() + index}
-                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          {role}
-                                          <IoIosClose
-                                            fontSize={20}
-                                            color="black"
-                                            className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              cancelEnteredValue(e, role, "role");
-                                            }}
-                                          />
-                                        </div>
-                                      </>
+                                      <div
+                                        key={uuidv4() + index}
+                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2  "
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {role}
+                                        <IoIosClose
+                                          fontSize={20}
+                                          color="black"
+                                          className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            cancelEnteredValue(e, role, "role");
+                                          }}
+                                        />
+                                      </div>
                                     );
                                   })}
                                 </p>
@@ -609,7 +608,7 @@ const Member = () => {
                     {/* Organization */}
                     <div className=" md:w-50 flex mx-1 justify-between ">
                       <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
-                        <label className="text-md font-bold block  tracking-wide text-gray-700 sm:mb-2">
+                        <label className="mb-1 md:mb-0 text-md font-bold block  tracking-wide text-gray-700 sm:mb-2">
                           Organization:
                         </label>
                         <div
@@ -630,24 +629,22 @@ const Member = () => {
                                   {selectedOrganization?.map(
                                     (organization: string, index: number) => {
                                       return (
-                                        <>
-                                          <div
-                                            key={uuidv4()}
-                                            className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            {organization}
-                                            <IoIosClose
-                                              fontSize={20}
-                                              color="black"
-                                              className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                cancelEnteredValue(e, organization, "organization");
-                                              }}
-                                            />
-                                          </div>
-                                        </>
+                                        <div
+                                          key={uuidv4()}
+                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          {organization}
+                                          <IoIosClose
+                                            fontSize={20}
+                                            color="black"
+                                            className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              cancelEnteredValue(e, organization, "organization");
+                                            }}
+                                          />
+                                        </div>
                                       );
                                     }
                                   )}
@@ -677,7 +674,7 @@ const Member = () => {
 
                   <div className="md:w-50 flex mx-1 justify-between">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
-                      <label className="text-md font-bold block tracking-wide text-gray-700">
+                      <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700">
                         Skill:
                       </label>
                       <div
@@ -697,24 +694,22 @@ const Member = () => {
                               <p className="flex gap-3 flex-wrap">
                                 {selectedSkills?.map((skill: string, index: number) => {
                                   return (
-                                    <>
-                                      <div
-                                        key={uuidv4()}
-                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        {skill}
-                                        <IoIosClose
-                                          fontSize={20}
-                                          color="black"
-                                          className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            cancelEnteredValue(e, skill, "skill");
-                                          }}
-                                        />
-                                      </div>
-                                    </>
+                                    <div
+                                      key={uuidv4()}
+                                      className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {skill}
+                                      <IoIosClose
+                                        fontSize={20}
+                                        color="black"
+                                        className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          cancelEnteredValue(e, skill, "skill");
+                                        }}
+                                      />
+                                    </div>
                                   );
                                 })}
                               </p>

@@ -18,6 +18,7 @@ code {
 
 ::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -32,4 +33,10 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #b3d1f1;
+}
+
+.prevent-select {
+  -webkit-user-select: none;
+  -md-user-select:none;
+  user-select:none;
 }

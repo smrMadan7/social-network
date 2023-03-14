@@ -11,6 +11,7 @@ import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
 import logo from "./../assets/Navbar/logo.svg";
 import fileCoinLogo from "./../assets/Auth/filecoin-logo.svg";
 import ipfsLogo from "./../assets/Auth/ipfs-logo.svg";
+import Footer from "../components/Footer/Footer";
 
 declare global {
   interface Window {
@@ -29,8 +30,6 @@ const SecureLayout = () => {
   const [warningMessage, setWarningMessage] = useState("Please Install MetaMask");
   const [isaddress, setIsAddress] = useState(false);
   const [isWallet, setIsWallet] = useState(false);
-
-  console.log();
 
   useEffect(() => {
     localStorage.setItem("currentLocation", location.pathname);
@@ -218,10 +217,22 @@ const SecureLayout = () => {
             <div className=" absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 text-center ">
               {(isaddress || isWallet) && (
                 <div className="p-5 flex justify-between items-center  gap-10 top-0">
-                  <img src={ipfsLogo} alt="ipfs-logo" width="48px" height="48px"></img>
+                  <img
+                    src={ipfsLogo}
+                    alt="ipfs-logo"
+                    width="48px"
+                    height="48px"
+                    loading="lazy"
+                  ></img>
 
-                  <img alt="app-logo" src={logo} width="100px" height="100px"></img>
-                  <img alt="file coin logo" src={fileCoinLogo} width="38px" height="38px"></img>
+                  <img alt="app-logo" src={logo} width="100px" height="100px" loading="lazy"></img>
+                  <img
+                    alt="file coin logo"
+                    src={fileCoinLogo}
+                    width="38px"
+                    height="38px"
+                    loading="lazy"
+                  ></img>
                 </div>
               )}
               {localStorage.getItem("isRegistered") && <Loading />}
@@ -243,7 +254,7 @@ const SecureLayout = () => {
                               onClick={signUser}
                             >
                               Sign-In
-                              <img src={logo} width="35px" height="35px"></img>
+                              <img src={logo} width="35px" height="35px" loading="lazy"></img>
                             </button>
                           </div>
                         </div>
@@ -259,7 +270,12 @@ const SecureLayout = () => {
                               onClick={borwserWalletHandler}
                             >
                               Browser Wallet
-                              <img src={metamaskLogo} width="30px" height="20px"></img>
+                              <img
+                                src={metamaskLogo}
+                                width="30px"
+                                height="20px"
+                                loading="lazy"
+                              ></img>
                             </button>
                           </div>
                         </div>
@@ -273,21 +289,38 @@ const SecureLayout = () => {
 
           {/* is meta mask is not installed */}
           {warning && (
-            <div className="z-10 absolute top-2 items-center flex justify-center w-full right-0 left-0 ">
-              <div
-                className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative w-300"
-                role="alert"
-              >
-                <div>
-                  <strong className="font-bold">{warningMessage}</strong>
-                </div>
-
+            <div className="prevent-select">
+              <div className="z-10 absolute top-2 items-center flex justify-center w-full right-0 left-0 ">
                 <div
-                  className=" cursor-pointer px-2 py-2 rounded-full hover:bg-white hover:animate-none"
-                  onClick={() => setWarning(false)}
+                  className="flex items-center justify-between bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative w-300"
+                  role="alert"
                 >
-                  <GrFormClose fontSize={25} />
+                  <div>
+                    <strong className="font-bold">{warningMessage}</strong>
+                  </div>
+
+                  <div
+                    className=" cursor-pointer px-2 py-2 rounded-full hover:bg-white hover:animate-none"
+                    // onClick={() => setWarning(false)}
+                  >
+                    <GrFormClose fontSize={25} />
+                  </div>
                 </div>
+              </div>
+              <div
+                className="absolute p-5 flex justify-between items-center  gap-10 top-0 bottom-0 right-0 left-0 m-auto"
+                style={{ zIndex: 14, width: "300px", height: "300px" }}
+              >
+                <img src={ipfsLogo} alt="ipfs-logo" width="48px" height="48px" loading="lazy"></img>
+
+                <img alt="app-logo" src={logo} width="100px" height="100px" loading="lazy"></img>
+                <img
+                  alt="file coin logo"
+                  src={fileCoinLogo}
+                  width="38px"
+                  height="38px"
+                  loading="lazy"
+                ></img>
               </div>
             </div>
           )}
@@ -296,6 +329,7 @@ const SecureLayout = () => {
         <>
           <Navbar />
           <Outlet />
+          <Footer />
         </>
       )}
     </>

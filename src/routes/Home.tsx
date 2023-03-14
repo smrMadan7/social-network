@@ -39,6 +39,8 @@ const Home = () => {
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
   const [ipfsPath, setIpfsPath] = useState<any>();
+  const [isReload, setIsReload] = useState(false);
+
   useEffect(() => {
     setIsLoading(false);
     setIsBold(false);
@@ -48,9 +50,11 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    setFilterStatus("timeline");
     getAllPosts();
+  }, [isReload]);
 
+  useEffect(() => {
+    setFilterStatus("timeline");
     if (!appState?.action?.user) {
       window.location.reload();
     }
@@ -91,11 +95,11 @@ const Home = () => {
 
     const contentElement: any = document.getElementById("content");
     var content = contentElement.innerHTML;
-    if (isBold) {
+    if (isBold && content) {
       content = `<span class="font-bold">${content}</span>`;
-    } else if (isItalic) {
+    } else if (isItalic && content) {
       content = `<span class="italic">${content}</span>`;
-    } else if (isBold && isItalic) {
+    } else if (isBold && isItalic && content) {
       content = `<span class="font-bold italic">${content}</span>`;
     } else {
       content = content;
@@ -111,14 +115,11 @@ const Home = () => {
             } else {
               setIsLoading(true);
             }
-
             const provider: any = window.ethereum;
             const web3: any = new Web3(provider);
             const userAccount = await web3.eth.getAccounts();
             const address = userAccount[0];
-
             const currentTimeStamp = Math.floor(Date.now() / 1000);
-
             const uri: any = {
               version: "1.0.0",
               description: "",
@@ -137,27 +138,25 @@ const Home = () => {
               address: address,
               postData: uri,
             };
-
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-
             var requestOptions: any = {
               method: "POST",
               headers: myHeaders,
               body: JSON.stringify(post),
               redirect: "follow",
             };
-            fetch(createPost, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  setIsPost(false);
-                  setIsLoading(false);
-                  setFilePath("");
-                  getAllPosts();
-                }
-              })
-              .catch((error) => {});
+            // fetch(createPost, requestOptions)
+            //   .then((response) => response.json())
+            //   .then((result) => {
+            //     if (result.status !== false) {
+            //       setIsPost(false);
+            //       setIsLoading(false);
+            //       setFilePath("");
+            //       getAllPosts();
+            //     }
+            //   })
+            //   .catch((error) => {});
           })
           .catch((error) => {
             setWarningMessage("Something went wrong!");
@@ -230,19 +229,21 @@ const Home = () => {
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
         <div style={{ height: "90px" }}></div>
 
-        <div className="flex gap-5 " style={{ height: "78vh" }}>
+        <div className="flex gap-5" style={{ height: "78vh" }}>
           <div className="flex gap-5 flex-col w-full md:w-65 ">
             {/* Enter message  */}
-            <div className="flex gap-4 p-7 border rounded-lg bg-white">
-              <div className="border rounded-full px-4 py-4 bg-black">
-                <FaUserAlt color="white" />
+            <div className="flex gap-4 p-7 px-2 md:px-7 border rounded-lg bg-white">
+              <div className="">
+                <div className="border rounded-full px-4 py-4 bg-black">
+                  <FaUserAlt color="white" />
+                </div>
               </div>
               <div
-                className="flex  gap-3 text-center items-center bg-gray-100 border w-full rounded-lg px-3 py-3 cursor-pointer "
+                className="flex  gap-2 md:gap-3 text-center items-center bg-gray-100 border w-full rounded-lg px-3 py-3 cursor-pointer "
                 onClick={() => setIsPost(true)}
               >
                 <BiMessageAltEdit fontSize={25} />
-                <p className="items-center">What's happening?</p>
+                <p className="items-center whitespace-nowrap">What's happening?</p>
               </div>
             </div>
 
@@ -259,14 +260,24 @@ const Home = () => {
                   }
                   onClick={() => setFilterStatus("timeline")}
                 >
-                  <BiMenu fontSize={20} />
+                  <BiMenu
+                    fontSize={20}
+                    className="origin-center hover:rotate-45"
+                    style={{ transition: "1s" }}
+                  />
                   Timeline
                 </button>
                 <button
                   className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
-                  onClick={() => getAllPosts()}
+                  onClick={() => {
+                    setIsReload(true);
+                  }}
                 >
-                  <AiOutlineReload fontSize={23} />
+                  <AiOutlineReload
+                    fontSize={23}
+                    className="origin-center hover:rotate-180"
+                    style={{ transition: "1s" }}
+                  />
                   Reload
                 </button>
               </div>
@@ -296,11 +307,13 @@ const Home = () => {
                 <div className="p-7 flex justify-center bg-white border rounded-lg ">
                   <div className="flex flex-col items-center gap-2 text-violet-700 ">
                     <FaThList fontSize={20} />
-                    <h1 className=" text-md text-slate-400">You haven't posted anything yet!</h1>
+                    <h1 className=" text-md text-slate-400 text-center">
+                      You haven't posted anything yet!
+                    </h1>
                   </div>
                 </div>
               ) : (
-                <div className=" mb-2">
+                <div className=" mb-9 md:mb-2">
                   {posts?.map((post: any, index: any) => {
                     return (
                       <div key={uuidv4()}>
@@ -330,12 +343,15 @@ const Home = () => {
       {/* Add new post */}
 
       {isPost && (
-        <div className=" absolute w-full top-0 h-screen ">
+        <div className=" absolute w-full top-0 h-screen m-auto ">
           <div className=" flex top-0 bottom-0 right-0 left-0  m-auto">
-            <div className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 bg-blackOverlay">
+            <div
+              className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 bg-blackOverlay"
+              style={{ zIndex: 20 }}
+            >
               {/* new post content */}
-              <div className="relative flex flex-col  md:w-50 sm:w-70 bg-white rounded-lg overflow-y-auto h-5/6 ">
-                <div className="flex justify-between p-4">
+              <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto h-5/6 md:h-5/6">
+                <div className="flex justify-between p-4 w-100">
                   <p className="font-semibold text-xl">Create Post</p>
                   <div
                     className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -350,8 +366,8 @@ const Home = () => {
                 <div className="border-t-2  w-100 ">
                   <form onSubmit={publishPost}>
                     {cropStatus ? (
-                      <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center sm:w-full">
-                        <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>
+                      <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-full h-full m-auto justify-center ">
+                        <div className=" relative w-90 sm:w-50" style={{ height: "50vh" }}>
                           <div>
                             <Cropper
                               image={filePath}
@@ -364,7 +380,7 @@ const Home = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex flex-col gap-4 w-50 bg-gray-700 ">
+                        <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
                           <div className="flex justify-center items-center mt-3">
                             <input
                               id="small-range"
@@ -466,10 +482,49 @@ const Home = () => {
                     />
                     <div className="w-full border-t-2">
                       <div className="mt-3 p-4">
+                        {/* <input
+                          placeholder="Share something!"
+                          value={content}
+                          onChange={(e) => {
+                            setContent(e.target.value);
+                            if (e.target.value.includes("http")) {
+                              const firstIndex = e.target.value.indexOf("http");
+                              const lastIndex = e.target.value.indexOf(" ", firstIndex);
+                              console.log("first index is", firstIndex, "last index is", lastIndex);
+                            }
+                          }}
+                          className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
+                          style={
+                            isBold
+                              ? { fontWeight: "bold" }
+                              : isCode
+                              ? { background: "gray" }
+                              : isItalic
+                              ? { fontStyle: "italic" }
+                              : isBold && isCode && isItalic
+                              ? {
+                                  fontWeight: "bold",
+                                  background: "grap",
+                                  fontStyle: "italic",
+                                }
+                              : isCode && isItalic
+                              ? {
+                                  background: "gray",
+                                  fontStyle: "italic",
+                                }
+                              : isBold && isItalic
+                              ? {
+                                  fontStyle: "italic",
+                                  fontWeight: "bold",
+                                }
+                              : {}
+                          }
+                        ></input> */}
                         <div
                           className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
                           contentEditable="true"
                           id="content"
+                          onKeyDown={(e: any) => {}}
                           data-placeholder="What's happening?"
                           style={
                             isBold
@@ -500,11 +555,18 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className=" overflow-y-auto " style={{ height: "230px" }}>
-                      {filePath && !cropStatus && <img alt="uploaded Image" src={filePath}></img>}
+                    <div className=" overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
+                      {filePath && !cropStatus && (
+                        <img
+                          alt="uploaded Image"
+                          className="h-150 md:h-225"
+                          src={filePath}
+                          loading="lazy"
+                        ></img>
+                      )}
                     </div>
 
-                    <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">
+                    <div className="absolute bottom-3 right-3 bpx-5 flex justify-end w-full items-center gap-5 mt-3 md:mt-0 mb-2">
                       <div className="flex gap-4 text-violet-700 font-semibold">
                         <div className="relative cursor-pointer" onClick={mediaUpload}>
                           <MdOutlinePermMedia fontSize={20} />

@@ -212,8 +212,8 @@ const Team = () => {
         {toast && <Warning message={toastMessage}></Warning>}
 
         {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-50 h-full m-auto justify-center sm:w-full">
-            <div className=" relative w-50 sm:w-100" style={{ height: "50vh" }}>
+          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-90 md:w-50 h-full m-auto justify-center">
+            <div className=" relative  w-90 md:w-50" style={{ height: "50vh" }}>
               <div>
                 <Cropper
                   image={uploadedImage}
@@ -228,7 +228,7 @@ const Team = () => {
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-4 w-50 bg-gray-700 ">
+            <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
               <div className="flex justify-center items-center mt-3">
                 <input
                   id="small-range"
@@ -382,6 +382,7 @@ const Team = () => {
                             height="140px"
                             width="140px"
                             src={userImage}
+                            loading="lazy"
                           ></img>
                         </div>
                       </div>
@@ -415,7 +416,7 @@ const Team = () => {
                   </div>
 
                   {/* actions  */}
-                  <div className="flex md:justify-end sm:justify-center gap-4 px-5 text-white py-3">
+                  <div className="flex md:justify-end justify-end gap-4 px-5 text-white py-3">
                     <button
                       type="button"
                       className="sm:w-30 md:w-20 border rounded-lg px-3 py-2 bg-violet-700 hover:bg-violet-900"

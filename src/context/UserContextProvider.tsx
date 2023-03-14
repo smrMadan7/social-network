@@ -1,8 +1,4 @@
-import { MetaMaskInpageProvider } from "@metamask/providers";
-import { createContext, useContext, useEffect, useReducer } from "react";
-import { useNavigate } from "react-router";
-import Web3 from "web3";
-import { getUser } from "../constants/AppConstants";
+import { createContext, useContext, useReducer } from "react";
 
 export const UserContext = createContext({});
 

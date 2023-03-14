@@ -173,7 +173,7 @@ const SignInCard = () => {
                   onClick={signUser}
                 >
                   Sign-In With Us
-                  <img src={appLogo} width="30px" height="20px"></img>
+                  <img src={appLogo} width="30px" height="20px" loading="lazy"></img>
                 </button>
               </div>
             </div>
@@ -191,7 +191,7 @@ const SignInCard = () => {
                   onClick={borwserWalletHandler}
                 >
                   Browser Wallet
-                  <img src={metamaskLogo} width="30px" height="20px"></img>
+                  <img src={metamaskLogo} width="30px" height="20px" loading="lazy"></img>
                 </button>
               </div>
             </div>

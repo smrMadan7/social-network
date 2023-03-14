@@ -31,9 +31,15 @@ export const addMember = `${baseUrl}/api/user/registerMember`;
 export const addTeam = `${baseUrl}/api/user/registerTeam`;
 export const handleCheck = `${baseUrl}/api/user/checkHandleAvailability/`;
 export const getUser = `${baseUrl}/api/user/getProfile/`;
+export const getLikedUsers = `${baseUrl}/api/user/getProfiles/`; // post method param address | type array
+
 export const createPost = `${baseUrl}/api/post/create`;
 export const getPostById = `${baseUrl}/api/post/getPostByWallet/`;
 export const getFeeds = `${baseUrl}/api/feed/getFeed/`;
 export const likeApi = `${baseUrl}/api/post/like`;
+export const postComment = `${baseUrl}/api/post/comment`;
+
+export const getComment = `${baseUrl}/api/post/comments/get/`;
+export const updateComment = `${baseUrl}/api/post/comments/edit`;
 
 export const roles = ["member", "team"];
