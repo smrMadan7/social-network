@@ -402,7 +402,7 @@ const Team = () => {
                   <div className="flex  mx-1 mt-3  ">
                     <div className="w-full md:w-full px-3  md:mb-0">
                       <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                        Description:
+                        Description:*
                       </label>
                       <textarea
                         onChange={(e) => setDescription(e.target.value)}
