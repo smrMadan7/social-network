@@ -297,9 +297,9 @@ const Feeds = (post: any) => {
                     className="flex items-center gap-1 text-center"
                     onClick={() => setPostProfileStatus(true)}
                   >
-                    <p className="text-lg  font-semibold">{post?.post?.displayName}</p>
+                    <p className="text-md  font-bold">{post?.post?.displayName}</p>
 
-                    <p className="text-lg handle">@{post?.post?.handle}</p>
+                    <p className="text-md handle">@{post?.post?.handle}</p>
                     {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
                   <div className="flex gap-2 items-center text-center">
