@@ -63,8 +63,8 @@ const PostProfile = ({ postDetails, post }: any) => {
     fetch(`${getUser}${profileAddress}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        setIsLoading(false);
         if (result.status === true) {
+          setIsLoading(false);
           setDetails(result.data);
           setProfileUrl(`${ipfsGateway}${result?.data?.profilePictureUrl}`);
           if (result?.data?.type === roles[0]) {

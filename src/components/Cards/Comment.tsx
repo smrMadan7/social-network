@@ -73,9 +73,9 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
   return (
     <>
       {postProfileStatus && (
-        <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+        <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay">
           <div className="text-white flex items-center justify-center flex m-auto h-screen">
-            <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white">
+            <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white duration-75">
               <div className="flex justify-between p-3 border-b ">
                 <p className="text-xl font-bold">Profile Details</p>
                 <div
