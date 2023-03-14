@@ -116,7 +116,9 @@ const LikedProfile = ({ post }: any) => {
       ) : (
         <>
           <div className="absolute w-full flex items-center justify-center m-auto">
-            {isEmpty ? <div className="absolute top-0 ">No Likes Yet!</div> : <Loading />}
+            {!likedProfiles && (
+              <>{isEmpty ? <div className="absolute top-0 ">No Likes Yet!</div> : <Loading />}</>
+            )}
           </div>
         </>
       )}
