@@ -171,13 +171,13 @@ const Home = () => {
         setWarning(true);
       }
     } else {
-      setWarningMessage("Nothing to post!!");
+      setWarningMessage("Content is required!");
       setWarning(true);
       setIsLoading(false);
       setTimeout(() => {
         setWarning(false);
         setWarningMessage("");
-      }, 500);
+      }, 2000);
     }
   };
 
