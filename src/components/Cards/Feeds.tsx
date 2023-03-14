@@ -35,6 +35,8 @@ const Feeds = (post: any) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
+  debugger;
+
   useEffect(() => {
     setPostProfileStatus(false);
     setCommentStatus(false);
