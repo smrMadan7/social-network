@@ -92,6 +92,7 @@ const LikedProfile = ({ post }: any) => {
                   onClick={() => {
                     setLikedProfiles(false);
                     setLikedProfileAddress(likedProfile.address);
+
                     setPostProfileStatus(true);
                   }}
                 >
@@ -116,9 +117,7 @@ const LikedProfile = ({ post }: any) => {
       ) : (
         <>
           <div className="absolute w-full flex items-center justify-center m-auto">
-            {!likedProfiles && (
-              <>{isEmpty ? <div className="absolute top-0 ">No Likes Yet!</div> : <Loading />}</>
-            )}
+            {!likedProfiles ? <div className="absolute top-0 ">No Likes Yet!</div> : <Loading />}
           </div>
         </>
       )}
