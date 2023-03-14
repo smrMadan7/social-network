@@ -141,7 +141,13 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                         ></img>{" "}
                       </div>
                       <div className="text-md flex flex-col gap-3 ">
-                        <div>
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setCommentedProfileAddress(comment?.commenter);
+                            setPostProfileStatus(true);
+                          }}
+                        >
                           <p className="flex gap-2 font-semibold">
                             {comment?.commenterDisplayName}{" "}
                             <span className="handle font-bold">@{comment?.commenterHandle}</span>
