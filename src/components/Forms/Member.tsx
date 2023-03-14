@@ -137,7 +137,7 @@ const Member = () => {
   };
 
   const checkHandle = (event: any) => {
-    if (event.target.value.length > 3) {
+    if (event.target.value.length > 1) {
       var requestOptions: any = {
         method: "GET",
         redirect: "follow",
