@@ -202,7 +202,8 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                           ) : (
                             <textarea
                               onClick={(e) => e.stopPropagation()}
-                              contentEditable="true"
+                              contentEditable="false"
+                              readOnly
                               className="resize-none text-black outline-none prevent-select rounded-lg p-2 break-words"
                               style={
                                 isUpdatePopup && comment?.commentId == commentId

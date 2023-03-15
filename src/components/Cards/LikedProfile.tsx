@@ -3,6 +3,7 @@ import { GrFormClose } from "react-icons/gr";
 import { getLikedUsers, getPostByPostId, ipfsGateway } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
 import PostProfile from "./PostProfile";
+import { BiArrowBack } from "react-icons/bi";
 
 const LikedProfile = ({ post }: any) => {
   const [likedProfiles, setLikedProfiles] = useState<any>();
@@ -63,7 +64,16 @@ const LikedProfile = ({ post }: any) => {
         <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
           <div className="text-white flex items-center justify-center flex m-auto h-screen">
             <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white">
-              <div className="flex justify-between p-3 border-b ">
+              <div className="flex gap-3 p-3 border-b items-center ">
+                <div
+                  className="rounded-full hover:bg-bgHover p-1 cursor-pointer"
+                  onClick={() => {
+                    setPostProfileStatus(false);
+                    getPost();
+                  }}
+                >
+                  <BiArrowBack color="black" className="cursor-pointer" fontSize={25} />
+                </div>
                 <p className="text-xl font-bold">Profile Details</p>
                 <div
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -71,9 +81,7 @@ const LikedProfile = ({ post }: any) => {
                     setPostProfileStatus(false);
                     getPost();
                   }}
-                >
-                  <GrFormClose color="black" fontSize={25} />
-                </div>
+                ></div>
               </div>
               <PostProfile post={likedProfileAddress} />
             </div>

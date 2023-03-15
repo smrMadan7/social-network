@@ -347,7 +347,7 @@ const Home = () => {
           <div className=" flex top-0 bottom-0 right-0 left-0  m-auto">
             <div
               className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 bg-blackOverlay"
-              style={{ zIndex: 9 }}
+              style={{ zIndex: 10 }}
             >
               {/* new post content */}
               <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto h-5/6 md:h-5/6">
