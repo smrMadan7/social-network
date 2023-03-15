@@ -116,7 +116,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                         return (
                           <div
                             key={index}
-                            className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex "
+                            className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex items-center"
                           >
                             <p className="mb-1">{roleObj}</p>
                           </div>
@@ -143,7 +143,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                           +{moreRoles?.length}
                         </span>
                         {moreRolesStatus && (
-                          <div className="absolute whitespace-nowrap  left-8 border p-2 rounded-lg bg-white z-10 font-light">
+                          <div className="absolute whitespace-nowrap  left-8 border p-2 rounded-lg bg-white z-10 font-light items-center">
                             {moreRoles?.map((role: any, index: any) => {
                               return (
                                 <div className="whitespace-prewrap" key={index}>
@@ -171,7 +171,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                       return (
                         <div
                           key={index}
-                          className="whitespace-nowrap border border-gray-300 font-light rounded-full px-3 flex"
+                          className="whitespace-nowrap border border-gray-300 font-light rounded-full px-3 flex items-center"
                         >
                           <p className="mb-1">{skill}</p>
                         </div>

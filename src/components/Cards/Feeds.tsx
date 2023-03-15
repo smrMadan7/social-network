@@ -30,6 +30,7 @@ const Feeds = (post: any) => {
   const [address, setAddress] = useState();
   const [isLiked, setIsLiked] = useState<any>(false);
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
+  const [sharedProfiles, setSharedProfiles] = useState(false);
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -38,6 +39,7 @@ const Feeds = (post: any) => {
     setPostProfileStatus(false);
     setCommentStatus(false);
     setLikedProfileStatus(false);
+    setSharedProfiles(false);
     setRefetch(false);
     getPostComments();
     getPostDetails();
@@ -279,10 +281,68 @@ const Feeds = (post: any) => {
               </div>
             )}
 
+            {sharedProfiles && (
+              <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+                <div className="text-white flex items-center justify-center flex m-auto h-screen">
+                  <div
+                    className="relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
+                    style={{
+                      maxHeight: "300px",
+                      height: "300px",
+                      maxWidth: "250px",
+                      width: "250px",
+                    }}
+                  >
+                    <div className="flex justify-between p-3 border-b ">
+                      {isSucessfull && (
+                        <div
+                          className="absolute text-center  top-0 right-0 left-0 bottom-0 "
+                          style={{ zIndex: 100, height: "30px" }}
+                        >
+                          <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
+                        </div>
+                      )}
+                      <p className="text-xl font-bold">Shared By</p>
+                      <div
+                        className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                        onClick={() => {
+                          setSharedProfiles(false);
+                        }}
+                      >
+                        <GrFormClose color="black" fontSize={25} />
+                      </div>
+                    </div>
+                    <div className="h-2/3 overflow-y-auto mt-2 "></div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className=""></div>
           </div>
-          <div className="mb-9 md:mb-0 p-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
-            <div className="flex justify-between">
+          <div className="p-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
+            {/* shared details */}
+            {/* <div className="w-full py-2 italic border-b flex gap-2 iems-center">
+              <div
+                className=" rounded-full flex items-center justify-center"
+                style={{ width: "50px" }}
+              >
+                <img src={userImageUrl} width="20px" height="20px" className="rounded-full"></img>
+              </div>
+              <p>
+                Gautam and{" "}
+                <span
+                  className="text-blue-700"
+                  onClick={() => {
+                    setSharedProfiles(true);
+                  }}
+                >
+                  2-more{" "}
+                </span>
+                shared this post.
+              </p>
+            </div> */}
+            <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
                   src={userImageUrl}
