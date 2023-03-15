@@ -404,7 +404,7 @@ const Member = () => {
                         {/* First Name */}
                         <div className="flex  w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
                           <label className="w-50 sm:w-40 md:w-50  block tracking-wide text-gray-700 font-bold mb-2">
-                            First Name:
+                            First Name:*
                           </label>
                           <input
                             required
@@ -420,7 +420,7 @@ const Member = () => {
 
                         <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
                           <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                            Last Name:
+                            Last Name:*
                           </label>
                           <input
                             required
@@ -436,7 +436,7 @@ const Member = () => {
                       {/* Display Name */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Display Name:
+                          Display Name:*
                         </label>
                         <input
                           required
@@ -457,7 +457,7 @@ const Member = () => {
 
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Handle:
+                          Handle:*
                         </label>
                         <input
                           required
@@ -548,7 +548,7 @@ const Member = () => {
                     <div className="md:w-50 flex mx-1 justify-between">
                       <div className="md:flex md:items-center md:gap-4 w-full md:w-full  px-3  md:mb-0">
                         <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700 sm:mb-2">
-                          Role:
+                          Role:*
                         </label>
                         <div
                           className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full"
@@ -609,7 +609,7 @@ const Member = () => {
                     <div className=" md:w-50 flex mx-1 justify-between ">
                       <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
                         <label className="mb-1 md:mb-0 text-md font-bold block  tracking-wide text-gray-700 sm:mb-2">
-                          Organization:
+                          Organization:*
                         </label>
                         <div
                           className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
@@ -675,7 +675,7 @@ const Member = () => {
                   <div className="md:w-50 flex mx-1 justify-between">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
                       <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700">
-                        Skill:
+                        Skill:*
                       </label>
                       <div
                         className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"

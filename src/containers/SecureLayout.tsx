@@ -46,6 +46,10 @@ const SecureLayout = () => {
     listen();
   }, []);
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, [isWallet]);
+
   const getCurrentUser = async () => {
     if (window.ethereum) {
       const provider: any = window.ethereum;
@@ -93,8 +97,9 @@ const SecureLayout = () => {
         setIsWallet(false);
         getCurrentUser();
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Error occured while account selection", error);
     }
   };
 
@@ -139,7 +144,9 @@ const SecureLayout = () => {
           navigate("/register");
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log("Error occured while fetching user", error);
+      });
   };
 
   const borwserWalletHandler = async () => {
@@ -161,46 +168,51 @@ const SecureLayout = () => {
   };
 
   const signUser = async () => {
-    setIsLoading(true);
-    const currentProvider: any = detectProvider();
-
-    if (currentProvider !== undefined) {
-      const web3 = new Web3(currentProvider);
-      const userAccount = await web3.eth.getAccounts();
-      const signature = await web3.eth.personal.sign(
-        `pln social wants you to sign in`,
-        userAccount[0],
-        ""
-      );
-
-      const body = {
-        signature: signature,
-        address: userAccount[0],
-        message: `pln social wants you to sign in`,
-      };
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-
-      var requestOptions: any = {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: myHeaders,
-        redirect: "follow",
-      };
+    try {
       setIsLoading(true);
-      fetch(verifyUser, requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          if (result.status === false) {
-            setWarning(true);
-            setWarningMessage("Something went wrong!!");
-          } else {
-            fetchUser();
-          }
-        })
-        .catch((error) => {
-          console.log("error is ", error);
-        });
+      const currentProvider: any = detectProvider();
+
+      if (currentProvider !== undefined) {
+        const web3 = new Web3(currentProvider);
+        const userAccount = await web3.eth.getAccounts();
+        const signature = await web3.eth.personal.sign(
+          `pln social wants you to sign in`,
+          userAccount[0],
+          ""
+        );
+
+        const body = {
+          signature: signature,
+          address: userAccount[0],
+          message: `pln social wants you to sign in`,
+        };
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var requestOptions: any = {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: myHeaders,
+          redirect: "follow",
+        };
+        setIsLoading(true);
+        fetch(verifyUser, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.status === false) {
+              setWarning(true);
+              setWarningMessage("Something went wrong!!");
+            } else {
+              fetchUser();
+            }
+          })
+          .catch((error) => {
+            console.log("error is ", error);
+          });
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
     }
   };
 
@@ -235,7 +247,7 @@ const SecureLayout = () => {
                   ></img>
                 </div>
               )}
-              {localStorage.getItem("isRegistered") && <Loading />}
+              {/* {localStorage.getItem("isRegistered") && <Loading />} */}
 
               <div
                 className="border flex flex-col bg-white w-300  rounded-lg"

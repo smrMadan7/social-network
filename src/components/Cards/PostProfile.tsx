@@ -116,7 +116,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                         return (
                           <div
                             key={index}
-                            className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex "
+                            className="whitespace-nowrap border border-gray-300 font-light rounded-full  px-3 flex items-center"
                           >
                             <p className="mb-1">{roleObj}</p>
                           </div>
@@ -133,7 +133,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                             ? { height: "60px", width: "60px" }
                             : { height: "30px", width: "30px" }
                         }
-                        className="rounded-full border flex items-center justify-center"
+                        className="relative rounded-full border flex items-center justify-center"
                       >
                         <span
                           className="p-2 cursor-pointer"
@@ -142,14 +142,17 @@ const PostProfile = ({ postDetails, post }: any) => {
                         >
                           +{moreRoles?.length}
                         </span>
-                      </div>
-                    )}
-
-                    {moreRolesStatus && (
-                      <div className="absolute  right-0 top-6 md:right-2 border p-2 rounded-lg bg-white z-10 font-light">
-                        {moreRoles?.map((role: any, index: any) => {
-                          return <div key={index}>{role}</div>;
-                        })}
+                        {moreRolesStatus && (
+                          <div className="absolute whitespace-nowrap  left-8 border p-2 rounded-lg bg-white z-10 font-light items-center">
+                            {moreRoles?.map((role: any, index: any) => {
+                              return (
+                                <div className="whitespace-prewrap" key={index}>
+                                  {role}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -168,7 +171,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                       return (
                         <div
                           key={index}
-                          className="whitespace-nowrap border border-gray-300 font-light rounded-full px-3 flex"
+                          className="whitespace-nowrap border border-gray-300 font-light rounded-full px-3 flex items-center"
                         >
                           <p className="mb-1">{skill}</p>
                         </div>
@@ -184,7 +187,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                           ? { height: "60px", width: "60px" }
                           : { height: "30px", width: "30px" }
                       }
-                      className="rounded-full border flex items-center justify-center"
+                      className="relative rounded-full border flex items-center justify-center"
                     >
                       <span
                         className="p-2 cursor-pointer"
@@ -193,14 +196,13 @@ const PostProfile = ({ postDetails, post }: any) => {
                       >
                         +{moreSkills?.length}
                       </span>
-                    </div>
-                  )}
-
-                  {moreSkillsStatus && (
-                    <div className="absolute font-light right-0 md:right-9 top-6 border p-2 rounded-lg bg-white z-10">
-                      {moreSkills?.map((skill: any, index: any) => {
-                        return <div key={index}>{skill}</div>;
-                      })}
+                      {moreSkillsStatus && (
+                        <div className="absolute whitespace-nowrap  left-8 border p-2 rounded-lg bg-white z-10 font-light">
+                          {moreSkills?.map((skill: any, index: any) => {
+                            return <div key={index}>{skill}</div>;
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -234,7 +236,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                           ? { height: "60px", width: "60px" }
                           : { height: "30px", width: "30px" }
                       }
-                      className="rounded-full border flex items-center justify-center"
+                      className="relative rounded-full border flex items-center justify-center"
                     >
                       <span
                         className="p-2 cursor-pointer"
@@ -243,13 +245,13 @@ const PostProfile = ({ postDetails, post }: any) => {
                       >
                         +{moreOrg?.length}
                       </span>
-                    </div>
-                  )}
-                  {moreOrgStatus && (
-                    <div className="absolute right-0 top-8 border p-2 rounded-lg z-10 font-light">
-                      {moreOrg?.map((org: any, index: any) => {
-                        return <div key={index}>{org}</div>;
-                      })}
+                      {moreOrgStatus && (
+                        <div className="absolute whitespace-nowrap  left-8 border p-2 rounded-lg bg-white z-10 font-light">
+                          {moreOrg?.map((org: any, index: any) => {
+                            return <div key={index}>{org}</div>;
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

@@ -105,7 +105,7 @@ const Home = () => {
       content = content;
     }
 
-    if (content !== "") {
+    if (content || uploadImage) {
       try {
         ipfsClient(uploadImage)
           .then(async (path) => {
@@ -146,17 +146,17 @@ const Home = () => {
               body: JSON.stringify(post),
               redirect: "follow",
             };
-            fetch(createPost, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  setIsPost(false);
-                  setIsLoading(false);
-                  setFilePath("");
-                  getAllPosts();
-                }
-              })
-              .catch((error) => {});
+            // fetch(createPost, requestOptions)
+            //   .then((response) => response.json())
+            //   .then((result) => {
+            //     if (result.status !== false) {
+            //       setIsPost(false);
+            //       setIsLoading(false);
+            //       setFilePath("");
+            //       getAllPosts();
+            //     }
+            //   })
+            //   .catch((error) => {});
           })
           .catch((error) => {
             setWarningMessage("Something went wrong!");
@@ -347,7 +347,7 @@ const Home = () => {
           <div className=" flex top-0 bottom-0 right-0 left-0  m-auto">
             <div
               className="absolute flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 bg-blackOverlay"
-              style={{ zIndex: 9 }}
+              style={{ zIndex: 10 }}
             >
               {/* new post content */}
               <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto h-5/6 md:h-5/6">
@@ -521,37 +521,42 @@ const Home = () => {
                           }
                         ></input> */}
                         <div
-                          className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
-                          contentEditable="true"
-                          id="content"
-                          onKeyDown={(e: any) => {}}
-                          data-placeholder="What's happening?"
-                          style={
-                            isBold
-                              ? { fontWeight: "bold" }
-                              : isCode
-                              ? { background: "gray" }
-                              : isItalic
-                              ? { fontStyle: "italic" }
-                              : isBold && isCode && isItalic
-                              ? {
-                                  fontWeight: "bold",
-                                  background: "grap",
-                                  fontStyle: "italic",
-                                }
-                              : isCode && isItalic
-                              ? {
-                                  background: "gray",
-                                  fontStyle: "italic",
-                                }
-                              : isBold && isItalic
-                              ? {
-                                  fontStyle: "italic",
-                                  fontWeight: "bold",
-                                }
-                              : {}
-                          }
-                        ></div>
+                          className="border rounded-lg w-full overflow-y-auto"
+                          style={{ height: "100px" }}
+                        >
+                          <div
+                            className="p-2 cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-100"
+                            contentEditable="true"
+                            id="content"
+                            onKeyDown={(e: any) => {}}
+                            data-placeholder="What's happening?"
+                            style={
+                              isBold
+                                ? { fontWeight: "bold" }
+                                : isCode
+                                ? { background: "gray" }
+                                : isItalic
+                                ? { fontStyle: "italic" }
+                                : isBold && isCode && isItalic
+                                ? {
+                                    fontWeight: "bold",
+                                    background: "grap",
+                                    fontStyle: "italic",
+                                  }
+                                : isCode && isItalic
+                                ? {
+                                    background: "gray",
+                                    fontStyle: "italic",
+                                  }
+                                : isBold && isItalic
+                                ? {
+                                    fontStyle: "italic",
+                                    fontWeight: "bold",
+                                  }
+                                : {}
+                            }
+                          ></div>
+                        </div>
                       </div>
                     </div>
 
