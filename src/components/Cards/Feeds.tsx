@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { BsHeart } from "react-icons/bs";
-import { FaShare } from "react-icons/fa";
+import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
+import { Tooltip } from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
 import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { timeAgo } from "../../utils/timeAgo";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
@@ -31,16 +33,22 @@ const Feeds = (post: any) => {
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
   // const [shareTo, setShareTo] = useState(false);
   const [isRepost, setIsRepost] = useState(false);
+  const [convertedDate, setConvertedDate] = useState<any>();
+  const [isDateHovered, setIsDateHovered] = useState(false);
+
   const [sharedCount, setSharedCount] = useState(post?.post?.shares.length);
   const { appState }: any = useUserContext();
 
   const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-  const date = new Date(post?.post?.timestamp);
-  const convertedDate = date.toLocaleString();
+
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
+    const date = new Date(post?.post?.timestamp);
+    setConvertedDate(timeAgo(date));
     setPostProfileStatus(false);
     setCommentStatus(false);
     setLikedProfileStatus(false);
@@ -235,6 +243,7 @@ const Feeds = (post: any) => {
                 </div>
               </div>
             )}
+
             {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
@@ -255,6 +264,7 @@ const Feeds = (post: any) => {
                 </div>
               </div>
             )}
+
             {likedProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
@@ -375,6 +385,16 @@ const Feeds = (post: any) => {
               </div>
             )} */}
 
+            {isSucessfull && (
+              <>
+                <div className="w-100 fixed z-10  top-4 right-0 left-0  ">
+                  <div className=" flex items-center justify-center flex">
+                    <p className="text-violet-700 font-semibold text-xl ">Success!</p>
+                  </div>
+                </div>
+              </>
+            )}
+
             {isRepost && (
               <Repost
                 isRepost={isRepost}
@@ -411,16 +431,14 @@ const Feeds = (post: any) => {
                 </p>
               </div>
             )}
-            {isSucessfull && (
+            {/* {isSucessfull && (
               <div
-                className="absolute text-center  top-0 right-0 left-0 bottom-0 items-center m-auto "
+                className="absolute text-center  top-0 right-0 left-0 bottom-1 items-center "
                 style={{ zIndex: 100, height: "30px" }}
               >
-                <p className="text-violet-700 font-semibold text-xl pt-3">
-                  You successfull re-post this post
-                </p>
+                <p className="text-violet-700 font-semibold text-xl pt-3">Successfully Re-post</p>
               </div>
-            )}
+            )} */}
 
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
@@ -432,20 +450,31 @@ const Feeds = (post: any) => {
                   className=" rounded-full cursor-pointer"
                   onClick={() => setPostProfileStatus(true)}
                 ></img>
-                <div className="flex flex-col">
+                <div className="flex flex-col w-full">
                   <div
                     className="flex items-center gap-1 text-center"
                     onClick={() => setPostProfileStatus(true)}
                   >
                     <p className="text-md  font-semibold">{post?.post?.displayName}</p>
 
-                    <p className="text-md handle">@{post?.post?.handle}</p>
+                    <p className="text-md  text-gray-500">@{post?.post?.handle}</p>
                     {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
-                  <div className="flex gap-2 items-center text-center">
+                  <div className="flex gap-2 items-center text-center relative w-full">
                     {/* <p className="text-sm userid-background font-bold ">@{post?.post?.handle} .</p> */}
 
-                    <p className="text-sm ">{convertedDate}</p>
+                    <p
+                      className="text-sm "
+                      onMouseEnter={() => setIsDateHovered(true)}
+                      onMouseOut={() => setIsDateHovered(false)}
+                    >
+                      {convertedDate}
+                    </p>
+                    {/* {isDateHovered && (
+                      <div className="w-full absolute top-6 right-0 text-sm border rounded-lg px-2 py-1 nowrap whitespace-nowrap">
+                        {convertToLocal(post?.post?.timestamp)}{" "}
+                      </div>
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -483,11 +512,19 @@ const Feeds = (post: any) => {
               >
                 <div
                   style={{ height: "40px", width: "40px" }}
+                  id="comment"
                   className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
                 >
-                  <TbMessage fontSize={18} className="text-indigo-500" id="comment" />
+                  <TbMessage fontSize={18} className="text-indigo-500" />
+
                   <span className="">{postComments?.length ? postComments?.length : 0}</span>
                 </div>
+                <Tooltip
+                  anchorSelect="#comment"
+                  place="bottom"
+                  content="Comments"
+                  className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
+                />
               </div>
 
               {/* Share button */}
@@ -501,9 +538,11 @@ const Feeds = (post: any) => {
               >
                 <div
                   style={{ height: "40px", width: "40px" }}
+                  id="repost"
                   className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
                 >
-                  <FaShare fontSize={18} className="text-indigo-500" id="comment" />
+                  <FaShareSquare fontSize={18} className="text-indigo-500" />
+
                   <span className="">
                     {post?.post?.shares?.includes(appState?.action?.user?.address) ? (
                       post?.post?.shares.length
@@ -512,65 +551,85 @@ const Feeds = (post: any) => {
                     )}
                   </span>
                 </div>
+                <Tooltip
+                  anchorSelect="#repost"
+                  place="bottom"
+                  content="Repost"
+                  className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
+                />
               </div>
 
               <div className="flex items-center text-center prevent-select">
-                {post?.post?.likes?.includes(address) ? (
-                  <>
-                    <div
-                      style={{ height: "40px", width: "40px" }}
-                      className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                      onClick={(e) => {
-                        if (!isDisLiked) {
-                          setIsLiked(true);
-                          setIsDisLiked(true);
-                          incrementAndDecrementLike(e, post, "unlike");
-                        } else {
-                          setIsLiked(false);
-                          setIsDisLiked(false);
-                          incrementAndDecrementLike(e, post, "like");
-                        }
-                      }}
-                    >
-                      <>
-                        {post?.post?.likes?.includes(address) && !isDisLiked ? (
+                <div id="like">
+                  {post?.post?.likes?.includes(address) ? (
+                    <>
+                      <div
+                        style={{ height: "40px", width: "40px" }}
+                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                        onClick={(e) => {
+                          if (!isDisLiked) {
+                            setIsLiked(true);
+                            setIsDisLiked(true);
+                            incrementAndDecrementLike(e, post, "unlike");
+                          } else {
+                            setIsLiked(false);
+                            setIsDisLiked(false);
+                            incrementAndDecrementLike(e, post, "like");
+                          }
+                        }}
+                      >
+                        <>
+                          {post?.post?.likes?.includes(address) && !isDisLiked ? (
+                            <>
+                              <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
+                            </>
+                          ) : (
+                            <>
+                              <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
+                            </>
+                          )}
+                        </>
+                        {like}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {isLiked ? (
+                        <div
+                          style={{ height: "40px", width: "40px" }}
+                          className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                          onClick={(e) => {
+                            setIsLiked(false);
+                            incrementAndDecrementLike(e, post, "unlike");
+                          }}
+                        >
                           <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
-                        ) : (
+
+                          {like}
+                        </div>
+                      ) : (
+                        <div
+                          style={{ height: "40px", width: "40px" }}
+                          className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                          onClick={(e) => {
+                            setIsLiked(true);
+                            incrementAndDecrementLike(e, post, "like");
+                          }}
+                        >
                           <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
-                        )}
-                      </>
-                      {like}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {isLiked ? (
-                      <div
-                        style={{ height: "40px", width: "40px" }}
-                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                        onClick={(e) => {
-                          setIsLiked(false);
-                          incrementAndDecrementLike(e, post, "unlike");
-                        }}
-                      >
-                        <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
-                        {like}
-                      </div>
-                    ) : (
-                      <div
-                        style={{ height: "40px", width: "40px" }}
-                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                        onClick={(e) => {
-                          setIsLiked(true);
-                          incrementAndDecrementLike(e, post, "like");
-                        }}
-                      >
-                        <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
-                        {like}
-                      </div>
-                    )}
-                  </>
-                )}
+
+                          {like}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <Tooltip
+                    anchorSelect="#like"
+                    place="bottom"
+                    content="Like"
+                    className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
+                  />
+                </div>
                 {(post?.post?.likes?.length > 0 || isLiked) && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
                     likes

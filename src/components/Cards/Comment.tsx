@@ -8,6 +8,7 @@ import { GrFormClose } from "react-icons/gr";
 import { BiArrowBack } from "react-icons/bi";
 import { GiCheckMark } from "react-icons/gi";
 import PostProfile from "./PostProfile";
+import { timeAgo } from "../../utils/timeAgo";
 
 const Comment = ({ comments, setRefetch, postId }: any) => {
   const [address, setAddress] = useState();
@@ -111,9 +112,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
           }}
         >
           {comments.map((comment: any, index: number) => {
-            const date = new Date(comment?.timestamp);
-            const convertedDate = date.toLocaleString();
-
             const imageUrl = `${ipfsGateway}${comment?.commenterProfilePic}`;
             return (
               <div key={index} className="mb-5 relative ">
@@ -147,12 +145,17 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                             setPostProfileStatus(true);
                           }}
                         >
-                          <p className="flex gap-2 font-semibold">
+                          <p className="flex gap-2 font-bold">
                             {comment?.commenterDisplayName}{" "}
-                            <span className="handle font-bold">@{comment?.commenterHandle}</span>
+                            <span className="text-md  text-gray-500 font-none">
+                              @{comment?.commenterHandle}
+                            </span>
                           </p>
 
-                          <span className="font-normal text-gray"> {convertedDate}</span>
+                          <span className="font-normal text-gray">
+                            {" "}
+                            {timeAgo(comment?.timestamp)}
+                          </span>
                         </div>
                       </div>
                     </div>

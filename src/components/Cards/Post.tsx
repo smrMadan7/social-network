@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { AiTwotoneHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
-import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
+import { BsHeart } from "react-icons/bs";
+import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
-import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
+import { Tooltip } from "react-tooltip";
 import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { timeAgo } from "../../utils/timeAgo";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
-import { FaShare } from "react-icons/fa";
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -19,9 +20,16 @@ const Post = (post: any) => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [userDetails, setUserDetails] = useState<any>();
   const [refetch, setRefetch] = useState(false);
+  const [convertedDate, setConvertedDate] = useState<any>();
+  const [isDateHovered, setIsDateHovered] = useState(false);
 
-  const date = new Date(post?.post?.timestamp);
-  const convertedDate = date.toLocaleString();
+  // const convertedDate = date.toLocaleString();
+
+  useEffect(() => {
+    const date = new Date(post?.post?.timestamp);
+
+    setConvertedDate(timeAgo(date));
+  }, []);
 
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -182,18 +190,27 @@ const Post = (post: any) => {
 
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
-                    <p className="text-lg">
+                    <p className="text-lg font-semibold">
                       {userDetails?.displayName}
                       {userDetails?.organizationName}
                     </p>
-                    <MdVerified fontSize={18} color="blue" />
-                  </div>
-                  <div className="flex gap-2 items-center text-center">
-                    <p className="text-sm userid-background font-bold hidden md:block">
-                      @{userDetails?.handle} .
-                    </p>
 
-                    <p className="text-sm ">{convertedDate}</p>
+                    <p className=" text-gray-500">@{userDetails?.handle}</p>
+                    {/* <MdVerified fontSize={18} color="blue" /> */}
+                  </div>
+                  <div className="flex gap-2 items-center text-center relative">
+                    <p
+                      className="text-sm "
+                      onMouseEnter={() => setIsDateHovered(true)}
+                      onMouseOut={() => setIsDateHovered(false)}
+                    >
+                      {convertedDate}
+                    </p>
+                    {/* {isDateHovered && (
+                      <div className="absolute items-center top-6 text-sm border rounded-lg px-2 py-1 ">
+                        {convertToLocal(post?.post?.timestamp)}{" "}
+                      </div>
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -229,13 +246,20 @@ const Post = (post: any) => {
                 <p>{postComments?.length ? postComments?.length : 0}</p>
               </div>
 
-              <div className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 ">
-                <FaShare fontSize={18} className="text-violet-500" />
+              <div
+                id="share"
+                className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 "
+              >
+                <FaShareSquare fontSize={18} className="text-violet-500" />
 
                 <p className=" ">{post?.post?.shares?.length}</p>
               </div>
+
               <div className="flex items-center text-center">
-                <div className="rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto">
+                <div
+                  id="like"
+                  className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
+                >
                   {post?.post?.likes.length > 0 ? (
                     <>
                       <AiTwotoneHeart

@@ -53,7 +53,7 @@ const Repost = ({
             style={{ width: "250px", height: "150px" }}
           >
             <div className="flex justify-between p-3 border-b ">
-              <p className="text-xl font-bold">Conformation</p>
+              <p className="text-xl font-bold">Confirmation</p>
               <div
                 className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                 onClick={() => {

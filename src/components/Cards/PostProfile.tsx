@@ -101,9 +101,10 @@ const PostProfile = ({ postDetails, post }: any) => {
               <div className="flex flex-col gap-3 w-full">
                 {/* display Name */}
                 <div className="flex  w-full gap-3 ">
-                  <div className="appearance-none block leading-tight focus:outline-none focus:bg-white">
-                    {`${details?.firstName}`}
-                    <span className="handle font-bold"> @{details?.handle}</span>
+                  <div className="flex gap-1 appearance-none block leading-tight focus:outline-none focus:bg-white">
+                    <p className="font-bold">{`${details?.firstName}`}</p>
+
+                    <span className="text-md  text-gray-500 font-none "> @{details?.handle}</span>
                   </div>
                 </div>
                 {/* Role */}

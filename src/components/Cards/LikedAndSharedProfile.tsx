@@ -15,6 +15,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
 
   useEffect(() => {
     setPostProfileStatus(false);
+    setIsEmpty(false);
     getPost();
   }, []);
 
@@ -48,10 +49,10 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
       .then((result) => {
         if (result.status !== false) {
           if (mode === "liked") {
-            if (result.data?.data?.likes.length > 0) {
-              getLikedOrSharedProfiles(result.data?.data?.likes);
-            } else {
+            if (result.data?.data?.likes.length == 0) {
               setIsEmpty(true);
+            } else {
+              getLikedOrSharedProfiles(result.data?.data?.likes);
             }
           } else {
             if (result.data?.data?.shares) {
@@ -115,7 +116,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
                   onClick={() => {
                     setLikedProfiles(false);
                     setLikedProfileAddress(likedProfile.address);
-
+                    setIsEmpty(true);
                     setPostProfileStatus(true);
                   }}
                 >
@@ -129,18 +130,19 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
                 <div
                   className="flex flex-col cursor-pointer"
                   onClick={() => {
+                    setIsEmpty(true);
                     setLikedProfiles(false);
                     setLikedProfileAddress(likedProfile.address);
 
                     setPostProfileStatus(true);
                   }}
                 >
-                  <div>
+                  <div className="font-bold">
                     {likedProfile?.displayName} {likedProfile?.organizationName}{" "}
                   </div>
 
                   <div>
-                    <span className="handle font-bold">@{likedProfile?.handle}</span>
+                    <span className="text-md  text-gray-500">@{likedProfile?.handle}</span>
                   </div>
                 </div>
               </div>
@@ -150,7 +152,9 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
       ) : (
         <>
           <div className="absolute w-full flex items-center justify-center m-auto">
-            {!likedProfiles ? (
+            {!likedProfiles && !isEmpty ? (
+              <Loading />
+            ) : (
               <div className="absolute top-0 ">
                 <>
                   {mode === "liked" ? (
@@ -160,8 +164,6 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
                   )}
                 </>
               </div>
-            ) : (
-              <Loading />
             )}
           </div>
         </>
