@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
+import { AiTwotoneHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
-import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
+import { BsHeart } from "react-icons/bs";
+import { FaShare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
-import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { Tooltip } from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
-import { postComment, ipfsGateway, likeApi, getComment } from "../../constants/AppConstants";
+import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
+import { useUserContext } from "../../context/UserContextProvider";
 import Comment from "./Comment";
+import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
-import Warning from "./Warning";
-import { AiTwotoneHeart } from "react-icons/ai";
-import LikedProfile from "./LikedProfile";
+import Repost from "./Repost";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -24,14 +24,19 @@ const Feeds = (post: any) => {
   const [refetch, setRefetch] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
-  const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-  const date = new Date(post?.post?.timestamp);
-  const convertedDate = date.toLocaleString();
   const [address, setAddress] = useState();
   const [isLiked, setIsLiked] = useState<any>(false);
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
   const [sharedProfiles, setSharedProfiles] = useState(false);
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
+  // const [shareTo, setShareTo] = useState(false);
+  const [isRepost, setIsRepost] = useState(false);
+  const [sharedCount, setSharedCount] = useState(post?.post?.shares.length);
+  const { appState }: any = useUserContext();
+
+  const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
+  const date = new Date(post?.post?.timestamp);
+  const convertedDate = date.toLocaleString();
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -40,6 +45,8 @@ const Feeds = (post: any) => {
     setCommentStatus(false);
     setLikedProfileStatus(false);
     setSharedProfiles(false);
+    // setShareTo(false);
+
     setRefetch(false);
     getPostComments();
     getPostDetails();
@@ -168,6 +175,12 @@ const Feeds = (post: any) => {
       });
   };
 
+  //Increment share
+  // const inCrementShare = (count: any) => {
+  //   console.log("method called");
+  //   setSharedCount(post?.post?.shares.length + count);
+  // };
+
   return (
     <>
       {postDetails ? (
@@ -274,7 +287,11 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <LikedProfile post={post} />
+                      <LikedProfile
+                        post={post}
+                        mode={"liked"}
+                        setLikedProfileStatus={setLikedProfileStatus}
+                      />
                     </div>
                   </div>
                 </div>
@@ -285,7 +302,7 @@ const Feeds = (post: any) => {
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div
-                    className="relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
+                    className="bg-black relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
                     style={{
                       maxHeight: "300px",
                       height: "300px",
@@ -312,36 +329,99 @@ const Feeds = (post: any) => {
                         <GrFormClose color="black" fontSize={25} />
                       </div>
                     </div>
-                    <div className="h-2/3 overflow-y-auto mt-2 "></div>
+                    <div className="h-2/3 overflow-y-auto mt-2 ">
+                      <LikedProfile
+                        post={post}
+                        mode={"shared"}
+                        setSharedStatus={setSharedProfiles}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
+            {/* {shareTo && (
+              <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+                <div className="text-white flex items-center justify-center flex m-auto h-screen">
+                  <div
+                    className="relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
+                    style={{
+                      maxWidth: "350px",
+                      width: "350px",
+                    }}
+                  >
+                    <div className="flex justify-between p-3 border-b ">
+                      <p className="text-xl font-bold">Share To</p>
+                      <div
+                        className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                        onClick={() => {
+                          setShareTo(false);
+                        }}
+                      >
+                        <GrFormClose color="black" fontSize={25} />
+                      </div>
+                    </div>
+                    <div className="h-2/3 overflow-y-auto mt-2 ">
+                      <Share
+                        address={address}
+                        postId={post?.post?.postId}
+                        setShareTo={setShareTo}
+                        callback={inCrementShare}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )} */}
+
+            {isRepost && (
+              <Repost
+                isRepost={isRepost}
+                setIsRepost={setIsRepost}
+                setIsSuccessfull={setIsSuccessfull}
+                postId={post?.post?.postId}
+                sharedCount={sharedCount}
+                setSharedCount={setSharedCount}
+              />
+            )}
+
             <div className=""></div>
           </div>
-          <div className="p-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
+          <div className="px-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             {/* shared details */}
-            {/* <div className="w-full py-2 italic border-b flex gap-2 iems-center">
-              <div
-                className=" rounded-full flex items-center justify-center"
-                style={{ width: "50px" }}
-              >
-                <img src={userImageUrl} width="20px" height="20px" className="rounded-full"></img>
-              </div>
-              <p>
-                Gautam and{" "}
-                <span
-                  className="text-blue-700"
-                  onClick={() => {
-                    setSharedProfiles(true);
-                  }}
+            {post?.post?.shares.length > 0 && (
+              <div className="w-full py-2 italic border-b flex gap-2 iems-center">
+                <div
+                  className=" rounded-full flex items-center justify-center"
+                  style={{ width: "50px" }}
                 >
-                  2-more{" "}
-                </span>
-                shared this post.
-              </p>
-            </div> */}
+                  <img src={userImageUrl} width="20px" height="20px" className="rounded-full"></img>
+                </div>
+                <p>
+                  <span
+                    className="text-blue-700"
+                    onClick={() => {
+                      setSharedProfiles(true);
+                    }}
+                  >
+                    {post?.post?.shares.length} more
+                  </span>
+                  <span> re-shared this post.</span>
+                </p>
+              </div>
+            )}
+            {isSucessfull && (
+              <div
+                className=" text-center  top-0 right-0 left-0 bottom-0 "
+                style={{ zIndex: 100, height: "30px" }}
+              >
+                <p className="text-violet-700 font-semibold text-xl pt-3">
+                  You successfull re-post this post
+                </p>
+              </div>
+            )}
+
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
@@ -394,7 +474,7 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            <div className=" flex gap-7 bottom-menu-container items-center">
+            <div className="mb-2 flex gap-7 bottom-menu-container items-center">
               <div
                 className=" flex text-indigo-500 items-center gap-2 "
                 onClick={() => {
@@ -406,15 +486,32 @@ const Feeds = (post: any) => {
                   className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
                 >
                   <TbMessage fontSize={18} className="text-indigo-500" id="comment" />
-                  <span className="">{postComments?.length}</span>
+                  <span className="">{postComments?.length ? postComments?.length : 0}</span>
                 </div>
               </div>
 
-              <div className="flex items-center">
-                <div className=" px-2 py-2 ">
-                  <BsArrowLeftRight fontSize={18} className="text-violet-300 rounded-full " />
+              {/* Share button */}
+
+              <div
+                className=" flex text-indigo-500 items-center gap-2 "
+                onClick={() => {
+                  setIsRepost(true);
+                  // setShareTo(true);
+                }}
+              >
+                <div
+                  style={{ height: "40px", width: "40px" }}
+                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
+                >
+                  <FaShare fontSize={18} className="text-indigo-500" id="comment" />
+                  <span className="">
+                    {post?.post?.shares?.includes(appState?.action?.user?.address) ? (
+                      post?.post?.shares.length
+                    ) : (
+                      <>{sharedCount}</>
+                    )}
+                  </span>
                 </div>
-                <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
               </div>
 
               <div className="flex items-center text-center prevent-select">

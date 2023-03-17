@@ -74,7 +74,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
       {postProfileStatus && (
         <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay">
           <div className="text-white flex items-center justify-center flex m-auto h-screen">
-            <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white duration-75">
+            <div className=" w-90 2xl:w-40 md:w-40  border rounded-lg text-black bg-white duration-75">
               <div className="flex justify-between p-3 border-b ">
                 <p className="text-xl font-bold">Profile Details</p>
                 <div
@@ -186,7 +186,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                           {isUpdatePopup && commentId === comment?.commentId ? (
                             <textarea
                               onClick={(e) => e.stopPropagation()}
-                              contentEditable="true"
                               autoFocus
                               className="resize-none text-black outline-none prevent-select rounded-lg p-2"
                               onChange={(e) => setUpdatedComment(e.target.value)}
@@ -202,7 +201,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                           ) : (
                             <textarea
                               onClick={(e) => e.stopPropagation()}
-                              contentEditable="false"
                               readOnly
                               className="resize-none text-black outline-none prevent-select rounded-lg p-2 break-words"
                               style={

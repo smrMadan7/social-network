@@ -42,5 +42,7 @@ export const getPostByPostId = `${baseUrl}/api/post/get/`;
 
 export const getComment = `${baseUrl}/api/post/comments/get/`;
 export const updateComment = `${baseUrl}/api/post/comments/edit`;
+export const getAllProfiles = `${baseUrl}/api/user/getAllProfiles`;
+export const sharePosts = `${baseUrl}/api/post/share`;
 
 export const roles = ["member", "team"];

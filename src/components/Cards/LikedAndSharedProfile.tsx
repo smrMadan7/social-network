@@ -5,7 +5,7 @@ import Loading from "../Loading/Loading";
 import PostProfile from "./PostProfile";
 import { BiArrowBack } from "react-icons/bi";
 
-const LikedProfile = ({ post }: any) => {
+const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedStatus }: any) => {
   const [likedProfiles, setLikedProfiles] = useState<any>();
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [likedProfileAddress, setLikedProfileAddress] = useState();
@@ -18,10 +18,11 @@ const LikedProfile = ({ post }: any) => {
     getPost();
   }, []);
 
-  const getLikedProfiles = (likes: any) => {
+  const getLikedOrSharedProfiles = (likes: any) => {
     const postIdData = {
       address: likes,
     };
+
     var requestOptions: any = {
       method: "POST",
       headers: myHeaders,
@@ -46,10 +47,16 @@ const LikedProfile = ({ post }: any) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
-          if (result.data?.data?.likes.length > 0) {
-            getLikedProfiles(result.data?.data?.likes);
+          if (mode === "liked") {
+            if (result.data?.data?.likes.length > 0) {
+              getLikedOrSharedProfiles(result.data?.data?.likes);
+            } else {
+              setIsEmpty(true);
+            }
           } else {
-            setIsEmpty(true);
+            if (result.data?.data?.shares) {
+              getLikedOrSharedProfiles(result?.data?.data?.shares);
+            }
           }
         }
       })
@@ -64,24 +71,32 @@ const LikedProfile = ({ post }: any) => {
         <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
           <div className="text-white flex items-center justify-center flex m-auto h-screen">
             <div className=" w-90 2xl:w-23 md:w-40  border rounded-lg text-black bg-white">
-              <div className="flex gap-3 p-3 border-b items-center ">
-                <div
-                  className="rounded-full hover:bg-bgHover p-1 cursor-pointer"
-                  onClick={() => {
-                    setPostProfileStatus(false);
-                    getPost();
-                  }}
-                >
-                  <BiArrowBack color="black" className="cursor-pointer" fontSize={25} />
+              <div className="flex gap-3 p-3 border-b items-center w-full justify-between">
+                <div className="flex gap-2 ">
+                  <div
+                    className="rounded-full hover:bg-bgHover p-1 cursor-pointer"
+                    onClick={() => {
+                      setPostProfileStatus(false);
+                      getPost();
+                    }}
+                  >
+                    <BiArrowBack color="black" className="cursor-pointer" fontSize={25} />
+                  </div>
+                  <p className="text-xl font-bold">Profile Details</p>
                 </div>
-                <p className="text-xl font-bold">Profile Details</p>
+
                 <div
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                   onClick={() => {
-                    setPostProfileStatus(false);
-                    getPost();
+                    if (setLikedProfileStatus) {
+                      setLikedProfileStatus(false);
+                    } else if (setSharedStatus) {
+                      setSharedStatus(false);
+                    }
                   }}
-                ></div>
+                >
+                  <GrFormClose color="black" fontSize={25} />
+                </div>
               </div>
               <PostProfile post={likedProfileAddress} />
             </div>
@@ -111,7 +126,15 @@ const LikedProfile = ({ post }: any) => {
                     className="border rounded-full"
                   ></img>
                 </div>
-                <div className="flex flex-col">
+                <div
+                  className="flex flex-col cursor-pointer"
+                  onClick={() => {
+                    setLikedProfiles(false);
+                    setLikedProfileAddress(likedProfile.address);
+
+                    setPostProfileStatus(true);
+                  }}
+                >
                   <div>
                     {likedProfile?.displayName} {likedProfile?.organizationName}{" "}
                   </div>
@@ -127,7 +150,19 @@ const LikedProfile = ({ post }: any) => {
       ) : (
         <>
           <div className="absolute w-full flex items-center justify-center m-auto">
-            {!likedProfiles ? <div className="absolute top-0 ">No Likes Yet!</div> : <Loading />}
+            {!likedProfiles ? (
+              <div className="absolute top-0 ">
+                <>
+                  {mode === "liked" ? (
+                    <span>No Likes Yet! </span>
+                  ) : (
+                    <span>Profiles Not Found!</span>
+                  )}
+                </>
+              </div>
+            ) : (
+              <Loading />
+            )}
           </div>
         </>
       )}
@@ -135,4 +170,4 @@ const LikedProfile = ({ post }: any) => {
   );
 };
 
-export default LikedProfile;
+export default LikedAndSharedProfile;

@@ -5,10 +5,11 @@ import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
 import { GrFormClose } from "react-icons/gr";
 import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
-import { getComment, ipfsGateway } from "../../constants/AppConstants";
+import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import Comment from "./Comment";
-import LikedProfile from "./LikedProfile";
+import LikedProfile from "./LikedAndSharedProfile";
+import { FaShare } from "react-icons/fa";
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -16,8 +17,9 @@ const Post = (post: any) => {
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
   const [postComments, setPostComments] = useState<any>();
   const [commentStatus, setCommentStatus] = useState(false);
+  const [userDetails, setUserDetails] = useState<any>();
+  const [refetch, setRefetch] = useState(false);
 
-  const userImageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
   const date = new Date(post?.post?.timestamp);
   const convertedDate = date.toLocaleString();
 
@@ -27,6 +29,30 @@ const Post = (post: any) => {
   useEffect(() => {
     setCommentStatus(false);
     setLikedProfileStatus(false);
+    getUserDetails();
+    getPostDetails();
+    getPostComments();
+  }, []);
+
+  const getUserDetails = async () => {
+    fetch(`${getUser}${post?.post?.createdBy}`, {})
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status !== false) {
+          setUserDetails(result?.data);
+        }
+      })
+      .catch((error) => {
+        console.log("error in new post is ", error);
+      });
+  };
+
+  useEffect(() => {
+    getPostComments();
+    setRefetch(false);
+  }, [refetch]);
+
+  const getPostDetails = () => {
     fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
       .then((response) => response.json())
       .then((result) => {
@@ -37,9 +63,7 @@ const Post = (post: any) => {
       .catch((error) => {
         console.log("error in new post is ", error);
       });
-
-    getPostComments();
-  }, []);
+  };
 
   // Get the post comments
   const getPostComments = async () => {
@@ -85,7 +109,11 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <LikedProfile post={post} />
+                <LikedProfile
+                  post={post}
+                  mode={"liked"}
+                  setLikedProfileStatus={setLikedProfileStatus}
+                />
               </div>
             </div>
           </div>
@@ -109,7 +137,11 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <Comment comments={postComments} postId={post?.post?.postId} />
+                <Comment
+                  comments={postComments}
+                  postId={post?.post?.postId}
+                  setRefetch={setRefetch}
+                />
               </div>
             </div>
           </div>
@@ -117,13 +149,30 @@ const Post = (post: any) => {
       )}
       {postDetails ? (
         <>
-          <div className="p-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
-            <div className="flex justify-between">
+          <div className="px-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
+            {post?.post?.createdBy !== appState.action?.user?.address && (
+              <div className="w-full py-2  italic border-b flex gap-2 iems-center">
+                <div
+                  className=" rounded-full flex items-center justify-center"
+                  style={{ width: "50px" }}
+                >
+                  <img
+                    src={`${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`}
+                    width="20px"
+                    height="20px"
+                    className="rounded-full"
+                  ></img>
+                </div>
+                <p>You re-posted this post</p>
+              </div>
+            )}
+
+            <div className=" py-3 flex justify-between">
               <div className="flex gap-2">
                 <div>
                   <img
+                    src={`${ipfsGateway}${userDetails?.profilePictureUrl}`}
                     alt="user-profile"
-                    src={userImageUrl}
                     height={50}
                     width={50}
                     className=" rounded-full"
@@ -134,14 +183,14 @@ const Post = (post: any) => {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1 text-center">
                     <p className="text-lg">
-                      {appState?.action?.user?.firstName}
-                      {appState?.action?.user?.organizationName}
+                      {userDetails?.displayName}
+                      {userDetails?.organizationName}
                     </p>
                     <MdVerified fontSize={18} color="blue" />
                   </div>
                   <div className="flex gap-2 items-center text-center">
                     <p className="text-sm userid-background font-bold hidden md:block">
-                      @{appState?.action?.user?.handle} .
+                      @{userDetails?.handle} .
                     </p>
 
                     <p className="text-sm ">{convertedDate}</p>
@@ -162,7 +211,7 @@ const Post = (post: any) => {
               dangerouslySetInnerHTML={{ __html: postDetails?.content }}
             ></div>
             {postDetails?.media[0]?.file && (
-              <div className="description-container w-180 md:w-320">
+              <div className=" description-container w-180 md:w-320">
                 <img
                   alt="post-image"
                   src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
@@ -171,20 +220,19 @@ const Post = (post: any) => {
                 ></img>
               </div>
             )}
-            <div className=" flex gap-7 bottom-menu-container items-center">
+            <div className="mb-3 flex gap-7 bottom-menu-container items-center">
               <div
                 className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 "
                 onClick={() => setCommentStatus(true)}
               >
                 <TbMessage fontSize={18} />
-                <p>{postComments?.length}</p>
+                <p>{postComments?.length ? postComments?.length : 0}</p>
               </div>
 
-              <div className="flex items-center">
-                <div className=" px-2 py-2 ">
-                  <BsArrowLeftRight fontSize={18} className="text-violet-200" />
-                </div>
-                <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
+              <div className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 ">
+                <FaShare fontSize={18} className="text-violet-500" />
+
+                <p className=" ">{post?.post?.shares?.length}</p>
               </div>
               <div className="flex items-center text-center">
                 <div className="rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto">
