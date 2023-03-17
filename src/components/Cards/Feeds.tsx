@@ -388,7 +388,7 @@ const Feeds = (post: any) => {
 
             <div className=""></div>
           </div>
-          <div className="px-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
+          <div className="relative px-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             {/* shared details */}
             {post?.post?.shares.length > 0 && (
               <div className="w-full py-2 italic border-b flex gap-2 iems-center">
@@ -413,7 +413,7 @@ const Feeds = (post: any) => {
             )}
             {isSucessfull && (
               <div
-                className=" text-center  top-0 right-0 left-0 bottom-0 "
+                className="absolute text-center  top-0 right-0 left-0 bottom-0 items-center m-auto "
                 style={{ zIndex: 100, height: "30px" }}
               >
                 <p className="text-violet-700 font-semibold text-xl pt-3">
