@@ -23,8 +23,8 @@ export const signMessage = "pln social wants you to sign in!";
 
 // real
 
-export const ipfsGateway = "http://ipfs.plnetwork.io/gateway/ipfs/";
-export const ipfsPostUrl = "http://ipfs.plnetwork.io/api/";
+export const ipfsGateway = "https://ipfs.plnetwork.io/gateway/ipfs/";
+export const ipfsPostUrl = "https://ipfs.plnetwork.io/api/";
 export const baseUrl = "https://stageapi-social.plnetwork.io";
 
 // local set up
