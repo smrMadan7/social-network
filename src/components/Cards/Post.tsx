@@ -21,8 +21,7 @@ const Post = (post: any) => {
   const [userDetails, setUserDetails] = useState<any>();
   const [refetch, setRefetch] = useState(false);
   const [convertedDate, setConvertedDate] = useState<any>();
-  const [isDateHovered, setIsDateHovered] = useState(false);
-
+  const [postContent, setPostContent] = useState<any>();
   // const convertedDate = date.toLocaleString();
 
   useEffect(() => {
@@ -90,6 +89,18 @@ const Post = (post: any) => {
         console.log("Erro while getting comments ", error);
       });
   };
+
+  useEffect(() => {
+    const urlPattern =
+      /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
+
+    setPostContent(
+      postDetails?.content?.replace(
+        urlPattern,
+        '<a href="$1" target="_blank" style="color: blue;">$1</a>'
+      )
+    );
+  }, [postDetails]);
 
   return (
     <>
@@ -199,13 +210,7 @@ const Post = (post: any) => {
                     {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
                   <div className="flex gap-2 items-center text-center relative">
-                    <p
-                      className="text-sm "
-                      onMouseEnter={() => setIsDateHovered(true)}
-                      onMouseOut={() => setIsDateHovered(false)}
-                    >
-                      {convertedDate}
-                    </p>
+                    <p className="text-sm ">{convertedDate}</p>
                     {/* {isDateHovered && (
                       <div className="absolute items-center top-6 text-sm border rounded-lg px-2 py-1 ">
                         {convertToLocal(post?.post?.timestamp)}{" "}
@@ -225,7 +230,7 @@ const Post = (post: any) => {
             </div>
             <div
               className="description-container"
-              dangerouslySetInnerHTML={{ __html: postDetails?.content }}
+              dangerouslySetInnerHTML={{ __html: postContent }}
             ></div>
             {postDetails?.media[0]?.file && (
               <div className=" description-container w-180 md:w-320">

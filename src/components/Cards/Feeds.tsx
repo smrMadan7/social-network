@@ -34,7 +34,7 @@ const Feeds = (post: any) => {
   // const [shareTo, setShareTo] = useState(false);
   const [isRepost, setIsRepost] = useState(false);
   const [convertedDate, setConvertedDate] = useState<any>();
-  const [isDateHovered, setIsDateHovered] = useState(false);
+  const [postContent, setPostContent] = useState<any>();
 
   const [sharedCount, setSharedCount] = useState(post?.post?.shares.length);
   const { appState }: any = useUserContext();
@@ -44,10 +44,9 @@ const Feeds = (post: any) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     const date = new Date(post?.post?.timestamp);
+
     setConvertedDate(timeAgo(date));
     setPostProfileStatus(false);
     setCommentStatus(false);
@@ -72,6 +71,17 @@ const Feeds = (post: any) => {
     getPostComments();
     setRefetch(false);
   }, [refetch]);
+
+  useEffect(() => {
+    const urlPattern =
+      /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
+    setPostContent(
+      postDetails?.content.replace(
+        urlPattern,
+        '<a href="$1" target="_blank" style="color: blue;">$1</a>'
+      )
+    );
+  }, [postDetails]);
 
   // Get post details
   const getPostDetails = () => {
@@ -463,13 +473,7 @@ const Feeds = (post: any) => {
                   <div className="flex gap-2 items-center text-center relative w-full">
                     {/* <p className="text-sm userid-background font-bold ">@{post?.post?.handle} .</p> */}
 
-                    <p
-                      className="text-sm "
-                      onMouseEnter={() => setIsDateHovered(true)}
-                      onMouseOut={() => setIsDateHovered(false)}
-                    >
-                      {convertedDate}
-                    </p>
+                    <p className="text-sm ">{convertedDate}</p>
                     {/* {isDateHovered && (
                       <div className="w-full absolute top-6 right-0 text-sm border rounded-lg px-2 py-1 nowrap whitespace-nowrap">
                         {convertToLocal(post?.post?.timestamp)}{" "}
@@ -491,8 +495,10 @@ const Feeds = (post: any) => {
 
             <div
               className="description-container break-words"
-              dangerouslySetInnerHTML={{ __html: postDetails?.content }}
-            ></div>
+              dangerouslySetInnerHTML={{ __html: postContent }}
+            >
+              {/* <Linkify >{postDetails?.content}</Linkify> */}
+            </div>
             {postDetails?.media[0]?.file && (
               <div className="description-container w-180 md:w-320">
                 <img
