@@ -1,4 +1,4 @@
-import { INotificationProps } from "../../Types/interface";
+import { INotificationProps } from "../../types/interface";
 
 const Notification = (props: INotificationProps) => {
   return (

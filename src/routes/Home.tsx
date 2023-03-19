@@ -576,9 +576,6 @@ const Home = () => {
                         <div className="relative cursor-pointer" onClick={mediaUpload}>
                           <MdOutlinePermMedia fontSize={20} />
                         </div>
-                        {/* <div className="cursor-pointer">
-                          <AiOutlineFileGif fontSize={20} />
-                        </div> */}
                       </div>
                       <div>
                         <button

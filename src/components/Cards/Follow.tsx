@@ -3,8 +3,6 @@ import { SlUserFollow } from "react-icons/sl";
 import { getUser } from "../../constants/AppConstants";
 
 const Follow = () => {
-  const [followers, setFollowers] = useState([]);
-
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");

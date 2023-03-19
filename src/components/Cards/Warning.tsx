@@ -1,4 +1,4 @@
-import { IWarningProps } from "../../Types/interface";
+import { IWarningProps } from "../../types/interface";
 
 const Warning = (props: IWarningProps) => {
   return (

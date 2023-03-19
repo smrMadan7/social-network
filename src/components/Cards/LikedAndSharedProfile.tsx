@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { BiArrowBack } from "react-icons/bi";
 import { GrFormClose } from "react-icons/gr";
 import { getLikedUsers, getPostByPostId, ipfsGateway } from "../../constants/AppConstants";
 import Loading from "../Loading/Loading";
 import PostProfile from "./PostProfile";
-import { BiArrowBack } from "react-icons/bi";
 
 const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedStatus }: any) => {
   const [likedProfiles, setLikedProfiles] = useState<any>();

@@ -7,10 +7,12 @@ import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
 import { Tooltip } from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
 import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customGet, customPost } from "../../fetch/customFetch";
+import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { timeAgo } from "../../utils/timeAgo";
+import { updateContent } from "../../utils/updateContent";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
@@ -18,106 +20,85 @@ import Repost from "./Repost";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
-  const [postId, setPostId] = useState("");
   const [postComments, setPostComents] = useState<any>();
   const [like, setLike] = useState(post?.post?.likes.length);
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
   const [refetch, setRefetch] = useState(false);
-  const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
-  const [address, setAddress] = useState();
   const [isLiked, setIsLiked] = useState<any>(false);
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
   const [sharedProfiles, setSharedProfiles] = useState(false);
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
-  // const [shareTo, setShareTo] = useState(false);
   const [isRepost, setIsRepost] = useState(false);
-  const [convertedDate, setConvertedDate] = useState<any>();
-  const [postContent, setPostContent] = useState<any>();
+  const [likeMode, setLikeMode] = useState("");
 
   const [sharedCount, setSharedCount] = useState(post?.post?.shares.length);
   const { appState }: any = useUserContext();
 
-  const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  const [addCommentResult, setAddCommentResult] = useState<any>();
+  const [incAndDecResult, setIncAndDecResult] = useState<any>();
 
   useEffect(() => {
-    const date = new Date(post?.post?.timestamp);
+    if (addCommentResult?.status) {
+      getInnerHtml("content").innerHTML = "";
+      getPostComments();
+      setIsSuccessfull(true);
+      setTimeout(() => {
+        setIsSuccessfull(false);
+      }, 500);
+    }
+  }, [addCommentResult]);
 
-    setConvertedDate(timeAgo(date));
-    setPostProfileStatus(false);
-    setCommentStatus(false);
-    setLikedProfileStatus(false);
-    setSharedProfiles(false);
-    // setShareTo(false);
+  useEffect(() => {
+    if (postComments?.status) {
+      setPostComents(
+        postComments.data?.comments?.sort((firstComment: any, secondComment: any) => {
+          return firstComment.timestamp - secondComment.timestamp;
+        })
+      );
+    }
+  }, [postComments]);
 
-    setRefetch(false);
+  useEffect(() => {
+    if (incAndDecResult?.status) {
+      if (likeMode === "like") {
+        setIsLiked(true);
+      } else {
+        setIsLiked(false);
+      }
+    }
+  }, [incAndDecResult]);
+
+  useEffect(() => {
+    if (postDetails?.status) {
+      setPostDetails(postDetails.data);
+    }
+  }, [postDetails]);
+
+  useEffect(() => {
     getPostComments();
     getPostDetails();
-    getAddress();
   }, []);
-
-  const getAddress = async () => {
-    const provider: any = window.ethereum;
-    const web3: any = new Web3(provider);
-    const userAccount = await web3.eth.getAccounts();
-    setAddress(userAccount[0]);
-  };
 
   useEffect(() => {
     getPostComments();
     setRefetch(false);
   }, [refetch]);
 
-  useEffect(() => {
-    const urlPattern =
-      /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
-    setPostContent(
-      postDetails?.content.replace(
-        urlPattern,
-        '<a href="$1" target="_blank" style="color: blue;">$1</a>'
-      )
-    );
-  }, [postDetails]);
-
   // Get post details
   const getPostDetails = () => {
-    fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setPostDetails(result);
-        }
-      })
-      .catch((error) => {
-        console.log("error in new post is ", error);
-      });
+    customGet(`${ipfsGateway}${post?.post?.postURI}`, setPostDetails, "getting post details");
   };
 
   // Get the post comments
   const getPostComments = async () => {
-    fetch(`${getComment}${post?.post?.postId}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setPostComents(
-            result?.data?.comments?.sort((firstComment: any, secondComment: any) => {
-              return firstComment.timestamp - secondComment.timestamp;
-            })
-          );
-          setPostId(result?.data?.postId);
-        }
-      })
-      .catch((error) => {
-        console.log("Erro while getting comments ", error);
-      });
+    customGet(`${getComment}${post?.post?.postId}`, setPostComents, "getting comments");
   };
 
   // Increment like
   const incrementAndDecrementLike = (e: any, postData: any, mode: string) => {
+    setLikeMode(mode);
     if (mode === "like") {
       setLike(like + 1);
       setIsLiked(true);
@@ -127,77 +108,28 @@ const Feeds = (post: any) => {
         setIsLiked(false);
       }
     }
-    const postIdData = {
+    const params = {
       postId: postData?.post?.postId,
-      address: address,
+      address: appState?.action?.user?.address,
       action: mode,
     };
-    var requestOptions: any = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify(postIdData),
-      redirect: "follow",
-    };
 
-    fetch(likeApi, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === true) {
-          if (mode === "like") {
-            setIsLiked(true);
-          } else {
-            setIsLiked(false);
-          }
-        }
-      })
-      .catch((error) => {});
+    customPost(params, likeApi, "POST", setIncAndDecResult, "increment decrement like");
   };
 
   // Add a new comment
   const addComment = async (e: any) => {
     e.preventDefault();
-    const provider: any = window.ethereum;
-    const web3: any = new Web3(provider);
-    const userAccount = await web3.eth.getAccounts();
-    const address = userAccount[0];
-
-    const commentObj = {
+    const params = {
       postId: post?.post?.postId,
       commentId: uuidv4(),
-      commenter: address,
-      comment: e.target.comment.value,
+      commenter: appState?.action?.user?.address,
+      comment: getInnerHtml("content").innerHTML,
       tage: ["@madan"],
     };
 
-    var requestOptions: any = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify(commentObj),
-      redirect: "follow",
-    };
-
-    fetch(`${postComment}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setCommentValue("");
-          getPostComments();
-          setIsSuccessfull(true);
-          setTimeout(() => {
-            setIsSuccessfull(false);
-          }, 500);
-        }
-      })
-      .catch((error) => {
-        console.log("error in new post is ", error);
-      });
+    customPost(params, postComment, "POST", setAddCommentResult, "adding comment");
   };
-
-  //Increment share
-  // const inCrementShare = (count: any) => {
-  //   console.log("method called");
-  //   setSharedCount(post?.post?.shares.length + count);
-  // };
 
   return (
     <>
@@ -229,23 +161,30 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Comment comments={postComments} setRefetch={setRefetch} postId={postId} />
+                      <Comment
+                        comments={postComments}
+                        setRefetch={setRefetch}
+                        postId={post?.post?.postId}
+                      />
                     </div>
                     <div className="absolute w-full bottom-2 px-5 py-3 flex gap-2">
                       <form onSubmit={addComment} className="flex w-full gap-2">
-                        <input
-                          className="p-2 w-full border outline-none rounded-lg"
-                          name="comment"
-                          value={commentValue}
-                          onChange={(e) => setCommentValue(e.target.value)}
-                          placeholder="Add a comment..."
-                        ></input>
-                        <button
-                          className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
-                          type="submit"
-                        >
-                          ADD
-                        </button>
+                        <div
+                          style={{ maxHeight: "43px" }}
+                          className="w-full p-2 overflow-y-auto cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words border rounded-lg"
+                          contentEditable="true"
+                          id="content"
+                          onKeyDown={(e: any) => {}}
+                          data-placeholder="Add a comment..."
+                        ></div>
+                        <div>
+                          <button
+                            className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
+                            type="submit"
+                          >
+                            ADD
+                          </button>
+                        </div>
                       </form>
                       {/* </div> */}
                     </div>
@@ -361,40 +300,6 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            {/* {shareTo && (
-              <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
-                <div className="text-white flex items-center justify-center flex m-auto h-screen">
-                  <div
-                    className="relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
-                    style={{
-                      maxWidth: "350px",
-                      width: "350px",
-                    }}
-                  >
-                    <div className="flex justify-between p-3 border-b ">
-                      <p className="text-xl font-bold">Share To</p>
-                      <div
-                        className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
-                        onClick={() => {
-                          setShareTo(false);
-                        }}
-                      >
-                        <GrFormClose color="black" fontSize={25} />
-                      </div>
-                    </div>
-                    <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Share
-                        address={address}
-                        postId={post?.post?.postId}
-                        setShareTo={setShareTo}
-                        callback={inCrementShare}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )} */}
-
             {isSucessfull && (
               <>
                 <div className="w-100 fixed z-10  top-4 right-0 left-0  ">
@@ -426,7 +331,12 @@ const Feeds = (post: any) => {
                   className=" rounded-full flex items-center justify-center"
                   style={{ width: "50px" }}
                 >
-                  <img src={userImageUrl} width="20px" height="20px" className="rounded-full"></img>
+                  <img
+                    src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
+                    width="20px"
+                    height="20px"
+                    className="rounded-full"
+                  ></img>
                 </div>
                 <p>
                   <span
@@ -453,7 +363,7 @@ const Feeds = (post: any) => {
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
-                  src={userImageUrl}
+                  src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
                   height={50}
                   width={50}
                   loading="lazy"
@@ -468,17 +378,9 @@ const Feeds = (post: any) => {
                     <p className="text-md  font-semibold">{post?.post?.displayName}</p>
 
                     <p className="text-md  text-gray-500">@{post?.post?.handle}</p>
-                    {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
                   <div className="flex gap-2 items-center text-center relative w-full">
-                    {/* <p className="text-sm userid-background font-bold ">@{post?.post?.handle} .</p> */}
-
-                    <p className="text-sm ">{convertedDate}</p>
-                    {/* {isDateHovered && (
-                      <div className="w-full absolute top-6 right-0 text-sm border rounded-lg px-2 py-1 nowrap whitespace-nowrap">
-                        {convertToLocal(post?.post?.timestamp)}{" "}
-                      </div>
-                    )} */}
+                    <p className="text-sm ">{timeAgo(new Date(post?.post?.timestamp))}</p>
                   </div>
                 </div>
               </div>
@@ -495,7 +397,7 @@ const Feeds = (post: any) => {
 
             <div
               className="description-container break-words"
-              dangerouslySetInnerHTML={{ __html: postContent }}
+              dangerouslySetInnerHTML={{ __html: updateContent(postDetails?.content) }}
             >
               {/* <Linkify >{postDetails?.content}</Linkify> */}
             </div>
@@ -567,7 +469,7 @@ const Feeds = (post: any) => {
 
               <div className="flex items-center text-center prevent-select">
                 <div id="like">
-                  {post?.post?.likes?.includes(address) ? (
+                  {post?.post?.likes?.includes(appState?.action?.user?.address) ? (
                     <>
                       <div
                         style={{ height: "40px", width: "40px" }}
@@ -585,7 +487,8 @@ const Feeds = (post: any) => {
                         }}
                       >
                         <>
-                          {post?.post?.likes?.includes(address) && !isDisLiked ? (
+                          {post?.post?.likes?.includes(appState?.action?.user?.address) &&
+                          !isDisLiked ? (
                             <>
                               <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
                             </>
@@ -645,18 +548,24 @@ const Feeds = (post: any) => {
             </div>
             <style>
               {`
+              .description-container {
+                margin-left: 60px;
+                margin-top: 20px;
+              }
+              
+              .bottom-menu-container {
+                margin-left: 55px;
+                margin-top: 20px;
+              }
 
+              div:empty:before {
+                content:attr(data-placeholder);
+                color:gray
+              }
 
-        .description-container {
-            margin-left: 60px;
-            margin-top: 20px;
-        }
-        .bottom-menu-container {
-            margin-left: 55px;
-            margin-top: 20px;
-
-        }
-
+              div:empty:before {
+                content:attr(data-placeholder);
+                color:gray
         
 `}
             </style>
@@ -664,9 +573,6 @@ const Feeds = (post: any) => {
         </>
       ) : (
         <> </>
-        // <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
-        //   {/* <Loading /> */}
-        // </div>
       )}
     </>
   );

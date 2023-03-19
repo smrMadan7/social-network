@@ -17,14 +17,14 @@ export const network = {
 export const signMessage = "pln social wants you to sign in!";
 
 // server setup
-export const ipfsGateway = "http://44.214.42.39:8080/ipfs/";
-export const ipfsPostUrl = "http://44.214.42.39:5001/";
-export const baseUrl = "http://44.214.42.39:3000";
+// export const ipfsGateway = "http://44.214.42.39:8080/ipfs/";
+// export const ipfsPostUrl = "http://44.214.42.39:5001/";
+// export const baseUrl = "http://44.214.42.39:3000";
 
 // // https setup
-// export const ipfsGateway = "https://ipfs.plnetwork.io/gateway/ipfs/";
-// export const ipfsPostUrl = "https://ipfs.plnetwork.io/api/";
-// export const baseUrl = "https://stageapi-social.plnetwork.io";
+export const ipfsGateway = "https://ipfs.plnetwork.io/gateway/ipfs/";
+export const ipfsPostUrl = "https://ipfs.plnetwork.io/api/";
+export const baseUrl = "https://stageapi-social.plnetwork.io";
 
 // local set up
 // export const baseUrl = "http://localhost:3000";

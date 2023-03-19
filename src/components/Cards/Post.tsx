@@ -5,9 +5,10 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { Tooltip } from "react-tooltip";
 import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customGet } from "../../fetch/customFetch";
+import { textToLink } from "../../utils/textToLink";
 import { timeAgo } from "../../utils/timeAgo";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
@@ -20,87 +21,52 @@ const Post = (post: any) => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [userDetails, setUserDetails] = useState<any>();
   const [refetch, setRefetch] = useState(false);
-  const [convertedDate, setConvertedDate] = useState<any>();
-  const [postContent, setPostContent] = useState<any>();
-  // const convertedDate = date.toLocaleString();
 
   useEffect(() => {
-    const date = new Date(post?.post?.timestamp);
-
-    setConvertedDate(timeAgo(date));
-  }, []);
-
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  useEffect(() => {
-    setCommentStatus(false);
-    setLikedProfileStatus(false);
     getUserDetails();
     getPostDetails();
     getPostComments();
   }, []);
 
-  const getUserDetails = async () => {
-    fetch(`${getUser}${post?.post?.createdBy}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setUserDetails(result?.data);
-        }
-      })
-      .catch((error) => {
-        console.log("error in new post is ", error);
-      });
-  };
+  useEffect(() => {
+    if (postDetails?.status) {
+      setPostDetails(postDetails?.data);
+    }
+  }, [postDetails]);
+
+  useEffect(() => {
+    if (postComments?.status) {
+      setPostComments(
+        postComments.data?.comments?.sort((firstComment: any, secondComment: any) => {
+          return firstComment.timestamp - secondComment.timestamp;
+        })
+      );
+    }
+  }, [postComments]);
+
+  useEffect(() => {
+    if (userDetails?.status) {
+      setUserDetails(userDetails?.data);
+    }
+  }, [userDetails]);
 
   useEffect(() => {
     getPostComments();
     setRefetch(false);
   }, [refetch]);
 
+  const getUserDetails = async () => {
+    customGet(`${getUser}${post?.post?.createdBy}`, setUserDetails, "getting user details");
+  };
+
   const getPostDetails = () => {
-    fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setPostDetails(result);
-        }
-      })
-      .catch((error) => {
-        console.log("error in new post is ", error);
-      });
+    customGet(`${ipfsGateway}${post?.post?.postURI}`, setPostDetails, "getting post details");
   };
 
   // Get the post comments
   const getPostComments = async () => {
-    fetch(`${getComment}${post?.post?.postId}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setPostComments(
-            result?.data?.comments?.sort((firstComment: any, secondComment: any) => {
-              return firstComment.timestamp - secondComment.timestamp;
-            })
-          );
-        }
-      })
-      .catch((error) => {
-        console.log("Erro while getting comments ", error);
-      });
+    customGet(`${getComment}${post?.post?.postId}`, setPostComments, "getting comments");
   };
-
-  useEffect(() => {
-    const urlPattern =
-      /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
-
-    setPostContent(
-      postDetails?.content?.replace(
-        urlPattern,
-        '<a href="$1" target="_blank" style="color: blue;">$1</a>'
-      )
-    );
-  }, [postDetails]);
 
   return (
     <>
@@ -207,15 +173,9 @@ const Post = (post: any) => {
                     </p>
 
                     <p className=" text-gray-500">@{userDetails?.handle}</p>
-                    {/* <MdVerified fontSize={18} color="blue" /> */}
                   </div>
                   <div className="flex gap-2 items-center text-center relative">
-                    <p className="text-sm ">{convertedDate}</p>
-                    {/* {isDateHovered && (
-                      <div className="absolute items-center top-6 text-sm border rounded-lg px-2 py-1 ">
-                        {convertToLocal(post?.post?.timestamp)}{" "}
-                      </div>
-                    )} */}
+                    <p className="text-sm ">{timeAgo(new Date(post?.post?.timestamp))}</p>
                   </div>
                 </div>
               </div>
@@ -230,7 +190,7 @@ const Post = (post: any) => {
             </div>
             <div
               className="description-container"
-              dangerouslySetInnerHTML={{ __html: postContent }}
+              dangerouslySetInnerHTML={{ __html: textToLink(postDetails?.content) }}
             ></div>
             {postDetails?.media[0]?.file && (
               <div className=" description-container w-180 md:w-320">
@@ -290,30 +250,28 @@ const Post = (post: any) => {
             </div>
             <style>
               {`
-        .userid-background {
-            background: rgb(203,66,252);
-            background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
-            -webkit-text-fill-color: transparent;
-            -webkit-background-clip: text;
-        }
+                userid-background {
+                  background: rgb(203,66,252);
+                  background: linear-gradient(90deg, rgba(203,66,252,1) 22%, rgba(252,91,216,1) 79%);
+                  -webkit-text-fill-color: transparent;
+                  -webkit-background-clip: text;
+                }
 
-        .description-container {
-            margin-left: 60px;
-            margin-top: 20px;
-        }
-        .bottom-menu-container {
-            margin-left: 55px;
-            margin-top: 20px;
+                .description-container {
+                  margin-left: 60px;
+                  margin-top: 20px;
+                }
 
-        }
-`}
+                .bottom-menu-container {
+                  margin-left: 55px;
+                  margin-top: 20px;
+
+                }
+              `}
             </style>
           </div>
         </>
       ) : (
-        // <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
-        //   {/* <Loading /> */}
-        // </div>
         <> </>
       )}
     </>
