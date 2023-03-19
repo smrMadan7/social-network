@@ -1,6 +1,4 @@
-import { INotificationProps } from "../../types/interface";
-
-const Notification = (props: INotificationProps) => {
+const Notification = (props: any) => {
   return (
     <div className="border-orange-300	p-5 flex flex-col gap-2 rounded-lg w-full">
       <div className="flex gap-2 items-center font-bold">
