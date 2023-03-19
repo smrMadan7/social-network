@@ -7,7 +7,7 @@ import TeamProfile from "../components/Profile/TeamProfile";
 import SignIn from "../components/SignIn/SignIn";
 
 import SecureLayout from "../containers/SecureLayout";
-import Register from "../register/Register";
+import Register from "../Register/Register";
 import Explore from "./Explore";
 import Home from "./Home";
 
