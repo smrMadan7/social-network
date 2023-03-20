@@ -42,24 +42,15 @@ const Home = () => {
   const [isReload, setIsReload] = useState(false);
 
   useEffect(() => {
-    setIsLoading(false);
-    setIsBold(false);
-    setIsItalic(false);
-    setWarning(false);
-    setIsCode(false);
+    setFilterStatus("timeline");
+    if (!appState?.action?.user) {
+      window.location.reload();
+    }
   }, []);
 
   useEffect(() => {
     getAllPosts();
   }, [isReload]);
-
-  useEffect(() => {
-    setFilterStatus("timeline");
-    if (!appState?.action?.user) {
-      window.location.reload();
-    }
-    setIsPost(false);
-  }, []);
 
   const mediaUpload = () => {
     let input: HTMLInputElement = document.createElement("input");
@@ -115,10 +106,7 @@ const Home = () => {
             } else {
               setIsLoading(true);
             }
-            const provider: any = window.ethereum;
-            const web3: any = new Web3(provider);
-            const userAccount = await web3.eth.getAccounts();
-            const address = userAccount[0];
+
             const currentTimeStamp = Math.floor(Date.now() / 1000);
             const uri: any = {
               version: "1.0.0",
@@ -135,7 +123,7 @@ const Home = () => {
             };
             const post = {
               postId: uuidv4(),
-              address: address,
+              address: appState?.action?.user?.address,
               postData: uri,
             };
             var myHeaders = new Headers();
@@ -197,11 +185,6 @@ const Home = () => {
   }, [croppedPixel]);
 
   const getAllPosts = async () => {
-    const provider: any = window.ethereum;
-    const web3: any = new Web3(provider);
-    const userAccount = await web3.eth.getAccounts();
-    const address = userAccount[0];
-
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -211,7 +194,7 @@ const Home = () => {
       redirect: "follow",
     };
 
-    fetch(`${getPostById}${address}`, requestOptions)
+    fetch(`${getPostById}${appState?.action?.user?.address}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
@@ -576,9 +559,6 @@ const Home = () => {
                         <div className="relative cursor-pointer" onClick={mediaUpload}>
                           <MdOutlinePermMedia fontSize={20} />
                         </div>
-                        {/* <div className="cursor-pointer">
-                          <AiOutlineFileGif fontSize={20} />
-                        </div> */}
                       </div>
                       <div>
                         <button

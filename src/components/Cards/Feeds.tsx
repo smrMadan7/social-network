@@ -1,57 +1,85 @@
 import { useEffect, useState } from "react";
+import { AiTwotoneHeart } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
-import { BsArrowLeftRight, BsHeart } from "react-icons/bs";
+import { BsHeart } from "react-icons/bs";
+import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
-import { MdVerified } from "react-icons/md";
 import { TbMessage } from "react-icons/tb";
 import { Tooltip } from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
-import { postComment, ipfsGateway, likeApi, getComment } from "../../constants/AppConstants";
+import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
+import { useUserContext } from "../../context/UserContextProvider";
+import { customGet, customPost } from "../../fetch/customFetch";
+import { getInnerHtml } from "../../utils/geteInnerHtml";
+import { timeAgo } from "../../utils/timeAgo";
+import { updateContent } from "../../utils/updateContent";
 import Comment from "./Comment";
+import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
-import Warning from "./Warning";
-import { AiTwotoneHeart } from "react-icons/ai";
-import LikedProfile from "./LikedProfile";
+import Repost from "./Repost";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
-  const [postId, setPostId] = useState("");
   const [postComments, setPostComents] = useState<any>();
   const [like, setLike] = useState(post?.post?.likes.length);
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [commentStatus, setCommentStatus] = useState(false);
   const [refetch, setRefetch] = useState(false);
-  const [commentValue, setCommentValue] = useState("");
   const [isSucessfull, setIsSuccessfull] = useState(false);
-  const userImageUrl = `${ipfsGateway}${post?.post?.profilePictureUrl}`;
-  const date = new Date(post?.post?.timestamp);
-  const convertedDate = date.toLocaleString();
-  const [address, setAddress] = useState();
   const [isLiked, setIsLiked] = useState<any>(false);
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
   const [sharedProfiles, setSharedProfiles] = useState(false);
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  const [isRepost, setIsRepost] = useState(false);
+  const [likeMode, setLikeMode] = useState("");
+
+  const [sharedCount, setSharedCount] = useState(post?.post?.shares.length);
+  const { appState }: any = useUserContext();
+
+  const [addCommentResult, setAddCommentResult] = useState<any>();
+  const [incAndDecResult, setIncAndDecResult] = useState<any>();
 
   useEffect(() => {
-    setPostProfileStatus(false);
-    setCommentStatus(false);
-    setLikedProfileStatus(false);
-    setSharedProfiles(false);
-    setRefetch(false);
+    if (addCommentResult?.status) {
+      getInnerHtml("content").innerHTML = "";
+      getPostComments();
+      setIsSuccessfull(true);
+      setTimeout(() => {
+        setIsSuccessfull(false);
+      }, 500);
+    }
+  }, [addCommentResult]);
+
+  useEffect(() => {
+    if (postComments?.status) {
+      setPostComents(
+        postComments.data?.comments?.sort((firstComment: any, secondComment: any) => {
+          return firstComment.timestamp - secondComment.timestamp;
+        })
+      );
+    }
+  }, [postComments]);
+
+  useEffect(() => {
+    if (incAndDecResult?.status) {
+      if (likeMode === "like") {
+        setIsLiked(true);
+      } else {
+        setIsLiked(false);
+      }
+    }
+  }, [incAndDecResult]);
+
+  useEffect(() => {
+    if (postDetails?.status) {
+      setPostDetails(postDetails.data);
+    }
+  }, [postDetails]);
+
+  useEffect(() => {
     getPostComments();
     getPostDetails();
-    getAddress();
   }, []);
-
-  const getAddress = async () => {
-    const provider: any = window.ethereum;
-    const web3: any = new Web3(provider);
-    const userAccount = await web3.eth.getAccounts();
-    setAddress(userAccount[0]);
-  };
 
   useEffect(() => {
     getPostComments();
@@ -60,39 +88,17 @@ const Feeds = (post: any) => {
 
   // Get post details
   const getPostDetails = () => {
-    fetch(`${ipfsGateway}${post?.post?.postURI}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setPostDetails(result);
-        }
-      })
-      .catch((error) => {
-        console.log("error in new post is ", error);
-      });
+    customGet(`${ipfsGateway}${post?.post?.postURI}`, setPostDetails, "getting post details");
   };
 
   // Get the post comments
   const getPostComments = async () => {
-    fetch(`${getComment}${post?.post?.postId}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setPostComents(
-            result?.data?.comments?.sort((firstComment: any, secondComment: any) => {
-              return firstComment.timestamp - secondComment.timestamp;
-            })
-          );
-          setPostId(result?.data?.postId);
-        }
-      })
-      .catch((error) => {
-        console.log("Erro while getting comments ", error);
-      });
+    customGet(`${getComment}${post?.post?.postId}`, setPostComents, "getting comments");
   };
 
   // Increment like
   const incrementAndDecrementLike = (e: any, postData: any, mode: string) => {
+    setLikeMode(mode);
     if (mode === "like") {
       setLike(like + 1);
       setIsLiked(true);
@@ -102,70 +108,27 @@ const Feeds = (post: any) => {
         setIsLiked(false);
       }
     }
-    const postIdData = {
+    const params = {
       postId: postData?.post?.postId,
-      address: address,
+      address: appState?.action?.user?.address,
       action: mode,
     };
-    var requestOptions: any = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify(postIdData),
-      redirect: "follow",
-    };
 
-    fetch(likeApi, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === true) {
-          if (mode === "like") {
-            setIsLiked(true);
-          } else {
-            setIsLiked(false);
-          }
-        }
-      })
-      .catch((error) => {});
+    customPost(params, likeApi, "POST", setIncAndDecResult, "increment decrement like");
   };
 
   // Add a new comment
   const addComment = async (e: any) => {
     e.preventDefault();
-    const provider: any = window.ethereum;
-    const web3: any = new Web3(provider);
-    const userAccount = await web3.eth.getAccounts();
-    const address = userAccount[0];
-
-    const commentObj = {
+    const params = {
       postId: post?.post?.postId,
       commentId: uuidv4(),
-      commenter: address,
-      comment: e.target.comment.value,
+      commenter: appState?.action?.user?.address,
+      comment: getInnerHtml("content").innerHTML,
       tage: ["@madan"],
     };
 
-    var requestOptions: any = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify(commentObj),
-      redirect: "follow",
-    };
-
-    fetch(`${postComment}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setCommentValue("");
-          getPostComments();
-          setIsSuccessfull(true);
-          setTimeout(() => {
-            setIsSuccessfull(false);
-          }, 500);
-        }
-      })
-      .catch((error) => {
-        console.log("error in new post is ", error);
-      });
+    customPost(params, postComment, "POST", setAddCommentResult, "adding comment");
   };
 
   return (
@@ -198,23 +161,30 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Comment comments={postComments} setRefetch={setRefetch} postId={postId} />
+                      <Comment
+                        comments={postComments}
+                        setRefetch={setRefetch}
+                        postId={post?.post?.postId}
+                      />
                     </div>
                     <div className="absolute w-full bottom-2 px-5 py-3 flex gap-2">
                       <form onSubmit={addComment} className="flex w-full gap-2">
-                        <input
-                          className="p-2 w-full border outline-none rounded-lg"
-                          name="comment"
-                          value={commentValue}
-                          onChange={(e) => setCommentValue(e.target.value)}
-                          placeholder="Add a comment..."
-                        ></input>
-                        <button
-                          className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
-                          type="submit"
-                        >
-                          ADD
-                        </button>
+                        <div
+                          style={{ maxHeight: "43px" }}
+                          className="w-full p-2 overflow-y-auto cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words border rounded-lg"
+                          contentEditable="true"
+                          id="content"
+                          onKeyDown={(e: any) => {}}
+                          data-placeholder="Add a comment..."
+                        ></div>
+                        <div>
+                          <button
+                            className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
+                            type="submit"
+                          >
+                            ADD
+                          </button>
+                        </div>
                       </form>
                       {/* </div> */}
                     </div>
@@ -222,6 +192,7 @@ const Feeds = (post: any) => {
                 </div>
               </div>
             )}
+
             {postProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
@@ -242,6 +213,7 @@ const Feeds = (post: any) => {
                 </div>
               </div>
             )}
+
             {likedProfileStatus && (
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
@@ -274,7 +246,11 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <LikedProfile post={post} />
+                      <LikedProfile
+                        post={post}
+                        mode={"liked"}
+                        setLikedProfileStatus={setLikedProfileStatus}
+                      />
                     </div>
                   </div>
                 </div>
@@ -285,7 +261,7 @@ const Feeds = (post: any) => {
               <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div
-                    className="relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
+                    className="bg-black relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
                     style={{
                       maxHeight: "300px",
                       height: "300px",
@@ -312,60 +288,99 @@ const Feeds = (post: any) => {
                         <GrFormClose color="black" fontSize={25} />
                       </div>
                     </div>
-                    <div className="h-2/3 overflow-y-auto mt-2 "></div>
+                    <div className="h-2/3 overflow-y-auto mt-2 ">
+                      <LikedProfile
+                        post={post}
+                        mode={"shared"}
+                        setSharedStatus={setSharedProfiles}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
+            {isSucessfull && (
+              <>
+                <div className="w-100 fixed z-10  top-4 right-0 left-0  ">
+                  <div className=" flex items-center justify-center flex">
+                    <p className="text-violet-700 font-semibold text-xl ">Success!</p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {isRepost && (
+              <Repost
+                isRepost={isRepost}
+                setIsRepost={setIsRepost}
+                setIsSuccessfull={setIsSuccessfull}
+                postId={post?.post?.postId}
+                sharedCount={sharedCount}
+                setSharedCount={setSharedCount}
+              />
+            )}
+
             <div className=""></div>
           </div>
-          <div className="p-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
+          <div className="relative px-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             {/* shared details */}
-            {/* <div className="w-full py-2 italic border-b flex gap-2 iems-center">
-              <div
-                className=" rounded-full flex items-center justify-center"
-                style={{ width: "50px" }}
-              >
-                <img src={userImageUrl} width="20px" height="20px" className="rounded-full"></img>
-              </div>
-              <p>
-                Gautam and{" "}
-                <span
-                  className="text-blue-700"
-                  onClick={() => {
-                    setSharedProfiles(true);
-                  }}
+            {post?.post?.shares.length > 0 && (
+              <div className="w-full py-2 italic border-b flex gap-2 iems-center">
+                <div
+                  className=" rounded-full flex items-center justify-center"
+                  style={{ width: "50px" }}
                 >
-                  2-more{" "}
-                </span>
-                shared this post.
-              </p>
-            </div> */}
+                  <img
+                    src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
+                    width="20px"
+                    height="20px"
+                    className="rounded-full"
+                  ></img>
+                </div>
+                <p>
+                  <span
+                    className="text-blue-700"
+                    onClick={() => {
+                      setSharedProfiles(true);
+                    }}
+                  >
+                    {post?.post?.shares.length} more
+                  </span>
+                  <span> re-shared this post.</span>
+                </p>
+              </div>
+            )}
+            {/* {isSucessfull && (
+              <div
+                className="absolute text-center  top-0 right-0 left-0 bottom-1 items-center "
+                style={{ zIndex: 100, height: "30px" }}
+              >
+                <p className="text-violet-700 font-semibold text-xl pt-3">Successfully Re-post</p>
+              </div>
+            )} */}
+
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
-                  src={userImageUrl}
+                  src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
                   height={50}
                   width={50}
                   loading="lazy"
                   className=" rounded-full cursor-pointer"
                   onClick={() => setPostProfileStatus(true)}
                 ></img>
-                <div className="flex flex-col">
+                <div className="flex flex-col w-full">
                   <div
                     className="flex items-center gap-1 text-center"
                     onClick={() => setPostProfileStatus(true)}
                   >
                     <p className="text-md  font-semibold">{post?.post?.displayName}</p>
 
-                    <p className="text-md handle">@{post?.post?.handle}</p>
-                    {/* <MdVerified fontSize={18} color="blue" /> */}
+                    <p className="text-md  text-gray-500">@{post?.post?.handle}</p>
                   </div>
-                  <div className="flex gap-2 items-center text-center">
-                    {/* <p className="text-sm userid-background font-bold ">@{post?.post?.handle} .</p> */}
-
-                    <p className="text-sm ">{convertedDate}</p>
+                  <div className="flex gap-2 items-center text-center relative w-full">
+                    <p className="text-sm ">{timeAgo(new Date(post?.post?.timestamp))}</p>
                   </div>
                 </div>
               </div>
@@ -382,8 +397,10 @@ const Feeds = (post: any) => {
 
             <div
               className="description-container break-words"
-              dangerouslySetInnerHTML={{ __html: postDetails?.content }}
-            ></div>
+              dangerouslySetInnerHTML={{ __html: updateContent(postDetails?.content) }}
+            >
+              {/* <Linkify >{postDetails?.content}</Linkify> */}
+            </div>
             {postDetails?.media[0]?.file && (
               <div className="description-container w-180 md:w-320">
                 <img
@@ -394,7 +411,7 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            <div className=" flex gap-7 bottom-menu-container items-center">
+            <div className="mb-2 flex gap-7 bottom-menu-container items-center">
               <div
                 className=" flex text-indigo-500 items-center gap-2 "
                 onClick={() => {
@@ -403,77 +420,125 @@ const Feeds = (post: any) => {
               >
                 <div
                   style={{ height: "40px", width: "40px" }}
+                  id="comment"
                   className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
                 >
-                  <TbMessage fontSize={18} className="text-indigo-500" id="comment" />
-                  <span className="">{postComments?.length}</span>
+                  <TbMessage fontSize={18} className="text-indigo-500" />
+
+                  <span className="">{postComments?.length ? postComments?.length : 0}</span>
                 </div>
+                <Tooltip
+                  anchorSelect="#comment"
+                  place="bottom"
+                  content="Comments"
+                  className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
+                />
               </div>
 
-              <div className="flex items-center">
-                <div className=" px-2 py-2 ">
-                  <BsArrowLeftRight fontSize={18} className="text-violet-300 rounded-full " />
+              {/* Share button */}
+
+              <div
+                className=" flex text-indigo-500 items-center gap-2 "
+                onClick={() => {
+                  setIsRepost(true);
+                  // setShareTo(true);
+                }}
+              >
+                <div
+                  style={{ height: "40px", width: "40px" }}
+                  id="repost"
+                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
+                >
+                  <FaShareSquare fontSize={18} className="text-indigo-500" />
+
+                  <span className="">
+                    {post?.post?.shares?.includes(appState?.action?.user?.address) ? (
+                      post?.post?.shares.length
+                    ) : (
+                      <>{sharedCount}</>
+                    )}
+                  </span>
                 </div>
-                <p className="text-sm text-violet-700 ">{post?.chat?.mirrors}</p>
+                <Tooltip
+                  anchorSelect="#repost"
+                  place="bottom"
+                  content="Repost"
+                  className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
+                />
               </div>
 
               <div className="flex items-center text-center prevent-select">
-                {post?.post?.likes?.includes(address) ? (
-                  <>
-                    <div
-                      style={{ height: "40px", width: "40px" }}
-                      className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                      onClick={(e) => {
-                        if (!isDisLiked) {
-                          setIsLiked(true);
-                          setIsDisLiked(true);
-                          incrementAndDecrementLike(e, post, "unlike");
-                        } else {
-                          setIsLiked(false);
-                          setIsDisLiked(false);
-                          incrementAndDecrementLike(e, post, "like");
-                        }
-                      }}
-                    >
-                      <>
-                        {post?.post?.likes?.includes(address) && !isDisLiked ? (
+                <div id="like">
+                  {post?.post?.likes?.includes(appState?.action?.user?.address) ? (
+                    <>
+                      <div
+                        style={{ height: "40px", width: "40px" }}
+                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                        onClick={(e) => {
+                          if (!isDisLiked) {
+                            setIsLiked(true);
+                            setIsDisLiked(true);
+                            incrementAndDecrementLike(e, post, "unlike");
+                          } else {
+                            setIsLiked(false);
+                            setIsDisLiked(false);
+                            incrementAndDecrementLike(e, post, "like");
+                          }
+                        }}
+                      >
+                        <>
+                          {post?.post?.likes?.includes(appState?.action?.user?.address) &&
+                          !isDisLiked ? (
+                            <>
+                              <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
+                            </>
+                          ) : (
+                            <>
+                              <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
+                            </>
+                          )}
+                        </>
+                        {like}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {isLiked ? (
+                        <div
+                          style={{ height: "40px", width: "40px" }}
+                          className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                          onClick={(e) => {
+                            setIsLiked(false);
+                            incrementAndDecrementLike(e, post, "unlike");
+                          }}
+                        >
                           <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
-                        ) : (
+
+                          {like}
+                        </div>
+                      ) : (
+                        <div
+                          style={{ height: "40px", width: "40px" }}
+                          className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
+                          onClick={(e) => {
+                            setIsLiked(true);
+                            incrementAndDecrementLike(e, post, "like");
+                          }}
+                        >
                           <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
-                        )}
-                      </>
-                      {like}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {isLiked ? (
-                      <div
-                        style={{ height: "40px", width: "40px" }}
-                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                        onClick={(e) => {
-                          setIsLiked(false);
-                          incrementAndDecrementLike(e, post, "unlike");
-                        }}
-                      >
-                        <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
-                        {like}
-                      </div>
-                    ) : (
-                      <div
-                        style={{ height: "40px", width: "40px" }}
-                        className="rounded-full hover:bg-fuchsia-200 items-center flex justify-center gap-1 text-fuchsia-500 "
-                        onClick={(e) => {
-                          setIsLiked(true);
-                          incrementAndDecrementLike(e, post, "like");
-                        }}
-                      >
-                        <BsHeart fontSize={18} className="text-fuchsia-500 mt-1 " />
-                        {like}
-                      </div>
-                    )}
-                  </>
-                )}
+
+                          {like}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <Tooltip
+                    anchorSelect="#like"
+                    place="bottom"
+                    content="Like"
+                    className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
+                  />
+                </div>
                 {(post?.post?.likes?.length > 0 || isLiked) && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
                     likes
@@ -483,18 +548,24 @@ const Feeds = (post: any) => {
             </div>
             <style>
               {`
+              .description-container {
+                margin-left: 60px;
+                margin-top: 20px;
+              }
+              
+              .bottom-menu-container {
+                margin-left: 55px;
+                margin-top: 20px;
+              }
 
+              div:empty:before {
+                content:attr(data-placeholder);
+                color:gray
+              }
 
-        .description-container {
-            margin-left: 60px;
-            margin-top: 20px;
-        }
-        .bottom-menu-container {
-            margin-left: 55px;
-            margin-top: 20px;
-
-        }
-
+              div:empty:before {
+                content:attr(data-placeholder);
+                color:gray
         
 `}
             </style>
@@ -502,9 +573,6 @@ const Feeds = (post: any) => {
         </>
       ) : (
         <> </>
-        // <div className="flex items-center fixed z-10 top-24 bottom-0 left-0 right-0 m-auto">
-        //   {/* <Loading /> */}
-        // </div>
       )}
     </>
   );

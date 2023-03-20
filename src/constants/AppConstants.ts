@@ -17,9 +17,15 @@ export const network = {
 export const signMessage = "pln social wants you to sign in!";
 
 // server setup
-export const ipfsGateway = "http://44.214.42.39:8080/ipfs/";
-export const ipfsPostUrl = "http://44.214.42.39:5001/";
-export const baseUrl = "http://44.214.42.39:3000";
+// export const ipfsGateway = "http://44.214.42.39:8080/ipfs/";
+// export const ipfsPostUrl = "http://44.214.42.39:5001/";
+// export const baseUrl = "http://44.214.42.39:3000";
+
+// // https setup
+// // https setup
+export const ipfsGateway = "https://gateway-ipfs.plnetwork.io/ipfs/";
+export const ipfsPostUrl = "https://api-ipfs.plnetwork.io/";
+export const baseUrl = "https://stageapi-social.plnetwork.io";
 
 // local set up
 // export const baseUrl = "http://localhost:3000";
@@ -42,5 +48,7 @@ export const getPostByPostId = `${baseUrl}/api/post/get/`;
 
 export const getComment = `${baseUrl}/api/post/comments/get/`;
 export const updateComment = `${baseUrl}/api/post/comments/edit`;
+export const getAllProfiles = `${baseUrl}/api/user/getAllProfiles`;
+export const sharePosts = `${baseUrl}/api/post/share`;
 
 export const roles = ["member", "team"];

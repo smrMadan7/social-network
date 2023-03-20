@@ -10,7 +10,6 @@ import SecureLayout from "../containers/SecureLayout";
 import Register from "../Register/Register";
 import Explore from "./Explore";
 import Home from "./Home";
-import Layout from "./Layout";
 
 const Router = () => {
   return (

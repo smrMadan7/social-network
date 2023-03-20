@@ -1,6 +1,4 @@
-import { IWarningProps } from "../../Types/interface";
-
-const Warning = (props: IWarningProps) => {
+const Warning = (props: any) => {
   return (
     <div className="absolute top-4 right-0 left-0 items-center w-full " style={{ zIndex: 15 }}>
       <div
