@@ -10,11 +10,12 @@ import { getFeeds } from "../constants/AppConstants";
 import banner from "./../assets/Explore/banner.png";
 import { useFeedsContext } from "../context/FeedsContextProvider";
 import { useUserContext } from "../context/UserContextProvider";
+import { customGet } from "../fetch/customFetch";
 
 const Explore = () => {
   const { appState }: any = useUserContext();
   const { feeds, setFeeds }: any = useFeedsContext();
-  const [address, setAddress] = useState();
+  const [fetchedFeeds, setFetchedFeeds] = useState<any>();
 
   useEffect(() => {
     getAllFeeds();
@@ -23,34 +24,20 @@ const Explore = () => {
     }
   }, []);
 
-  const getAllFeeds = async () => {
-    const provider: any = window.ethereum;
-    const web3: any = new Web3(provider);
-    const userAccount = await web3.eth.getAccounts();
-    const address = userAccount[0];
-    setAddress(address);
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions: any = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-    fetch(`${getFeeds}${address}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          const feeds = result.data;
-          setFeeds({
-            feeds,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
+  useEffect(() => {
+    if (fetchedFeeds?.staus) {
+      const feeds = fetchedFeeds?.data;
+      setFeeds({
+        feeds,
       });
+    }
+  }, [fetchedFeeds]);
+  const getAllFeeds = async () => {
+    customGet(
+      `${getFeeds}${appState?.action?.user?.address}`,
+      setFetchedFeeds,
+      "getting all feeds"
+    );
   };
 
   return (
@@ -96,7 +83,13 @@ const Explore = () => {
         <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
           <div className="w-full md:w-70 border rounded-lg ">
             {feeds?.action?.feeds?.map((post: any, index: number) => {
-              return <Post post={post} address={address} key={index + uuidv4()} />;
+              return (
+                <Post
+                  post={post}
+                  address={appState?.action?.user?.address}
+                  key={index + uuidv4()}
+                />
+              );
             })}
           </div>
 

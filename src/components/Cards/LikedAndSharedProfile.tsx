@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { GrFormClose } from "react-icons/gr";
 import { getLikedUsers, getPostByPostId, ipfsGateway } from "../../constants/AppConstants";
+import { customGet, customPost } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
 import PostProfile from "./PostProfile";
 
@@ -10,8 +11,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
   const [postProfileStatus, setPostProfileStatus] = useState(false);
   const [likedProfileAddress, setLikedProfileAddress] = useState();
   const [isEmpty, setIsEmpty] = useState(false);
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  const [postResult, setPostResult] = useState<any>();
 
   useEffect(() => {
     setPostProfileStatus(false);
@@ -19,46 +19,35 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
     getPost();
   }, []);
 
+  useEffect(() => {
+    if (postResult?.status) {
+      if (mode === "liked") {
+        if (postResult?.data?.data?.likes?.length == 0) {
+          setIsEmpty(true);
+        } else {
+          getLikedOrSharedProfiles(postResult?.data?.data?.likes);
+        }
+      } else {
+        if (postResult?.data?.data?.shares) {
+          getLikedOrSharedProfiles(postResult?.data?.data?.shares);
+        }
+      }
+    }
+  }, [postResult]);
+
   const getLikedOrSharedProfiles = (likes: any) => {
-    const postIdData = {
+    const params = {
       address: likes,
     };
-
-    var requestOptions: any = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify(postIdData),
-      redirect: "follow",
-    };
-
-    fetch(getLikedUsers, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setLikedProfiles(result.data);
-        }
-      })
-      .catch((error) => {
-        console.log("Error occured while getting liked profiles", error);
-      });
+    customPost(params, getLikedUsers, "POST", setLikedProfiles, "getting liked profiles");
   };
 
   const getPost = () => {
+    customGet(`${getPostByPostId}${post?.post?.postId}`, setPostResult, "getting post details");
     fetch(`${getPostByPostId}${post?.post?.postId}`, {})
       .then((response) => response.json())
       .then((result) => {
         if (result.status !== false) {
-          if (mode === "liked") {
-            if (result.data?.data?.likes.length == 0) {
-              setIsEmpty(true);
-            } else {
-              getLikedOrSharedProfiles(result.data?.data?.likes);
-            }
-          } else {
-            if (result.data?.data?.shares) {
-              getLikedOrSharedProfiles(result?.data?.data?.shares);
-            }
-          }
         }
       })
       .catch((error) => {
@@ -106,7 +95,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
       )}
       {likedProfiles ? (
         <>
-          {likedProfiles?.map((likedProfile: any, index: number) => {
+          {likedProfiles?.data?.map((likedProfile: any, index: number) => {
             const imageUrl = `${ipfsGateway}${likedProfile.profilePictureUrl}`;
 
             return (

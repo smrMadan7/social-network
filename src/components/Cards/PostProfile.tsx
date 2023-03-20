@@ -3,6 +3,7 @@ import { AiFillTwitterCircle } from "react-icons/ai";
 import { BsDiscord } from "react-icons/bs";
 import { TbWorld } from "react-icons/tb";
 import { getUser, roles, ipfsGateway } from "../../constants/AppConstants";
+import { customGet } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
 
 const PostProfile = ({ postDetails, post }: any) => {
@@ -24,6 +25,8 @@ const PostProfile = ({ postDetails, post }: any) => {
   const [moreRoles, setMoreRoles] = useState<any>();
   const [moreRolesStatus, setMoreRolesStatus] = useState(false);
   const role: any = [];
+
+  const [fetchUserResult, setFetchUserResult] = useState<any>();
 
   var orgCharLength = 0;
   var skillCharLength = 0;
@@ -48,36 +51,22 @@ const PostProfile = ({ postDetails, post }: any) => {
     setMoreRoles(role);
   }, [isLoading]);
 
+  useEffect(() => {
+    if (fetchUserResult?.status) {
+      setIsLoading(false);
+      setDetails(fetchUserResult?.data);
+      setProfileUrl(`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`);
+      if (fetchUserResult?.data?.type === roles[0]) {
+        setIsMember(true);
+      } else if (fetchUserResult?.data?.type === roles[1]) {
+        setIsTeam(true);
+      }
+    }
+  }, [fetchUserResult]);
+
   const fetchUser = async () => {
     setIsLoading(true);
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions: any = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
-    fetch(`${getUser}${profileAddress}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === true) {
-          setIsLoading(false);
-          setDetails(result.data);
-          setProfileUrl(`${ipfsGateway}${result?.data?.profilePictureUrl}`);
-          if (result?.data?.type === roles[0]) {
-            setIsMember(true);
-          } else if (result?.data?.type === roles[1]) {
-            setIsTeam(true);
-          }
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.log("Error while fetching user", error);
-      });
+    customGet(`${getUser}${profileAddress}`, setFetchUserResult, "fetching user");
   };
 
   return (

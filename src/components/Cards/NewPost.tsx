@@ -1,21 +1,16 @@
+import { create } from "ipfs-http-client";
 import { useCallback, useEffect, useState } from "react";
+import Cropper, { Area } from "react-easy-crop";
 import { AiFillStar, AiOutlineFileGif } from "react-icons/ai";
 import { MdOutlinePermMedia } from "react-icons/md";
-import { createPost, ipfsPostUrl } from "../../constants/AppConstants";
-import getCroppedImage from "../../utils/crop";
-import { create } from "ipfs-http-client";
-import Warning from "./Warning";
-import Loading from "../Loading/Loading";
-import Cropper, { Area } from "react-easy-crop";
 import { v4 as uuidv4 } from "uuid";
-import { MetaMaskInpageProvider } from "@metamask/providers";
 import Web3 from "web3";
-import { Buffer } from "buffer";
-
-interface Window {
-  ethereum?: MetaMaskInpageProvider;
-  web3?: any;
-}
+import { createPost, ipfsPostUrl } from "../../constants/AppConstants";
+import { useUserContext } from "../../context/UserContextProvider";
+import { customPost } from "../../fetch/customFetch";
+import getCroppedImage from "../../utils/crop";
+import Loading from "../Loading/Loading";
+import Warning from "./Warning";
 
 const NewPost = ({ postStatus }: any) => {
   const [filePath, setFilePath] = useState("");
@@ -30,7 +25,10 @@ const NewPost = ({ postStatus }: any) => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [isPost, setIsPost] = useState(postStatus);
   const [zoom, setZoom] = useState(1);
+  const [postResult, setPostResult] = useState();
   const [content, setContent] = useState();
+  const ipfs = create({ url: ipfsPostUrl });
+  const { appState }: any = useUserContext();
 
   useEffect(() => {
     setIsBold(false);
@@ -52,8 +50,6 @@ const NewPost = ({ postStatus }: any) => {
     };
     input.click();
   };
-
-  const ipfs = create({ url: ipfsPostUrl });
 
   const ipfsClient = async (croppedImg: any) => {
     try {
@@ -78,10 +74,6 @@ const NewPost = ({ postStatus }: any) => {
       ipfsClient(uploadImage)
         .then(async (path) => {
           if (path !== undefined) {
-            const provider: any = window.ethereum;
-            const web3: any = new Web3(provider);
-            const userAccount = await web3.eth.getAccounts();
-            const address = userAccount[0];
             const currentTimeStamp = Math.floor(Date.now() / 1000);
             const uri: any = {
               version: "1.0.0",
@@ -96,31 +88,14 @@ const NewPost = ({ postStatus }: any) => {
                 },
               ],
             };
-            const post = {
+
+            const params = {
               profileId: uuidv4(),
-              address: address,
+              address: appState?.action?.user?.address,
               postData: uri,
             };
 
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            var requestOptions: any = {
-              method: "POST",
-              headers: myHeaders,
-              body: JSON.stringify(post),
-              redirect: "follow",
-            };
-
-            fetch(createPost, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                }
-              })
-              .catch((error) => {
-                console.log("error in new post is ", error);
-              });
+            customPost(params, createPost, "POST", setPostResult, "creating post");
           } else {
             setWarning(true);
 
@@ -153,6 +128,7 @@ const NewPost = ({ postStatus }: any) => {
       console.log(e);
     }
   }, [croppedPixel]);
+
   return (
     <>
       {isLoading && (

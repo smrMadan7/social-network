@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { sharePosts } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customPost } from "../../fetch/customFetch";
 
 const Repost = ({
   isRepost,
@@ -12,36 +13,25 @@ const Repost = ({
   setSharedCount,
 }: any) => {
   const { appState }: any = useUserContext();
+  const [repostResult, setRepostResult] = useState<any>();
 
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  useEffect(() => {
+    if (repostResult?.status) {
+      setIsRepost(false);
+      setSharedCount(sharedCount + 1);
+      setIsSuccessfull(true);
+      setTimeout(() => {
+        setIsSuccessfull(false);
+      }, 2000);
+    }
+  }, [repostResult]);
 
   const rePost = () => {
-    const sharedObj = {
+    const params = {
       postId: postId,
       sharedBy: appState?.action?.user?.address,
     };
-    var requestOptions: any = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify(sharedObj),
-      redirect: "follow",
-    };
-    fetch(`${sharePosts}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status === true) {
-          setIsRepost(false);
-          setSharedCount(sharedCount + 1);
-          setIsSuccessfull(true);
-          setTimeout(() => {
-            setIsSuccessfull(false);
-          }, 2000);
-        }
-      })
-      .catch((error) => {
-        console.log("Erro while getting comments ", error);
-      });
+    customPost(params, `${sharePosts}`, "POST", setRepostResult, "repost");
   };
 
   return (

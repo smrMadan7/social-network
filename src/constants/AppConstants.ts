@@ -22,8 +22,9 @@ export const signMessage = "pln social wants you to sign in!";
 // export const baseUrl = "http://44.214.42.39:3000";
 
 // // https setup
-export const ipfsGateway = "https://ipfs.plnetwork.io/gateway/ipfs/";
-export const ipfsPostUrl = "https://ipfs.plnetwork.io/api/";
+// // https setup
+export const ipfsGateway = "https://gateway-ipfs.plnetwork.io/ipfs/";
+export const ipfsPostUrl = "https://api-ipfs.plnetwork.io/";
 export const baseUrl = "https://stageapi-social.plnetwork.io";
 
 // local set up
