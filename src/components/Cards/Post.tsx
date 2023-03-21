@@ -5,11 +5,11 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
+import { getComment, getUser, ipfsGateway, updateComment } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet } from "../../fetch/customFetch";
-import { textToLink } from "../../utils/textToLink";
 import { timeAgo } from "../../utils/timeAgo";
+import { updateContent } from "../../utils/updateContent";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 
@@ -190,7 +190,7 @@ const Post = (post: any) => {
             </div>
             <div
               className="description-container"
-              dangerouslySetInnerHTML={{ __html: textToLink(postDetails?.content) }}
+              dangerouslySetInnerHTML={{ __html: updateContent(postDetails?.content) }}
             ></div>
             {postDetails?.media[0]?.file && (
               <div className=" description-container w-180 md:w-320">
