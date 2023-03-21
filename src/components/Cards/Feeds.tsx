@@ -30,7 +30,6 @@ const Feeds = (post: any) => {
   const [isDisLiked, setIsDisLiked] = useState<any>(false);
   const [sharedProfiles, setSharedProfiles] = useState(false);
   const [likedProfileStatus, setLikedProfileStatus] = useState(false);
-  const [isRepost, setIsRepost] = useState(false);
   const [likeMode, setLikeMode] = useState("");
 
   const [sharedCount, setSharedCount] = useState(post?.post?.shares.length);
@@ -38,6 +37,9 @@ const Feeds = (post: any) => {
 
   const [addCommentResult, setAddCommentResult] = useState<any>();
   const [incAndDecResult, setIncAndDecResult] = useState<any>();
+
+  const [isRepost, setIsRepost] = useState(false);
+  const [isReposted, setIsReposted] = useState(false);
 
   useEffect(() => {
     if (addCommentResult?.status) {
@@ -314,6 +316,7 @@ const Feeds = (post: any) => {
               <Repost
                 isRepost={isRepost}
                 setIsRepost={setIsRepost}
+                setIsReposted={setIsReposted}
                 setIsSuccessfull={setIsSuccessfull}
                 postId={post?.post?.postId}
                 sharedCount={sharedCount}
@@ -325,7 +328,7 @@ const Feeds = (post: any) => {
           </div>
           <div className="relative px-5 md:mb-0 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             {/* shared details */}
-            {post?.post?.shares.length > 0 && (
+            {(post?.post?.shares.length > 0 || isReposted) && (
               <div className="w-full py-2 italic border-b flex gap-2 iems-center">
                 <div
                   className=" rounded-full flex items-center justify-center"
@@ -345,12 +348,13 @@ const Feeds = (post: any) => {
                       setSharedProfiles(true);
                     }}
                   >
-                    {post?.post?.shares.length} more
+                    {sharedCount} more
                   </span>
                   <span> re-shared this post.</span>
                 </p>
               </div>
             )}
+
             {/* {isSucessfull && (
               <div
                 className="absolute text-center  top-0 right-0 left-0 bottom-1 items-center "
@@ -411,7 +415,7 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            <div className="mb-2 flex gap-7 bottom-menu-container items-center">
+            <div className="mb-2 flex gap-4 md:gap-7 bottom-menu-container items-center">
               <div
                 className=" flex text-indigo-500 items-center gap-2 "
                 onClick={() => {
@@ -438,16 +442,19 @@ const Feeds = (post: any) => {
               {/* Share button */}
 
               <div
-                className=" flex text-indigo-500 items-center gap-2 "
+                style={isReposted ? {} : {}}
+                className=" flex text-indigo-500 items-center gap-2 prevent-select"
                 onClick={() => {
-                  setIsRepost(true);
-                  // setShareTo(true);
+                  if (
+                    !(post?.post?.shares?.includes(appState?.action?.user?.address) || isReposted)
+                  ) {
+                    setIsRepost(true);
+                  }
                 }}
               >
                 <div
-                  style={{ height: "40px", width: "40px" }}
                   id="repost"
-                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 "
+                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 h-10 w-10 "
                 >
                   <FaShareSquare fontSize={18} className="text-indigo-500" />
 

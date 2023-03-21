@@ -6,6 +6,7 @@ import { customPost } from "../../fetch/customFetch";
 
 const Repost = ({
   isRepost,
+  setIsReposted,
   setIsRepost,
   setIsSuccessfull,
   postId,
@@ -17,6 +18,7 @@ const Repost = ({
 
   useEffect(() => {
     if (repostResult?.status) {
+      setIsReposted(true);
       setIsRepost(false);
       setSharedCount(sharedCount + 1);
       setIsSuccessfull(true);
