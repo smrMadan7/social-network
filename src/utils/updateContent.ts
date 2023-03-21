@@ -1,6 +1,18 @@
 export const updateContent = (content: any) => {
-  const urlPattern =
-    /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
+  const anchorRegex = /(<a\s.*?>.*?<\/a>)/g;
 
-  return content?.replace(urlPattern, '<a href="$1" target="_blank" style="color: blue;">$1</a>');
+  const hasAnchor = anchorRegex.test(content);
+
+  const linkColorStyle = {
+    color: "blue",
+  };
+
+  if (hasAnchor) {
+    return content.replace(anchorRegex, "<a style='color: blue;' $1");
+  } else {
+    const urlPattern =
+      /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
+
+    return content?.replace(urlPattern, '<a href="$1" target="_blank" style="color: blue;">$1</a>');
+  }
 };

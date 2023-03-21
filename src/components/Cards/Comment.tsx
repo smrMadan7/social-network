@@ -125,12 +125,12 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                             setPostProfileStatus(true);
                           }}
                         >
-                          <p className="flex gap-2 font-bold">
-                            {comment?.commenterDisplayName}{" "}
-                            <span className="text-md  text-gray-500 font-none">
+                          <div className="flex flex-col md:flex-row md:gap-2 font-bold">
+                            <p>{comment?.commenterDisplayName} </p>
+                            <p className="text-md  text-gray-500 font-none">
                               @{comment?.commenterHandle}
-                            </span>
-                          </p>
+                            </p>
+                          </div>
 
                           <span className="font-normal text-gray">
                             {" "}
@@ -161,7 +161,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                   </div>
                   <div>
                     {" "}
-                    <div className=" flex flex-col gap-1 whitespace-nowrap ml-14 md:ml-16">
+                    <div className=" flex flex-col gap-1 whitespace-nowrap ml-16 md:ml-16">
                       {/* comment content */}
                       {comment?.commenter === appState?.action?.user?.address ? (
                         <>
@@ -171,7 +171,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                               id="updated-comment"
                               contentEditable="true"
                               onClick={(e) => e.stopPropagation()}
-                              className="overflow-y-auto resize-none text-black outline-none prevent-select rounded-lg p-2"
+                              className="whitespace-normal overflow-y-auto resize-none text-black outline-none prevent-select rounded-lg p-2"
                               style={
                                 isUpdatePopup && comment?.commentId == commentId
                                   ? { maxHeight: "100px", border: "1px solid grey" }
@@ -180,7 +180,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                             ></div>
                           ) : (
                             <div
-                              className=" resize-none text-black prevent-select outline-none overflow-y-auto"
+                              className="whitespace-normal resize-none text-black prevent-select outline-none overflow-y-auto"
                               style={{ maxHeight: "100px" }}
                               dangerouslySetInnerHTML={{ __html: updateContent(comment?.comment) }}
                             ></div>
@@ -188,7 +188,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                         </>
                       ) : (
                         <div
-                          className="resize-none text-black prevent-select outline-none"
+                          className="whitespace-normal resize-none text-black prevent-select outline-none"
                           dangerouslySetInnerHTML={{ __html: updateContent(comment?.comment) }}
                         ></div>
                       )}

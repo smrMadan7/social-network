@@ -415,7 +415,7 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            <div className="mb-2 flex gap-7 bottom-menu-container items-center">
+            <div className="mb-2 flex gap-4 md:gap-7 bottom-menu-container items-center">
               <div
                 className=" flex text-indigo-500 items-center gap-2 "
                 onClick={() => {

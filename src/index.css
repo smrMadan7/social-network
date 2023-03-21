@@ -48,3 +48,7 @@ code {
     -webkit-background-clip: text;
 
 }
+
+.link {
+  color: blue;
+}
