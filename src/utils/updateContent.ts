@@ -3,10 +3,6 @@ export const updateContent = (content: any) => {
 
   const hasAnchor = anchorRegex.test(content);
 
-  const linkColorStyle = {
-    color: "blue",
-  };
-
   if (hasAnchor) {
     return content.replace(anchorRegex, "<a style='color: blue;' $1");
   } else {

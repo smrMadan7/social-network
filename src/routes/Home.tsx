@@ -19,6 +19,7 @@ import getCroppedImage from "../utils/crop";
 import { Tooltip } from "react-tooltip";
 import Loading from "../components/Loading/Loading";
 import Post from "../components/Cards/Post";
+import { htmlToText } from "../utils/htmlToText";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -86,6 +87,7 @@ const Home = () => {
 
     const contentElement: any = document.getElementById("content");
     var content = contentElement.innerHTML;
+
     if (isBold && content) {
       content = `<span class="font-bold">${content}</span>`;
     } else if (isItalic && content) {
@@ -96,7 +98,9 @@ const Home = () => {
       content = content;
     }
 
-    if (content || uploadImage) {
+    content = content.trim();
+
+    if (htmlToText(content).trim() || uploadImage) {
       try {
         ipfsClient(uploadImage)
           .then(async (path) => {
@@ -339,6 +343,7 @@ const Home = () => {
                   <div
                     className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                     onClick={() => {
+                      setFilePath("");
                       setIsPost(false);
                     }}
                   >

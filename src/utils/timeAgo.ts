@@ -25,7 +25,7 @@ export const timeAgo: any = (timestamp: any) => {
       return convertToLocal(timestamp);
     } else {
       if (interval === 1) {
-        return interval + "days ago";
+        return interval + "day ago";
       } else {
         return interval + " days ago";
       }

@@ -110,7 +110,7 @@ const Team = () => {
               contact: target.contactEmail.value,
               social: {
                 twitter: target.twitter.value,
-                discord: target.twitter.value,
+                discord: target.discord.value,
               },
               desc: description,
               profilePictureUrl: path,
