@@ -11,6 +11,7 @@ import banner from "./../assets/Explore/banner.png";
 import { useFeedsContext } from "../context/FeedsContextProvider";
 import { useUserContext } from "../context/UserContextProvider";
 import { customGet } from "../fetch/customFetch";
+import FeedsContainer from "../containers/FeedsContainer";
 
 const Explore = () => {
   const { appState }: any = useUserContext();
@@ -80,34 +81,7 @@ const Explore = () => {
           </button>
         </div>
 
-        <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
-          <div className="w-full md:w-70 border rounded-lg ">
-            {feeds?.action?.feeds?.map((post: any, index: number) => {
-              return (
-                <Post
-                  post={post}
-                  address={appState?.action?.user?.address}
-                  key={index + uuidv4()}
-                />
-              );
-            })}
-          </div>
-
-          <div
-            className="flex-col hidden md:flex md:w-30 sticky top-4 right-0 z-1"
-            style={{ left: "70vw" }}
-          >
-            <div className="border-orange-300	text-yellow-600 w-full bg-amber-100 rounded-lg">
-              <Notification
-                headerImg={<MdOutlineScience />}
-                title={"Beta Warning"}
-                description={
-                  "This Decentralized social network is still in the beta phase, things may break, please handle us with care."
-                }
-              />
-            </div>
-          </div>
-        </div>
+        <FeedsContainer feeds={feeds} />
       </div>
 
       <style>

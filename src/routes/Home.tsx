@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { BiMenu, BiMessageAltEdit } from "react-icons/bi";
+import { useEffect, useRef, useState } from "react";
+import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
 import { FaThList, FaUserAlt } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
 
@@ -20,6 +20,7 @@ import { Tooltip } from "react-tooltip";
 import Loading from "../components/Loading/Loading";
 import Post from "../components/Cards/Post";
 import { htmlToText } from "../utils/htmlToText";
+import PostContainer from "../containers/PostContainer";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -39,7 +40,6 @@ const Home = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
-  const [ipfsPath, setIpfsPath] = useState<any>();
   const [isReload, setIsReload] = useState(false);
 
   useEffect(() => {
@@ -52,6 +52,8 @@ const Home = () => {
   useEffect(() => {
     getAllPosts();
   }, [isReload]);
+
+  const myElementRef = useRef(null);
 
   const mediaUpload = () => {
     let input: HTMLInputElement = document.createElement("input");
@@ -98,18 +100,13 @@ const Home = () => {
       content = content;
     }
 
-    content = content.trim();
+    content = content.trimStart();
 
     if (htmlToText(content).trim() || uploadImage) {
       try {
         ipfsClient(uploadImage)
           .then(async (path) => {
             setIsLoading(true);
-            if (path !== undefined) {
-              setIpfsPath(path);
-            } else {
-              setIsLoading(true);
-            }
 
             const currentTimeStamp = Math.floor(Date.now() / 1000);
             const uri: any = {
@@ -213,6 +210,7 @@ const Home = () => {
   return (
     <>
       {isLoading && <Loading />}
+
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
         <div style={{ height: "90px" }}></div>
 
@@ -268,49 +266,11 @@ const Home = () => {
                   Reload
                 </button>
               </div>
-
-              {/* <div className="flex gap-9 items-center">
-                <button className="flex hover:bg-violet-200 p-2 rounded-lg">
-                  <div className="flex items-center gap-2 text-center">
-                    <div className="rounded-full bg-black px-1 py-1">
-                      <FaUserAlt color="white" />
-                    </div>
-                    My Feed
-                    <div className="items-center flex ">
-                      <RiArrowDownSLine fontSize={23} />
-                    </div>
-                  </div>
-                </button>
-                <div className="cursor-pointer p-2 hover:bg-violet-200 rounded-lg">
-                  <FiFilter />
-                </div>
-              </div> */}
             </div>
 
             {/* post section */}
 
-            <div className="border rounded-lg">
-              {posts?.length === 0 ? (
-                <div className="p-7 flex justify-center bg-white border rounded-lg ">
-                  <div className="flex flex-col items-center gap-2 text-violet-700 ">
-                    <FaThList fontSize={20} />
-                    <h1 className=" text-md text-slate-400 text-center">
-                      You haven't posted anything yet!
-                    </h1>
-                  </div>
-                </div>
-              ) : (
-                <div className=" mb-9 md:mb-2">
-                  {posts?.map((post: any, index: any) => {
-                    return (
-                      <div key={uuidv4()}>
-                        <Post post={post} />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <PostContainer posts={posts} />
           </div>
 
           {/* Who to follow section */}
@@ -344,6 +304,7 @@ const Home = () => {
                     className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                     onClick={() => {
                       setFilePath("");
+                      setUploadImage(null);
                       setIsPost(false);
                     }}
                   >
@@ -365,6 +326,20 @@ const Home = () => {
                               onCropChange={setCrop}
                               onCropComplete={cropComplete}
                               onZoomChange={setZoom}
+                            />
+                          </div>
+                          <div
+                            className="absolute top-0 right-0 cursor-pointer"
+                            style={{ top: "-10px", right: "-10px" }}
+                            onClick={() => {
+                              setCropStatus(false);
+                              setFilePath("");
+                              setUploadImage(null);
+                            }}
+                          >
+                            <GrFormClose
+                              fontSize={28}
+                              className="hover:bg-bgHoverActive bg-bgHover rounded-full"
                             />
                           </div>
                         </div>
@@ -429,7 +404,7 @@ const Home = () => {
                             }
                           }}
                         >
-                          <AiOutlineItalic />
+                          {isItalic ? <BiItalic /> : <AiOutlineItalic />}
                         </button>
                         {/* <button
                           type="button"
@@ -470,44 +445,6 @@ const Home = () => {
                     />
                     <div className="w-full border-t-2">
                       <div className="mt-3 p-4">
-                        {/* <input
-                          placeholder="Share something!"
-                          value={content}
-                          onChange={(e) => {
-                            setContent(e.target.value);
-                            if (e.target.value.includes("http")) {
-                              const firstIndex = e.target.value.indexOf("http");
-                              const lastIndex = e.target.value.indexOf(" ", firstIndex);
-                              console.log("first index is", firstIndex, "last index is", lastIndex);
-                            }
-                          }}
-                          className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
-                          style={
-                            isBold
-                              ? { fontWeight: "bold" }
-                              : isCode
-                              ? { background: "gray" }
-                              : isItalic
-                              ? { fontStyle: "italic" }
-                              : isBold && isCode && isItalic
-                              ? {
-                                  fontWeight: "bold",
-                                  background: "grap",
-                                  fontStyle: "italic",
-                                }
-                              : isCode && isItalic
-                              ? {
-                                  background: "gray",
-                                  fontStyle: "italic",
-                                }
-                              : isBold && isItalic
-                              ? {
-                                  fontStyle: "italic",
-                                  fontWeight: "bold",
-                                }
-                              : {}
-                          }
-                        ></input> */}
                         <div
                           className="border rounded-lg w-full overflow-y-auto"
                           style={{ height: "100px" }}
@@ -521,25 +458,12 @@ const Home = () => {
                             style={
                               isBold
                                 ? { fontWeight: "bold" }
-                                : isCode
-                                ? { background: "gray" }
                                 : isItalic
                                 ? { fontStyle: "italic" }
-                                : isBold && isCode && isItalic
-                                ? {
-                                    fontWeight: "bold",
-                                    background: "grap",
-                                    fontStyle: "italic",
-                                  }
-                                : isCode && isItalic
-                                ? {
-                                    background: "gray",
-                                    fontStyle: "italic",
-                                  }
                                 : isBold && isItalic
                                 ? {
-                                    fontStyle: "italic",
                                     fontWeight: "bold",
+                                    fontStyle: "italic",
                                   }
                                 : {}
                             }
@@ -548,14 +472,29 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div className=" overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
+                    <div className="relative overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
                       {filePath && !cropStatus && (
-                        <img
-                          alt="uploaded Image"
-                          className="h-150 md:h-225"
-                          src={filePath}
-                          loading="lazy"
-                        ></img>
+                        <>
+                          <img
+                            alt="uploaded Image"
+                            className="h-150 md:h-225"
+                            src={filePath}
+                            loading="lazy"
+                          ></img>
+                          <div
+                            className="px-4 absolute top-0 right-0 cursor-pointer"
+                            onClick={() => {
+                              setCropStatus(false);
+                              setFilePath("");
+                              setUploadImage(null);
+                            }}
+                          >
+                            <GrFormClose
+                              fontSize={28}
+                              className="hover:bg-bgHoverActive bg-bgHover rounded-full"
+                            />
+                          </div>
+                        </>
                       )}
                     </div>
 

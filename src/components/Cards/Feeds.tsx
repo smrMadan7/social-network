@@ -41,13 +41,15 @@ const Feeds = (post: any) => {
   const [isRepost, setIsRepost] = useState(false);
   const [isReposted, setIsReposted] = useState(false);
 
+  const [isCommentSuccess, setIsCommentSuccess] = useState(false);
+
   useEffect(() => {
     if (addCommentResult?.status) {
       getInnerHtml("content").innerHTML = "";
       getPostComments();
-      setIsSuccessfull(true);
+      setIsCommentSuccess(true);
       setTimeout(() => {
-        setIsSuccessfull(false);
+        setIsCommentSuccess(false);
       }, 500);
     }
   }, [addCommentResult]);
@@ -143,7 +145,7 @@ const Feeds = (post: any) => {
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
-                      {isSucessfull && (
+                      {isCommentSuccess && (
                         <div
                           className="absolute text-center  top-0 right-0 left-0 bottom-0 "
                           style={{ zIndex: 100, height: "30px" }}
