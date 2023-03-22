@@ -13,6 +13,7 @@ import PoweredBy from "../PoweredBy/PoweredBy";
 import defaultProfile from "./.././../assets/Form/default-user.png";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import Web3 from "web3";
+import { GrFormClose } from "react-icons/gr";
 
 interface Window {
   ethereum?: MetaMaskInpageProvider;
@@ -23,7 +24,7 @@ const Team = () => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userImage, setUserImage] = useState(defaultProfile);
-  const [uploadImage, setUploadImage] = useState();
+  const [uploadFile, setUploadFile] = useState<any>();
   const [toast, setToast] = useState(false);
 
   const [cropStatus, setCropStatus] = useState(false);
@@ -85,10 +86,10 @@ const Team = () => {
 
   const formSubmitHandler = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (uploadedImage) {
+    if (uploadFile) {
       if (description && handle) {
         setIsLoading(true);
-        ipfsClient(uploadImage).then(async (path) => {
+        ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
             const target = event.target as typeof event.target & {
               organizationName: { value: string };
@@ -197,7 +198,7 @@ const Team = () => {
       const { file, url }: any = await getCroppedImage(uploadedImage, croppedPixel);
 
       setUserImage(url);
-      setUploadImage(file);
+      setUploadFile(file);
 
       setCropStatus(false);
     } catch (e) {
@@ -225,6 +226,20 @@ const Team = () => {
                   onCropChange={setCrop}
                   onCropComplete={cropComplete}
                   onZoomChange={setZoom}
+                />
+              </div>
+              <div
+                className=" absolute top-0 right-0 cursor-pointer"
+                style={{ right: "-10px", top: "-10px" }}
+                onClick={() => {
+                  setCropStatus(false);
+                  setUserImage(defaultProfile);
+                  setUploadFile(null);
+                }}
+              >
+                <GrFormClose
+                  fontSize={28}
+                  className="hover:bg-bgHoverActive bg-bgHover rounded-full"
                 />
               </div>
             </div>
@@ -369,12 +384,12 @@ const Team = () => {
                           type="url"
                           placeholder="Discord"
                         ></input>
-                      </div>{" "}
+                      </div>
                     </div>
                     <div className="gap-2 flex flex-col items-center text-center sm:w-50 md:mt-2">
                       <div className="items-center text-center flex md:justify-center sm:justify-start">
                         <div
-                          className=" cursor-pointer"
+                          className="relative cursor-pointer"
                           style={{ width: "140px", height: "140px" }}
                         >
                           <img
@@ -384,6 +399,22 @@ const Team = () => {
                             src={userImage}
                             loading="lazy"
                           ></img>
+                          {userImage !== defaultProfile && (
+                            <div
+                              className=" absolute top-0 right-0 cursor-pointer"
+                              style={{ right: "-10px" }}
+                              onClick={() => {
+                                setCropStatus(false);
+                                setUserImage(defaultProfile);
+                                setUploadFile(null);
+                              }}
+                            >
+                              <GrFormClose
+                                fontSize={28}
+                                className="hover:bg-bgHoverActive bg-bgHover rounded-full"
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex md:justify-center sm:justify-start text-center items-center ">

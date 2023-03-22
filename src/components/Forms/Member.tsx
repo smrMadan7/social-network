@@ -4,7 +4,7 @@ import { IoIosClose } from "react-icons/io";
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { create } from "ipfs-http-client";
 import Cropper, { Area } from "react-easy-crop";
-import { GrFormAdd } from "react-icons/gr";
+import { GrFormAdd, GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
@@ -31,7 +31,7 @@ const Member = () => {
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userImage, setUserImage] = useState<any>(defaultProfile);
-  const [uploadFile, setUploadFile] = useState<any>();
+  const [uploadFile, setUploadFile] = useState<any>(null);
 
   const [selectedOrganization, setSelectedOrganization] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -129,6 +129,7 @@ const Member = () => {
   const ipfsClient = async (croppedImg: any) => {
     try {
       const file = await ipfs.add(croppedImg);
+      console.log("file path is ", file.path);
       return file.path;
     } catch (error) {
       console.log(error);
@@ -280,6 +281,7 @@ const Member = () => {
   };
 
   const cropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+    console.log("cropped pixedl is ", croppedPixel);
     setCroppedPixel(croppedAreaPixels);
   };
 
@@ -315,6 +317,20 @@ const Member = () => {
                   onCropChange={setCrop}
                   onCropComplete={cropComplete}
                   onZoomChange={setZoom}
+                />
+              </div>
+              <div
+                className=" absolute top-0 right-0 cursor-pointer"
+                style={{ right: "-10px", top: "-10px" }}
+                onClick={() => {
+                  setCropStatus(false);
+                  setUserImage(defaultProfile);
+                  setUploadFile(null);
+                }}
+              >
+                <GrFormClose
+                  fontSize={28}
+                  className="hover:bg-bgHoverActive bg-bgHover rounded-full"
                 />
               </div>
             </div>
@@ -501,7 +517,7 @@ const Member = () => {
                     <div className="gap-2 flex flex-col items-center text-center sm:w-50 md:mt-2">
                       <div className="items-center text-center flex md:justify-center sm:justify-start">
                         <div
-                          className=" cursor-pointer"
+                          className="relative cursor-pointer"
                           style={{ width: "140px", height: "140px" }}
                         >
                           <img
@@ -511,6 +527,22 @@ const Member = () => {
                             src={userImage}
                             loading="lazy"
                           ></img>
+                          {userImage !== defaultProfile && (
+                            <div
+                              className=" absolute top-0 right-0 cursor-pointer"
+                              style={{ right: "-10px" }}
+                              onClick={() => {
+                                setCropStatus(false);
+                                setUserImage(defaultProfile);
+                                setUploadFile(null);
+                              }}
+                            >
+                              <GrFormClose
+                                fontSize={28}
+                                className="hover:bg-bgHoverActive bg-bgHover rounded-full"
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex md:justify-center sm:justify-start text-center items-center ">
@@ -564,7 +596,7 @@ const Member = () => {
                               </>
                             ) : (
                               <>
-                                <p className="flex gap-3 flex-wrap">
+                                <div className="flex gap-3 flex-wrap">
                                   {selectedRoles?.map((role: string, index: number) => {
                                     return (
                                       <div
@@ -585,7 +617,7 @@ const Member = () => {
                                       </div>
                                     );
                                   })}
-                                </p>
+                                </div>
                               </>
                             )}
                           </div>
@@ -625,7 +657,7 @@ const Member = () => {
                               </>
                             ) : (
                               <>
-                                <p className="flex gap-3 flex-wrap">
+                                <div className="flex gap-3 flex-wrap">
                                   {selectedOrganization?.map(
                                     (organization: string, index: number) => {
                                       return (
@@ -648,7 +680,7 @@ const Member = () => {
                                       );
                                     }
                                   )}
-                                </p>
+                                </div>
                               </>
                             )}
                           </div>
@@ -691,7 +723,7 @@ const Member = () => {
                             </>
                           ) : (
                             <>
-                              <p className="flex gap-3 flex-wrap">
+                              <div className="flex gap-3 flex-wrap">
                                 {selectedSkills?.map((skill: string, index: number) => {
                                   return (
                                     <div
@@ -712,7 +744,7 @@ const Member = () => {
                                     </div>
                                   );
                                 })}
-                              </p>
+                              </div>
                             </>
                           )}
                         </div>
