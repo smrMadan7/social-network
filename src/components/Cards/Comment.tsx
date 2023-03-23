@@ -183,7 +183,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                               onClick={(e) => e.stopPropagation()}
                               className="whitespace-normal overflow-y-auto resize-none text-black outline-none prevent-select rounded-lg p-2"
                               style={
-                                isUpdatePopup && comment?.commentId == commentId
+                                isUpdatePopup && comment?.commentId === commentId
                                   ? { maxHeight: "100px", border: "1px solid grey" }
                                   : {}
                               }
@@ -205,7 +205,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                     </div>
                   </div>
                 </div>
-                {isUpdatePopup && commentId == comment?.commentId && (
+                {isUpdatePopup && commentId === comment?.commentId && (
                   <div className="absolute right-0 bottom-1 px-3">
                     <div className="flex gap-2">
                       <div>

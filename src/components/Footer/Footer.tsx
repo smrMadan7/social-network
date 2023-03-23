@@ -8,7 +8,6 @@ import { NavLink } from "react-router-dom";
 import { useUserContext } from "../../context/UserContextProvider";
 
 const Footer = () => {
-  const navigate = useNavigate();
   const exactPath = useLocation().pathname.slice(1);
   const [routerStatus, setRouterStatus] = useState("");
   const user = localStorage.getItem("signedIn");

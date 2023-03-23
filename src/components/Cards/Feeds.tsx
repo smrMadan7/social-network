@@ -6,7 +6,7 @@ import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
 import { Tooltip } from "react-tooltip";
-import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
+import { getComment, ipfsGateway, likeApi } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet, customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
@@ -310,7 +310,13 @@ const Feeds = (post: any) => {
                   className=" rounded-full flex items-center justify-center"
                   style={{ width: "50px" }}
                 >
-                  <img src={userImage} width="20px" height="20px" className="rounded-full"></img>
+                  <img
+                    src={userImage}
+                    alt="user profile"
+                    width="20px"
+                    height="20px"
+                    className="rounded-full"
+                  ></img>
                 </div>
                 <p>
                   <span
@@ -342,6 +348,7 @@ const Feeds = (post: any) => {
                   height={50}
                   width={50}
                   loading="lazy"
+                  alt="user profile"
                   className=" rounded-full cursor-pointer"
                   onClick={() => setPostProfileStatus(true)}
                 ></img>
@@ -379,6 +386,7 @@ const Feeds = (post: any) => {
             {postDetails?.media[0]?.file && (
               <div className="description-container w-180 md:w-320">
                 <img
+                  alt="post"
                   src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
                   height="100"
                   loading="lazy"

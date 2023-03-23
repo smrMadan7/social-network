@@ -1,14 +1,15 @@
-import { lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import Member from "../components/Forms/Member";
+import Team from "../components/Forms/Team";
+
+import MemberProfile from "../components/Profile/MemberProfile";
+import TeamProfile from "../components/Profile/TeamProfile";
+
+import SecureLayout from "../containers/SecureLayout";
+import Register from "../Register/Register";
 import Explore from "./Explore";
 import Home from "./Home";
-
-const Member = lazy(() => import("../components/Forms/Member"));
-const Team = lazy(() => import("../components/Forms/Team"));
-const MemberProfile = lazy(() => import("../components/Profile/MemberProfile"));
-const TeamProfile = lazy(() => import("../components/Profile/TeamProfile"));
-const Register = lazy(() => import("../Register/Register"));
-const SecureLayout = lazy(() => import("../containers/SecureLayout"));
 
 const Router = () => {
   return (

@@ -23,7 +23,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
   useEffect(() => {
     if (postResult?.status) {
       if (mode === "liked") {
-        if (postResult?.data?.data?.likes?.length == 0) {
+        if (postResult?.data?.data?.likes?.length === 0) {
           setIsEmpty(true);
         } else {
           getLikedOrSharedProfiles(postResult?.data?.data?.likes);
@@ -110,7 +110,13 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
                     setPostProfileStatus(true);
                   }}
                 >
-                  <img src={user} height="60px" width="60px" className="border rounded-full"></img>
+                  <img
+                    alt="user"
+                    src={user}
+                    height="60px"
+                    width="60px"
+                    className="border rounded-full"
+                  ></img>
                 </div>
                 <div
                   className="flex flex-col cursor-pointer"

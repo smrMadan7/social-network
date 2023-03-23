@@ -28,8 +28,7 @@ const Home = () => {
   const [filePath, setFilePath] = useState("");
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
-  const [isCode, setIsCode] = useState(false);
-  const [uploadImage, setUploadImage] = useState<any>();
+  const [uploadImage, setUploadImage] = useState<any>(null);
   const [warning, setWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +49,6 @@ const Home = () => {
   useEffect(() => {
     getAllPosts();
   }, [isReload]);
-
-  const myElementRef = useRef(null);
 
   const mediaUpload = () => {
     let input: HTMLInputElement = document.createElement("input");
@@ -100,7 +97,7 @@ const Home = () => {
 
     content = content.trimStart();
 
-    if (htmlToText(content).trim() || uploadImage) {
+    if (htmlToText(content).trim() || uploadImage !== null) {
       try {
         ipfsClient(uploadImage)
           .then(async (path) => {

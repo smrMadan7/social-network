@@ -81,6 +81,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             <div className="w-full text-black flex px-5 mt-5 gap-4">
               <div>
                 <img
+                  alt="profile picture"
                   height="70px"
                   width="70px"
                   className="rounded-full border bg-black"
@@ -268,6 +269,7 @@ const PostProfile = ({ postDetails, post }: any) => {
             <div className="text-black flex flex-col md:flex-row px-5 mt-5 gap-3">
               <div>
                 <img
+                  alt="profile"
                   height="70px"
                   width="70px"
                   className="rounded-full border"
@@ -296,13 +298,13 @@ const PostProfile = ({ postDetails, post }: any) => {
 
             <div className="absolute bottom-0 flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3 ">
               <div className="flex gap-3">
-                <a href={details?.social?.twitter} target="_blank">
+                <a href={details?.social?.twitter} target="_blank" rel="noreferrer">
                   <AiFillTwitterCircle size={30} color="blue" />
                 </a>
-                <a href={details?.social?.discord} target="_blank">
+                <a href={details?.social?.discord} target="_blank" rel="noreferrer">
                   <BsDiscord size={30} color="blue" />
                 </a>
-                <a href={details?.website} target="_blank">
+                <a href={details?.website} target="_blank" rel="noreferrer">
                   <TbWorld size={30} />
                 </a>
               </div>
