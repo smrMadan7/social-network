@@ -6,7 +6,6 @@ import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
 import { Tooltip } from "react-tooltip";
-import { v4 as uuidv4 } from "uuid";
 import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet, customPost } from "../../fetch/customFetch";
@@ -14,6 +13,7 @@ import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { setProfile } from "../../utils/setProfile";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import AddComment from "../Forms/AddComment";
 import defaultProfile from "./../.././assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
@@ -126,20 +126,6 @@ const Feeds = (post: any) => {
     customPost(params, likeApi, "POST", setIncAndDecResult, "increment decrement like");
   };
 
-  // Add a new comment
-  const addComment = async (e: any) => {
-    e.preventDefault();
-    const params = {
-      postId: post?.post?.postId,
-      commentId: uuidv4(),
-      commenter: appState?.action?.user?.address,
-      comment: getInnerHtml("content").innerHTML,
-      tage: ["@madan"],
-    };
-
-    customPost(params, postComment, "POST", setAddCommentResult, "adding comment");
-  };
-
   return (
     <>
       {postDetails ? (
@@ -176,27 +162,10 @@ const Feeds = (post: any) => {
                         postId={post?.post?.postId}
                       />
                     </div>
-                    <div className="absolute w-full bottom-2 px-5 py-3 flex gap-2">
-                      <form onSubmit={addComment} className="flex w-full gap-2">
-                        <div
-                          style={{ maxHeight: "43px" }}
-                          className="w-full p-2 overflow-y-auto cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words border rounded-lg"
-                          contentEditable="true"
-                          id="content"
-                          onKeyDown={(e: any) => {}}
-                          data-placeholder="Add a comment..."
-                        ></div>
-                        <div>
-                          <button
-                            className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
-                            type="submit"
-                          >
-                            ADD
-                          </button>
-                        </div>
-                      </form>
-                      {/* </div> */}
-                    </div>
+                    <AddComment
+                      postId={post?.post?.postId}
+                      setAddCommentResult={setAddCommentResult}
+                    />
                   </div>
                 </div>
               </div>

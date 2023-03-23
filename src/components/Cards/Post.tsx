@@ -5,15 +5,18 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
+import { getComment, getUser, ipfsGateway, postComment } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
-import { customGet } from "../../fetch/customFetch";
+import { customGet, customPost } from "../../fetch/customFetch";
 import { setProfile } from "../../utils/setProfile";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
 import defaultUser from "./../././../assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
+import { v4 as uuidv4 } from "uuid";
+import { getInnerHtml } from "../../utils/geteInnerHtml";
+import AddComment from "../Forms/AddComment";
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -25,6 +28,8 @@ const Post = (post: any) => {
   const [refetch, setRefetch] = useState(false);
   const [imageUrl, setImageUrl] = useState(defaultUser);
   const [currentUserImage, setCurrentUserImage] = useState(defaultUser);
+  const [addCommentResult, setAddCommentResult] = useState<any>();
+  const [isCommentSuccess, setIsCommentSuccess] = useState(false);
 
   useEffect(() => {
     getUserDetails();
@@ -32,6 +37,17 @@ const Post = (post: any) => {
     getPostComments();
     setProfile(appState?.action?.user?.profilePictureUrl, setCurrentUserImage);
   }, []);
+
+  useEffect(() => {
+    if (addCommentResult?.status) {
+      getInnerHtml("content").innerHTML = "";
+      getPostComments();
+      setIsCommentSuccess(true);
+      setTimeout(() => {
+        setIsCommentSuccess(false);
+      }, 500);
+    }
+  }, [addCommentResult]);
 
   useEffect(() => {
     if (postDetails?.status) {
@@ -73,6 +89,19 @@ const Post = (post: any) => {
   // Get the post comments
   const getPostComments = async () => {
     customGet(`${getComment}${post?.post?.postId}`, setPostComments, "getting comments");
+  };
+
+  const addComment = async (e: any) => {
+    e.preventDefault();
+    const params = {
+      postId: post?.post?.postId,
+      commentId: uuidv4(),
+      commenter: appState?.action?.user?.address,
+      comment: getInnerHtml("content").innerHTML,
+      tage: ["@madan"],
+    };
+
+    // customPost(params, postComment, "POST", setAddCommentResult, "adding comment");
   };
 
   return (
@@ -117,6 +146,14 @@ const Post = (post: any) => {
           <div className="text-white flex items-center justify-center flex m-auto h-screen">
             <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
               <div className="flex justify-between p-3 border-b ">
+                {isCommentSuccess && (
+                  <div
+                    className="absolute text-center  top-0 right-0 left-0 bottom-0 "
+                    style={{ zIndex: 100, height: "30px" }}
+                  >
+                    <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
+                  </div>
+                )}
                 <p className="text-xl font-bold">Comments</p>
                 <div
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -135,6 +172,7 @@ const Post = (post: any) => {
                   setRefetch={setRefetch}
                 />
               </div>
+              <AddComment postId={post?.post?.postId} setAddCommentResult={setAddCommentResult} />
             </div>
           </div>
         </div>
