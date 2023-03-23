@@ -5,11 +5,13 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { getComment, getUser, ipfsGateway, updateComment } from "../../constants/AppConstants";
+import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet } from "../../fetch/customFetch";
+import { setProfile } from "../../utils/setProfile";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import defaultUser from "./../././../assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 
@@ -21,11 +23,14 @@ const Post = (post: any) => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [userDetails, setUserDetails] = useState<any>();
   const [refetch, setRefetch] = useState(false);
+  const [imageUrl, setImageUrl] = useState(defaultUser);
+  const [currentUserImage, setCurrentUserImage] = useState(defaultUser);
 
   useEffect(() => {
     getUserDetails();
     getPostDetails();
     getPostComments();
+    setProfile(appState?.action?.user?.profilePictureUrl, setCurrentUserImage);
   }, []);
 
   useEffect(() => {
@@ -46,6 +51,8 @@ const Post = (post: any) => {
 
   useEffect(() => {
     if (userDetails?.status) {
+      setProfile(userDetails?.data?.profilePictureUrl, setImageUrl);
+
       setUserDetails(userDetails?.data);
     }
   }, [userDetails]);
@@ -142,7 +149,7 @@ const Post = (post: any) => {
                   style={{ width: "50px" }}
                 >
                   <img
-                    src={`${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`}
+                    src={currentUserImage}
                     width="20px"
                     height="20px"
                     className="rounded-full"
@@ -156,7 +163,7 @@ const Post = (post: any) => {
               <div className="flex gap-2">
                 <div>
                   <img
-                    src={`${ipfsGateway}${userDetails?.profilePictureUrl}`}
+                    src={imageUrl}
                     alt="user-profile"
                     height={50}
                     width={50}

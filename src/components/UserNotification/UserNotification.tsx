@@ -1,6 +1,5 @@
-import React from "react";
 import { GrFormClose } from "react-icons/gr";
-import commingSoon from "./../././../assets/Notification/coming-soon.png";
+import commingSoon from "./../././../assets/Notification/coming-soon.jpg";
 
 const UserNotification = ({ isNotification, setIsNotification }: any) => {
   return (

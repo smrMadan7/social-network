@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { AiOutlineReload } from "react-icons/ai";
 import { BiMenu } from "react-icons/bi";
-import { MdOutlineScience } from "react-icons/md";
-import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
-import Notification from "../components/Cards/Notification";
-import Post from "../components/Cards/Feeds";
 import { getFeeds } from "../constants/AppConstants";
-import banner from "./../assets/Explore/banner.png";
+import FeedsContainer from "../containers/FeedsContainer";
 import { useFeedsContext } from "../context/FeedsContextProvider";
 import { useUserContext } from "../context/UserContextProvider";
 import { customGet } from "../fetch/customFetch";
-import FeedsContainer from "../containers/FeedsContainer";
+import banner from "./../assets/Explore/banner.jpg";
 
 const Explore = () => {
   const { appState }: any = useUserContext();

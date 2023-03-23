@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Loading from "../Loading/Loading";
+import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { getAllProfiles, ipfsGateway, sharePosts } from "../../constants/AppConstants";
 import { RiSendPlaneFill } from "react-icons/ri";
+import { getAllProfiles, ipfsGateway, sharePosts } from "../../constants/AppConstants";
+import { customGet } from "../../fetch/customFetch";
+import Loading from "../Loading/Loading";
 import PostProfile from "./PostProfile";
 
 const Share = ({ address, postId, setShareTo, callback }: any) => {
@@ -22,17 +23,14 @@ const Share = ({ address, postId, setShareTo, callback }: any) => {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (allProfiles?.status) {
+      setAllProfiles(allProfiles?.data);
+    }
+  }, [allProfiles]);
+
   const getProfiles = async () => {
-    fetch(`${getAllProfiles}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-          setAllProfiles(result.data);
-        }
-      })
-      .catch((error) => {
-        console.log("Erro while getting comments ", error);
-      });
+    customGet(getAllProfiles, setAllProfiles, "getting profiles");
   };
 
   const share = () => {
@@ -57,7 +55,6 @@ const Share = ({ address, postId, setShareTo, callback }: any) => {
         setTimeout(() => {
           setIsSuccessfull(false);
           setSelectedProfiles([]);
-          // setShareTo(false);
         }, 1000);
         if (result.status !== false) {
         }

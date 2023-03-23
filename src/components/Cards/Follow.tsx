@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SlUserFollow } from "react-icons/sl";
 import { getUser } from "../../constants/AppConstants";
 

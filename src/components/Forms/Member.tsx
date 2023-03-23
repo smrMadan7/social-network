@@ -3,19 +3,21 @@ import { IoIosClose } from "react-icons/io";
 
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { create } from "ipfs-http-client";
-import Cropper, { Area } from "react-easy-crop";
+import { Area } from "react-easy-crop";
 import { GrFormAdd, GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
 import { addMember, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customPost } from "../../fetch/customFetch";
 import getCroppedImage from "../../utils/crop";
+import Crop from "../Cards/Crop";
 import Warning from "../Cards/Warning";
 import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
-import defaultProfile from "./.././../assets/Form/default-user.png";
+import defaultProfile from "./.././../assets/Form/default-user.svg";
 
 declare global {
   interface Window {
@@ -49,8 +51,24 @@ const Member = () => {
   const [warning, setWarning] = useState(false);
   const [handleWarning, setHandleWarning] = useState(false);
   const [handle, setHandle] = useState(true);
+  const [addMemberResult, setAddMemberResult] = useState<any>();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (addMemberResult?.status) {
+      localStorage.setItem("registered", "true");
+      const user = addMemberResult?.data;
+      appStatedispatch({
+        user,
+      });
+      setTimeout(() => {
+        setIsLoading(false);
+        setToastMessage("");
+        navigate("/home");
+      }, 1000);
+    }
+  }, [addMemberResult]);
 
   useEffect(() => {
     setFormStatus("");
@@ -129,7 +147,6 @@ const Member = () => {
   const ipfsClient = async (croppedImg: any) => {
     try {
       const file = await ipfs.add(croppedImg);
-      console.log("file path is ", file.path);
       return file.path;
     } catch (error) {
       console.log(error);
@@ -157,35 +174,35 @@ const Member = () => {
         });
     }
   };
+
   const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    const target = event.target as typeof event.target & {
+      firstName: { value: string };
+      lastName: { value: string };
+      displayName: { value: string };
+      open: { value: string };
+      handle: { value: string };
+    };
 
-    if (uploadFile) {
-      if (
-        bio &&
-        selectedRoles.length >= 1 &&
-        selectedOrganization.length >= 1 &&
-        selectedSkills.length >= 1 &&
-        handle
-      ) {
-        setIsLoading(true);
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
+    const userAccount = await web3.eth.getAccounts();
+    const address = userAccount[0];
+
+    if (
+      bio &&
+      selectedRoles.length >= 1 &&
+      selectedOrganization.length >= 1 &&
+      selectedSkills.length >= 1 &&
+      handle
+    ) {
+      setIsLoading(true);
+      if (uploadFile) {
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
-            const target = event.target as typeof event.target & {
-              firstName: { value: string };
-              lastName: { value: string };
-              displayName: { value: string };
-              open: { value: string };
-              handle: { value: string };
-            };
-
-            const provider: any = window.ethereum;
-            const web3: any = new Web3(provider);
-
-            const userAccount = await web3.eth.getAccounts();
-            const address = userAccount[0];
-
-            const user = {
+            setIsLoading(true);
+            const params = {
               firstName: target.firstName.value,
               lastName: target.lastName.value,
               handle: target.handle.value,
@@ -199,65 +216,42 @@ const Member = () => {
               profilePictureUrl: path,
             };
 
-            var requestOptions: any = {
-              method: "POST",
-              mode: "cors",
-              redirect: "follow",
-            };
-            setIsLoading(true);
-
-            var raw = JSON.stringify(user);
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            var requestOptions: any = {
-              method: "POST",
-              headers: myHeaders,
-              body: raw,
-              redirect: "follow",
-            };
-
-            fetch(addMember, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  localStorage.setItem("registered", "true");
-                  const user = result.data;
-                  appStatedispatch({
-                    user,
-                  });
-                  setTimeout(() => {
-                    setIsLoading(false);
-                    setToastMessage("");
-                    navigate("/home");
-                  }, 1000);
-                }
-              });
+            customPost(params, addMember, "POST", setAddMemberResult, "adding Member");
           } else {
-            setWarning(true);
+            setToast(true);
+            setToastMessage("Something went wrong. Please try again!");
             setIsLoading(false);
 
             setTimeout(() => {
+              setToast(false);
               setWarning(false);
             }, 3000);
           }
         });
       } else {
-        setToastMessage("All fields are required");
-        setToast(true);
-        setTimeout(() => {
-          setToastMessage("");
-          setToast(false);
-        }, 2000);
+        const params = {
+          firstName: target.firstName.value,
+          lastName: target.lastName.value,
+          handle: target.handle.value,
+          displayName: target.displayName.value,
+          bio: bio,
+          role: selectedRoles,
+          organization: selectedOrganization,
+          skill: selectedSkills,
+          openForWork: target.open.value,
+          address: address,
+          profilePictureUrl: "empty",
+        };
+
+        customPost(params, addMember, "POST", setAddMemberResult, "addingMember");
       }
     } else {
-      setToastMessage("Upload profile picture");
+      setToastMessage("All fields are required");
       setToast(true);
-
       setTimeout(() => {
         setToastMessage("");
         setToast(false);
-      }, 3000);
+      }, 2000);
     }
   };
 
@@ -281,11 +275,10 @@ const Member = () => {
   };
 
   const cropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
-    console.log("cropped pixedl is ", croppedPixel);
     setCroppedPixel(croppedAreaPixels);
   };
 
-  const getGroppedImage = useCallback(async () => {
+  const getcroppedImage = useCallback(async () => {
     try {
       const { file, url }: any = await getCroppedImage(uploadedImage, croppedPixel);
 
@@ -301,66 +294,21 @@ const Member = () => {
   return (
     <>
       <div className="relative w-full h-screen">
-        {warning && <Warning message="Something went wrong. Please try again!"></Warning>}
         {toast && <Warning message={toastMessage}></Warning>}
-        {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center w-90 md:w-50">
-            <div className=" relative w-90 md:w-50" style={{ height: "50vh" }}>
-              <div>
-                <Cropper
-                  image={uploadedImage}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={5 / 5}
-                  cropShape="round"
-                  showGrid={false}
-                  onCropChange={setCrop}
-                  onCropComplete={cropComplete}
-                  onZoomChange={setZoom}
-                />
-              </div>
-              <div
-                className=" absolute top-0 right-0 cursor-pointer"
-                style={{ right: "-10px", top: "-10px" }}
-                onClick={() => {
-                  setCropStatus(false);
-                  setUserImage(defaultProfile);
-                  setUploadFile(null);
-                }}
-              >
-                <GrFormClose
-                  fontSize={28}
-                  className="hover:bg-bgHoverActive bg-bgHover rounded-full"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
-              <div className="flex justify-center items-center mt-3">
-                <input
-                  id="small-range"
-                  type="range"
-                  min={1}
-                  max={50}
-                  value={zoom}
-                  onChange={(e: any) => {
-                    setZoom(e.target.value);
-                  }}
-                  className="w-50 h-2 bg-blue-100 appearance-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-center mb-3">
-                <button
-                  className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white"
-                  onClick={getGroppedImage}
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div></div>
+        {cropStatus && (
+          <Crop
+            uploadedImage={uploadedImage}
+            crop={crop}
+            zoom={zoom}
+            setCrop={setCrop}
+            cropComplete={cropComplete}
+            setZoom={setZoom}
+            setCropStatus={setCropStatus}
+            setUserImage={setUserImage}
+            setUploadFile={setUploadFile}
+            getcroppedImage={getcroppedImage}
+            defaultProfile={defaultProfile}
+          />
         )}
 
         <Navbar />

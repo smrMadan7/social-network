@@ -11,8 +11,10 @@ import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/A
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet, customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
+import { setProfile } from "../../utils/setProfile";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import defaultProfile from "./../.././assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
@@ -42,6 +44,14 @@ const Feeds = (post: any) => {
   const [isReposted, setIsReposted] = useState(false);
 
   const [isCommentSuccess, setIsCommentSuccess] = useState(false);
+
+  const [userImage, setUserImage] = useState(defaultProfile);
+
+  useEffect(() => {
+    setProfile(post?.post?.profilePictureUrl, setUserImage);
+    getPostComments();
+    getPostDetails();
+  }, []);
 
   useEffect(() => {
     if (addCommentResult?.status) {
@@ -79,11 +89,6 @@ const Feeds = (post: any) => {
       setPostDetails(postDetails.data);
     }
   }, [postDetails]);
-
-  useEffect(() => {
-    getPostComments();
-    getPostDetails();
-  }, []);
 
   useEffect(() => {
     getPostComments();
@@ -336,12 +341,7 @@ const Feeds = (post: any) => {
                   className=" rounded-full flex items-center justify-center"
                   style={{ width: "50px" }}
                 >
-                  <img
-                    src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
-                    width="20px"
-                    height="20px"
-                    className="rounded-full"
-                  ></img>
+                  <img src={userImage} width="20px" height="20px" className="rounded-full"></img>
                 </div>
                 <p>
                   <span
@@ -369,7 +369,7 @@ const Feeds = (post: any) => {
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
-                  src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
+                  src={userImage}
                   height={50}
                   width={50}
                   loading="lazy"

@@ -4,6 +4,7 @@ import { GrFormClose } from "react-icons/gr";
 import { getLikedUsers, getPostByPostId, ipfsGateway } from "../../constants/AppConstants";
 import { customGet, customPost } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
+import defaultProfile from "./../././../assets/Form/default-user.svg";
 import PostProfile from "./PostProfile";
 
 const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedStatus }: any) => {
@@ -44,15 +45,6 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
 
   const getPost = () => {
     customGet(`${getPostByPostId}${post?.post?.postId}`, setPostResult, "getting post details");
-    fetch(`${getPostByPostId}${post?.post?.postId}`, {})
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.status !== false) {
-        }
-      })
-      .catch((error) => {
-        console.log("Error occured while getting liked profiles", error);
-      });
   };
 
   return (
@@ -97,6 +89,15 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
         <>
           {likedProfiles?.data?.map((likedProfile: any, index: number) => {
             const imageUrl = `${ipfsGateway}${likedProfile.profilePictureUrl}`;
+            var user = defaultProfile;
+            if (
+              likedProfile?.profilePictureUrl === "empty" ||
+              likedProfile?.profilePictureUrl === undefined
+            ) {
+              user = defaultProfile;
+            } else {
+              user = imageUrl;
+            }
 
             return (
               <div key={index} className="flex p-3 text-sm gap-3 items-center">
@@ -109,12 +110,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
                     setPostProfileStatus(true);
                   }}
                 >
-                  <img
-                    src={imageUrl}
-                    height="60px"
-                    width="60px"
-                    className="border rounded-full"
-                  ></img>
+                  <img src={user} height="60px" width="60px" className="border rounded-full"></img>
                 </div>
                 <div
                   className="flex flex-col cursor-pointer"

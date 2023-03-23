@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { AiFillTwitterCircle } from "react-icons/ai";
 import { BsDiscord } from "react-icons/bs";
 import { TbWorld } from "react-icons/tb";
-import { getUser, roles, ipfsGateway } from "../../constants/AppConstants";
+import { getUser, roles } from "../../constants/AppConstants";
 import { customGet } from "../../fetch/customFetch";
+import { setProfile } from "../../utils/setProfile";
 import Loading from "../Loading/Loading";
 
 const PostProfile = ({ postDetails, post }: any) => {
@@ -55,7 +56,7 @@ const PostProfile = ({ postDetails, post }: any) => {
     if (fetchUserResult?.status) {
       setIsLoading(false);
       setDetails(fetchUserResult?.data);
-      setProfileUrl(`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`);
+      setProfile(fetchUserResult?.data?.profilePictureUrl, setProfileUrl);
       if (fetchUserResult?.data?.type === roles[0]) {
         setIsMember(true);
       } else if (fetchUserResult?.data?.type === roles[1]) {

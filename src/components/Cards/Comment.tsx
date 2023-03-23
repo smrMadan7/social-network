@@ -9,6 +9,7 @@ import { customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import defaultProfile from "./../././../assets/Form/default-user.svg";
 import PostProfile from "./PostProfile";
 
 const Comment = ({ comments, setRefetch, postId }: any) => {
@@ -92,6 +93,15 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
         >
           {comments.map((comment: any, index: number) => {
             const imageUrl = `${ipfsGateway}${comment?.commenterProfilePic}`;
+            var user = defaultProfile;
+            if (
+              comment?.commenterProfilePic === "empty" ||
+              comment?.commenterProfilePic === undefined
+            ) {
+              user = defaultProfile;
+            } else {
+              user = imageUrl;
+            }
 
             return (
               <div key={index} className="mb-5 relative ">
@@ -113,7 +123,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                           height="50px"
                           width="50px"
                           className="border rounded-full"
-                          src={imageUrl}
+                          src={user}
                           loading="lazy"
                         ></img>{" "}
                       </div>

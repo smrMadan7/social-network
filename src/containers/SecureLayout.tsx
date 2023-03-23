@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import Web3 from "web3";
+import Footer from "../components/Footer/Footer";
 import Loading from "../components/Loading/Loading";
 import Navbar from "../components/Navbar/Navbar";
 import { chainId, getUser, network, verifyUser } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
-import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
-import logo from "./../assets/Navbar/logo.svg";
 import fileCoinLogo from "./../assets/Auth/filecoin-logo.svg";
 import ipfsLogo from "./../assets/Auth/ipfs-logo.svg";
-import Footer from "../components/Footer/Footer";
+import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
+import logo from "./../assets/Navbar/logo.svg";
 
 declare global {
   interface Window {
@@ -39,6 +39,7 @@ const SecureLayout = () => {
 
   useEffect(() => {
     const listen = async () => {
+      appStatedispatch({});
       window?.ethereum?.on("accountsChanged", async function () {
         window.location.reload();
       });

@@ -1,9 +1,8 @@
-import React from "react";
 import { MdOutlineScience } from "react-icons/md";
-import Notification from "../components/Cards/Notification";
-import { useUserContext } from "../context/UserContextProvider";
 import { v4 as uuidv4 } from "uuid";
 import Feeds from "../components/Cards/Feeds";
+import Notification from "../components/Cards/Notification";
+import { useUserContext } from "../context/UserContextProvider";
 
 const FeedsContainer = ({ feeds }: any) => {
   const { appState }: any = useUserContext();

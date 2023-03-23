@@ -2,17 +2,14 @@ import React, { useEffect, useState } from "react";
 
 import { AiFillBug } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
-import { IoIosContact } from "react-icons/io";
+import { IoIosContact, IoMdNotificationsOutline } from "react-icons/io";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ipfsGateway, roles } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
-import defaultUser from "./.././.././assets/Form/default-user.png";
-import logo from "./.././.././assets/Navbar/nav-logo.svg";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import Notification from "../Cards/Notification";
 import UserNotification from "../UserNotification/UserNotification";
+import defaultUser from "./.././.././assets/Form/default-user.svg";
+import logo from "./.././.././assets/Navbar/nav-logo.svg";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -26,14 +23,17 @@ const Navbar = () => {
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
-  var image;
+  var profilePictureUrl;
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
+  useEffect(() => {});
   if (appState?.action?.user?.profilePictureUrl === undefined) {
-    image = defaultUser;
+    profilePictureUrl = undefined;
+  } else if (appState?.action?.user?.profilePictureUrl === "empty") {
+    profilePictureUrl = "empty";
   } else {
-    image = imageUrl;
+    profilePictureUrl = imageUrl;
   }
 
   var profileRoute = "";
@@ -108,7 +108,7 @@ const Navbar = () => {
               alt="app-log "
               src={logo}
               loading="lazy"
-              style={image !== defaultUser ? { padding: "0px" } : { padding: "10px" }}
+              style={profilePictureUrl === null ? { padding: "0px" } : { padding: "10px" }}
             ></img>
             {/* <div className="hidden md:block mt-1 ">
               <p className="font-bold text-md">Protocol Labs</p>
@@ -117,7 +117,7 @@ const Navbar = () => {
           </div>
 
           <div className=" text-center items-center hidden md:flex">
-            {image !== defaultUser && (
+            {(profilePictureUrl === "empty" || profilePictureUrl !== undefined) && (
               <ul className="flex gap-6 font-semibold ">
                 <NavLink to={"/home"}>
                   <li
@@ -253,16 +253,30 @@ const Navbar = () => {
             onMouseOver={() => setProfileStatus(true)}
             onMouseOut={() => setProfileStatus(false)}
           >
-            {image !== defaultUser && (
-              <img
-                alt="user profile"
-                height="45px"
-                width="45px"
-                src={image}
-                className="rounded-full"
-                loading="lazy"
-              ></img>
+            {(profilePictureUrl === "empty" || profilePictureUrl !== undefined) && (
+              <>
+                {!(profilePictureUrl === "empty") ? (
+                  <img
+                    alt="user profile"
+                    height="45px"
+                    width="45px"
+                    src={profilePictureUrl}
+                    className="rounded-full"
+                    loading="lazy"
+                  ></img>
+                ) : (
+                  <img
+                    alt="user profile"
+                    height="45px"
+                    width="45px"
+                    src={defaultUser}
+                    className="rounded-full"
+                    loading="lazy"
+                  ></img>
+                )}
+              </>
             )}
+
             {profileStatus && (
               <div
                 className="fixed z-40 border mt-1 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-4"

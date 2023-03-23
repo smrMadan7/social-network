@@ -4,8 +4,6 @@ import Team from "../components/Forms/Team";
 import MemberProfile from "../components/Profile/MemberProfile";
 import TeamProfile from "../components/Profile/TeamProfile";
 
-import SignIn from "../components/SignIn/SignIn";
-
 import SecureLayout from "../containers/SecureLayout";
 import Register from "../Register/Register";
 import Explore from "./Explore";
@@ -21,7 +19,6 @@ const Router = () => {
           <Route path="/register/member" element={<Member />}></Route>
           <Route path="/home" element={<Home />}></Route>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/sign-in" element={<SignIn />}></Route>
           <Route path="/explore" element={<Explore />}></Route>
           <Route path="/member-profile" element={<MemberProfile />}></Route>
           <Route path="/team-profile" element={<TeamProfile />}></Route>

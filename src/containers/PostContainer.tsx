@@ -1,7 +1,7 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { FaThList } from "react-icons/fa";
-import Post from "../components/Cards/Post";
 import { v4 as uuidv4 } from "uuid";
+import Post from "../components/Cards/Post";
 
 const PostContainer = memo(({ posts }: any) => {
   return (

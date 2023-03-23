@@ -1,19 +1,21 @@
 import React, { useCallback, useEffect, useState } from "react";
 
+import { MetaMaskInpageProvider } from "@metamask/providers";
 import { create } from "ipfs-http-client";
-import Cropper, { Area } from "react-easy-crop";
+import { Area } from "react-easy-crop";
+import { GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
+import Web3 from "web3";
 import { addTeam, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customPost } from "../../fetch/customFetch";
 import getCroppedImage from "../../utils/crop";
+import Crop from "../Cards/Crop";
 import Warning from "../Cards/Warning";
 import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
-import defaultProfile from "./.././../assets/Form/default-user.png";
-import { MetaMaskInpageProvider } from "@metamask/providers";
-import Web3 from "web3";
-import { GrFormClose } from "react-icons/gr";
+import defaultProfile from "./../././.././assets/Form/default-user.svg";
 
 interface Window {
   ethereum?: MetaMaskInpageProvider;
@@ -34,10 +36,10 @@ const Team = () => {
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
   const { appState, appStatedispatch }: any = useUserContext();
-  const [warning, setWarning] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [handle, setHandle] = useState(true);
   const [handleWarning, setHandleWarning] = useState(false);
+  const [teamResult, setTeamResult] = useState<any>();
 
   const navigate = useNavigate();
 
@@ -49,6 +51,18 @@ const Team = () => {
     setCropStatus(false);
     setHandle(true);
   }, []);
+
+  useEffect(() => {
+    if (teamResult?.status) {
+      const user = teamResult?.data;
+      appStatedispatch({
+        user,
+      });
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    }
+  }, [teamResult]);
   const ipfs = create({ url: ipfsPostUrl });
 
   const ipfsClient = async (croppedImg: any) => {
@@ -84,28 +98,29 @@ const Team = () => {
     }
   };
 
-  const formSubmitHandler = (event: React.SyntheticEvent) => {
+  const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (uploadFile) {
-      if (description && handle) {
-        setIsLoading(true);
+
+    const target = event.target as typeof event.target & {
+      organizationName: { value: string };
+      website: { value: string };
+      contactEmail: { value: string };
+      twitter: { value: string };
+      discord: { value: string };
+      handle: { value: string };
+    };
+
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
+    const userAccount = await web3.eth.getAccounts();
+    const address = userAccount[0];
+
+    if (description && handle) {
+      setIsLoading(true);
+      if (uploadFile) {
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
-            const target = event.target as typeof event.target & {
-              organizationName: { value: string };
-              website: { value: string };
-              contactEmail: { value: string };
-              twitter: { value: string };
-              discord: { value: string };
-              handle: { value: string };
-            };
-            const provider: any = window.ethereum;
-            const web3: any = new Web3(provider);
-
-            const userAccount = await web3.eth.getAccounts();
-            const address = userAccount[0];
-
-            const user = {
+            const params = {
               organizationName: target.organizationName.value,
               website: target.website.value,
               contact: target.contactEmail.value,
@@ -119,54 +134,41 @@ const Team = () => {
               address: address,
             };
 
-            var raw = JSON.stringify(user);
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            var requestOptions: any = {
-              method: "POST",
-              headers: myHeaders,
-              body: raw,
-              redirect: "follow",
-            };
-
-            fetch(addTeam, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  const user = result.data;
-                  appStatedispatch({
-                    user,
-                  });
-                  setTimeout(() => {
-                    navigate("/home");
-                  }, 1000);
-                }
-              });
+            customPost(params, addTeam, "POST", setTeamResult, "adding team");
           } else {
-            setWarning(true);
+            setToast(true);
+            setToastMessage("Something went wrong. Please try again!");
             setIsLoading(false);
             setTimeout(() => {
-              setWarning(false);
+              setToast(false);
+              setToastMessage("");
             }, 3000);
           }
         });
       } else {
-        setToast(true);
-        setToastMessage("All fields are required");
-        setTimeout(() => {
-          setToastMessage("");
-          setToast(false);
-        }, 2000);
+        const params = {
+          organizationName: target.organizationName.value,
+          website: target.website.value,
+          contact: target.contactEmail.value,
+          social: {
+            twitter: target.twitter.value,
+            discord: target.discord.value,
+          },
+          desc: description,
+          profilePictureUrl: "empty",
+          handle: target.handle.value,
+          address: address,
+        };
+
+        customPost(params, addTeam, "POST", setTeamResult, "adding team");
       }
     } else {
-      setToastMessage("Upload profile picture");
       setToast(true);
-      setIsLoading(false);
+      setToastMessage("All fields are required");
       setTimeout(() => {
         setToastMessage("");
         setToast(false);
-      }, 3000);
+      }, 2000);
     }
   };
 
@@ -193,7 +195,7 @@ const Team = () => {
     setCroppedPixel(croppedAreaPixels);
   };
 
-  const getGroppedImage = useCallback(async () => {
+  const getcroppedImage = useCallback(async () => {
     try {
       const { file, url }: any = await getCroppedImage(uploadedImage, croppedPixel);
 
@@ -209,67 +211,22 @@ const Team = () => {
   return (
     <>
       <div className="relative w-full h-screen">
-        {warning && <Warning message="Something went wrong. Please try again?"></Warning>}
         {toast && <Warning message={toastMessage}></Warning>}
 
-        {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-90 md:w-50 h-full m-auto justify-center">
-            <div className=" relative  w-90 md:w-50" style={{ height: "50vh" }}>
-              <div>
-                <Cropper
-                  image={uploadedImage}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={5 / 5}
-                  cropShape="round"
-                  showGrid={false}
-                  onCropChange={setCrop}
-                  onCropComplete={cropComplete}
-                  onZoomChange={setZoom}
-                />
-              </div>
-              <div
-                className=" absolute top-0 right-0 cursor-pointer"
-                style={{ right: "-10px", top: "-10px" }}
-                onClick={() => {
-                  setCropStatus(false);
-                  setUserImage(defaultProfile);
-                  setUploadFile(null);
-                }}
-              >
-                <GrFormClose
-                  fontSize={28}
-                  className="hover:bg-bgHoverActive bg-bgHover rounded-full"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
-              <div className="flex justify-center items-center mt-3">
-                <input
-                  id="small-range"
-                  type="range"
-                  min={1}
-                  max={50}
-                  value={zoom}
-                  onChange={(e: any) => {
-                    setZoom(e.target.value);
-                  }}
-                  className="w-50 h-2 bg-blue-100 appearance-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-center mb-3">
-                <button
-                  className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white"
-                  onClick={getGroppedImage}
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div></div>
+        {cropStatus && (
+          <Crop
+            uploadedImage={uploadedImage}
+            crop={crop}
+            zoom={zoom}
+            setCrop={setCrop}
+            cropComplete={cropComplete}
+            setZoom={setZoom}
+            setCropStatus={setCropStatus}
+            setUserImage={setUserImage}
+            setUploadFile={setUploadFile}
+            getcroppedImage={getcroppedImage}
+            defaultProfile={defaultProfile}
+          />
         )}
 
         <Navbar />

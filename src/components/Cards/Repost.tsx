@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { sharePosts } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";

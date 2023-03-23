@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
-import { FaThList, FaUserAlt } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
 
 import { create } from "ipfs-http-client";
 import { useCallback } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import { AiFillStar, AiOutlineReload, AiOutlineItalic } from "react-icons/ai";
+import { AiFillStar, AiOutlineItalic, AiOutlineReload } from "react-icons/ai";
 import { GrFormClose } from "react-icons/gr";
 import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
+import { Tooltip } from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
 import Notification from "../components/Cards/Notification";
 import Warning from "../components/Cards/Warning";
+import Loading from "../components/Loading/Loading";
 import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
+import PostContainer from "../containers/PostContainer";
 import { useUserContext } from "../context/UserContextProvider";
 import getCroppedImage from "../utils/crop";
-import { Tooltip } from "react-tooltip";
-import Loading from "../components/Loading/Loading";
-import Post from "../components/Cards/Post";
 import { htmlToText } from "../utils/htmlToText";
-import PostContainer from "../containers/PostContainer";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");

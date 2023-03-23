@@ -4,7 +4,6 @@ import Cropper, { Area } from "react-easy-crop";
 import { AiFillStar, AiOutlineFileGif } from "react-icons/ai";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
 import { createPost, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";

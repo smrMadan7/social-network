@@ -1,14 +1,18 @@
+import { useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { Outlet, useNavigate } from "react-router";
-import { NavLink } from "react-router-dom";
-import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { setProfile } from "../../utils/setProfile";
+import defaultUser from "./.././.././assets/Form/default-user.svg";
 
 const MemberProfile = () => {
   const { appState }: any = useUserContext();
   const navigate = useNavigate();
+  const [imageUrl, setImageUrl] = useState(defaultUser);
 
-  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
+  useEffect(() => {
+    setProfile(appState?.action?.user?.profilePictureUrl, setImageUrl);
+  }, []);
 
   return (
     <>
@@ -146,7 +150,7 @@ const MemberProfile = () => {
                         <div className="text-gray-700 flex gap-2 ">
                           <>
                             <div className="flex gap-3 flex-wrap">
-                              {appState?.action?.user?.role.map((role: string, index: number) => {
+                              {appState?.action?.user?.role?.map((role: string, index: number) => {
                                 return (
                                   <div
                                     key={index}
@@ -174,7 +178,7 @@ const MemberProfile = () => {
                         <div className="text-gray-700 flex gap-2 role-container">
                           <>
                             <div className="flex gap-3 flex-wrap">
-                              {appState?.action?.user?.organization.map(
+                              {appState?.action?.user?.organization?.map(
                                 (organization: string, index: number) => {
                                   return (
                                     <div
@@ -206,7 +210,7 @@ const MemberProfile = () => {
                       <div className="text-gray-700 flex gap-2 role-container">
                         <>
                           <div className="flex gap-3 flex-wrap">
-                            {appState?.action?.user?.skill.map((skill: string, index: number) => {
+                            {appState?.action?.user?.skill?.map((skill: string, index: number) => {
                               return (
                                 <div
                                   key={index}

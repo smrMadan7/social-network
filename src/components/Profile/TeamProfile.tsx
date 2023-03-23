@@ -1,15 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
-import { NavLink, useNavigate } from "react-router-dom";
-
-import { ipfsGateway } from "../../constants/AppConstants";
+import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContextProvider";
+import { setProfile } from "../../utils/setProfile";
+import defaultUser from "./.././.././assets/Form/default-user.svg";
 
 const TeamProfile = () => {
   const { appState }: any = useUserContext();
   const navigate = useNavigate();
 
-  const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
+  const [imageUrl, setImageUrl] = useState(defaultUser);
+
+  useEffect(() => {
+    setProfile(appState?.action?.user?.profilePictureUrl, setImageUrl);
+  }, []);
+
   return (
     <>
       <div className=" p-5 md:gap-16 gap-4  w-full  flex flex-col items-center justify-center">
