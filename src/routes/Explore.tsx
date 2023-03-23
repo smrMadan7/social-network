@@ -10,7 +10,7 @@ import banner from "./../assets/Explore/banner.jpg";
 
 const Explore = () => {
   const { appState }: any = useUserContext();
-  const { feeds, setFeeds }: any = useFeedsContext();
+  const [feeds, setFeeds] = useState();
   const [fetchedFeeds, setFetchedFeeds] = useState<any>();
 
   useEffect(() => {
@@ -22,12 +22,10 @@ const Explore = () => {
 
   useEffect(() => {
     if (fetchedFeeds?.staus) {
-      const feeds = fetchedFeeds?.data;
-      setFeeds({
-        feeds,
-      });
+      setFeeds(fetchedFeeds?.data);
     }
   }, [fetchedFeeds]);
+
   const getAllFeeds = async () => {
     customGet(
       `${getFeeds}${appState?.action?.user?.address}`,

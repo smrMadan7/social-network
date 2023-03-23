@@ -9,7 +9,7 @@ const FeedsContainer = ({ feeds }: any) => {
   return (
     <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
       <div className="w-full md:w-70 border rounded-lg ">
-        {feeds?.action?.feeds?.map((post: any, index: number) => {
+        {feeds?.map((post: any, index: number) => {
           return (
             <Feeds post={post} address={appState?.action?.user?.address} key={index + uuidv4()} />
           );

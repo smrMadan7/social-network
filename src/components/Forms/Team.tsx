@@ -322,6 +322,7 @@ const Team = () => {
                           Twitter:*
                         </label>
                         <input
+                          required
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="twitter"
                           name="twitter"
@@ -335,6 +336,7 @@ const Team = () => {
                           Discord:*
                         </label>
                         <input
+                          required
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="discord"
                           name="discord"
@@ -393,6 +395,7 @@ const Team = () => {
                         Description:*
                       </label>
                       <textarea
+                        required
                         onChange={(e) => setDescription(e.target.value)}
                         value={description}
                         id="desacription"

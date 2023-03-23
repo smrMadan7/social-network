@@ -62,7 +62,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                   onClick={() => {
                     setPostProfileStatus(false);
-                    setRefetch(true);
                   }}
                 >
                   <GrFormClose color="black" fontSize={25} />
