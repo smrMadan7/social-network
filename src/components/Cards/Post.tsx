@@ -290,25 +290,28 @@ const Post = (post: any) => {
               </div>
 
               <div className="prevent-select flex items-center text-center">
-                <div
-                  id="like"
-                  className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
-                >
-                  {post?.post?.likes.length > 0 ? (
-                    <>
-                      <AiTwotoneHeart
-                        fontSize={15}
-                        className="text-fuchsia-500 mt-1"
-                        onClick={() => setLikedProfileStatus(true)}
-                      />
-                    </>
-                  ) : (
-                    <>
+                {post?.post?.likes.length > 0 ? (
+                  <>
+                    <div
+                      id="like"
+                      className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
+                      onClick={() => setLikedProfileStatus(true)}
+                    >
+                      <AiTwotoneHeart fontSize={15} className="text-fuchsia-500 mt-1" />
+                      <p className="prevent-default">{post?.post?.likes.length}</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      id="like"
+                      className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
+                    >
                       <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
-                    </>
-                  )}
-                  <p className="prevent-default">{post?.post?.likes.length}</p>
-                </div>
+                      <p className="prevent-default">{post?.post?.likes.length}</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <style>
