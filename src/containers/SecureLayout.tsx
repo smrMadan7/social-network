@@ -21,7 +21,7 @@ declare global {
 }
 
 const SecureLayout = () => {
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appStatedispatch }: any = useUserContext();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -267,7 +267,13 @@ const SecureLayout = () => {
                               onClick={signUser}
                             >
                               Sign-In
-                              <img src={logo} width="35px" height="35px" loading="lazy"></img>
+                              <img
+                                alt="logo"
+                                src={logo}
+                                width="35px"
+                                height="35px"
+                                loading="lazy"
+                              ></img>
                             </button>
                           </div>
                         </div>
@@ -284,6 +290,7 @@ const SecureLayout = () => {
                             >
                               Browser Wallet
                               <img
+                                alt="meta mask logo"
                                 src={metamaskLogo}
                                 width="30px"
                                 height="20px"

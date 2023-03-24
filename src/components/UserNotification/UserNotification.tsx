@@ -23,7 +23,7 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
             </div>
           </div>
           <div className="mt-2">
-            <img src={commingSoon} height="100px"></img>
+            <img alt="notification" src={commingSoon} height="100px"></img>
           </div>
         </div>
       )}

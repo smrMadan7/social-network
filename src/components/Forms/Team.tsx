@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { MetaMaskInpageProvider } from "@metamask/providers";
 import { create } from "ipfs-http-client";
 import { Area } from "react-easy-crop";
 import { GrFormClose } from "react-icons/gr";
@@ -17,11 +16,6 @@ import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
 import defaultProfile from "./../././.././assets/Form/default-user.svg";
 
-interface Window {
-  ethereum?: MetaMaskInpageProvider;
-  web3?: any;
-}
-
 const Team = () => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +29,7 @@ const Team = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appStatedispatch }: any = useUserContext();
   const [toastMessage, setToastMessage] = useState("");
   const [handle, setHandle] = useState(true);
   const [handleWarning, setHandleWarning] = useState(false);
@@ -353,6 +347,7 @@ const Team = () => {
                         >
                           <img
                             className="border rounded-full"
+                            alt="user"
                             height="140px"
                             width="140px"
                             src={userImage}

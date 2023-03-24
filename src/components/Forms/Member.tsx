@@ -45,10 +45,9 @@ const Member = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appStatedispatch }: any = useUserContext();
   const [toast, setToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [warning, setWarning] = useState(false);
   const [handleWarning, setHandleWarning] = useState(false);
   const [handle, setHandle] = useState(true);
   const [addMemberResult, setAddMemberResult] = useState<any>();
@@ -79,7 +78,6 @@ const Member = () => {
     setCropStatus(false);
     setHandleWarning(false);
     setToast(false);
-    setWarning(false);
     setHandle(true);
   }, []);
 
@@ -224,7 +222,6 @@ const Member = () => {
 
             setTimeout(() => {
               setToast(false);
-              setWarning(false);
             }, 3000);
           }
         });
@@ -469,6 +466,7 @@ const Member = () => {
                           style={{ width: "140px", height: "140px" }}
                         >
                           <img
+                            alt="user"
                             className="border rounded-full"
                             height="140px"
                             width="140px"

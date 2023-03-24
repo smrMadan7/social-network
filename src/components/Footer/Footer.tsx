@@ -3,7 +3,7 @@ import { AiFillBug, AiFillHome } from "react-icons/ai";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { IoIosContact } from "react-icons/io";
 import { MdOutlineTravelExplore } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
 import { useUserContext } from "../../context/UserContextProvider";
 

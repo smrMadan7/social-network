@@ -18,7 +18,7 @@ const Navbar = () => {
   const [moreStatus, setMoreStatus] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
   const [greeting, setGreeting] = useState("");
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appState }: any = useUserContext();
   const user = localStorage.getItem("signedIn");
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);

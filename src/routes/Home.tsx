@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
 import { FaUserAlt } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
@@ -92,7 +92,6 @@ const Home = () => {
     } else if (isBold && isItalic && content) {
       content = `<span class="font-bold italic">${content}</span>`;
     } else {
-      content = content;
     }
 
     content = content.trimStart();
@@ -471,7 +470,7 @@ const Home = () => {
                       {filePath && !cropStatus && (
                         <>
                           <img
-                            alt="uploaded Image"
+                            alt="uploaded file"
                             className="h-150 md:h-225"
                             src={filePath}
                             loading="lazy"

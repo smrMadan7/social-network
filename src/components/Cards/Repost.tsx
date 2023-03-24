@@ -5,7 +5,6 @@ import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";
 
 const Repost = ({
-  isRepost,
   setIsReposted,
   setIsRepost,
   setIsSuccessfull,

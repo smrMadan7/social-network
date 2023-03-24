@@ -3,7 +3,6 @@ import { AiOutlineReload } from "react-icons/ai";
 import { BiMenu } from "react-icons/bi";
 import { getFeeds } from "../constants/AppConstants";
 import FeedsContainer from "../containers/FeedsContainer";
-import { useFeedsContext } from "../context/FeedsContextProvider";
 import { useUserContext } from "../context/UserContextProvider";
 import { customGet } from "../fetch/customFetch";
 import banner from "./../assets/Explore/banner.jpg";
