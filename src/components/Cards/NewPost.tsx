@@ -236,11 +236,22 @@ const NewPost = ({ postStatus }: any) => {
               </div>
             </div>
             <div className="w-full border-t-2">
-              <div className="mt-3 p-4">
+              <div className="mt-3 p-4 relative">
+                <div className=" border " id="tagContainer" style={{ fontSize: "20rem" }}>
+                  abc
+                </div>
                 <div
                   className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
                   contentEditable="true"
                   id="content"
+                  onMouseMove={(e: any) => {
+                    var containerElement: any = document.getElementById("tagContainer");
+                    console.log("containerElement: " + containerElement);
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    containerElement.left = x + "px";
+                    containerElement.style.top = y + "px";
+                  }}
                   data-placeholder="What's happening?"
                   style={
                     isBold
@@ -292,25 +303,33 @@ const NewPost = ({ postStatus }: any) => {
                 </button>
               </div>
             </div>
-
-            <style>
-              {`
-            div:empty:before {
-              content:attr(data-placeholder);
-              color:gray
-            }
-            div:empty:before {
-              content:attr(data-placeholder);
-              color:gray
-            }
-            
-            `}
-            </style>
           </form>
         </div>
       )}
+      <style>
+        {`
+            div:empty:before {
+              content:attr(data-placeholder);
+              color:gray
+            }
+            div:empty:before {
+              content:attr(data-placeholder);
+              color:gray
+            }
+
+            #tagContainer {
+              height: 20px;
+              width:"20px";
+              background-color:black;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color:black;
+            }
+
+            `}
+      </style>
     </>
   );
 };
-
 export default NewPost;

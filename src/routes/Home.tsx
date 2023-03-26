@@ -19,6 +19,7 @@ import PostContainer from "../containers/PostContainer";
 import { useUserContext } from "../context/UserContextProvider";
 import getCroppedImage from "../utils/crop";
 import { htmlToText } from "../utils/htmlToText";
+import { alignTagContainer } from "../utils/alignTagContainer";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -308,7 +309,7 @@ const Home = () => {
                 {/* new post */}
                 <div className="border-t-2  w-100 ">
                   <form onSubmit={publishPost}>
-                    {cropStatus ? (
+                    {cropStatus && (
                       <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-full h-full m-auto justify-center ">
                         <div className=" relative w-90 sm:w-50" style={{ height: "50vh" }}>
                           <div>
@@ -363,8 +364,6 @@ const Home = () => {
                           </div>
                         </div>
                       </div>
-                    ) : (
-                      <div></div>
                     )}
                     {warning && <Warning message={warningMessage}></Warning>}
                     <div className="flex gap-4 justify-between p-4">
@@ -400,20 +399,6 @@ const Home = () => {
                         >
                           {isItalic ? <BiItalic /> : <AiOutlineItalic />}
                         </button>
-                        {/* <button
-                          type="button"
-                          className="font-semibold text-violet-900 text-xl"
-                          style={isCode ? { fontWeight: "700" } : { fontWeight: "" }}
-                          onClick={() => {
-                            if (isCode) {
-                              setIsCode(false);
-                            } else {
-                              setIsCode(true);
-                            }
-                          }}
-                        >
-                          {"</>"}
-                        </button> */}
                       </div>
                       <div>
                         <button
@@ -437,31 +422,43 @@ const Home = () => {
                       content="Italic"
                       className="z-10 absolute bg-black text-white border rounded-lg px-2"
                     />
-                    <div className="w-full border-t-2">
-                      <div className="mt-3 p-4">
+                    <div className="border-t-2 mt-3 p-4">
+                      <div
+                        className=" border rounded-lg overflow-y-auto"
+                        style={{ height: "100px" }}
+                      >
+                        {/* input text area */}
                         <div
-                          className="border rounded-lg w-full overflow-y-auto"
-                          style={{ height: "100px" }}
+                          className="p-2 cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-100"
+                          contentEditable="true"
+                          id="content"
+                          onInput={(e: any) => {
+                            alignTagContainer("tagContainer");
+                          }}
+                          onKeyDown={(e: any) => {}}
+                          data-placeholder="What's happening?"
+                          style={
+                            isBold
+                              ? { fontWeight: "bold" }
+                              : isItalic
+                              ? { fontStyle: "italic" }
+                              : isBold && isItalic
+                              ? {
+                                  fontWeight: "bold",
+                                  fontStyle: "italic",
+                                }
+                              : {}
+                          }
+                        ></div>
+
+                        {/* tag container */}
+                        <div
+                          className="mt-5 md:mt-0 absolute border rounded-lg bg-gray-700 left-0 bg-black "
+                          id="tagContainer"
                         >
-                          <div
-                            className="p-2 cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-100"
-                            contentEditable="true"
-                            id="content"
-                            onKeyDown={(e: any) => {}}
-                            data-placeholder="What's happening?"
-                            style={
-                              isBold
-                                ? { fontWeight: "bold" }
-                                : isItalic
-                                ? { fontStyle: "italic" }
-                                : isBold && isItalic
-                                ? {
-                                    fontWeight: "bold",
-                                    fontStyle: "italic",
-                                  }
-                                : {}
-                            }
-                          ></div>
+                          <div className=" " style={{ width: "100px", height: "100px" }}>
+                            abc
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -512,8 +509,11 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <style>
-            {`
+        </div>
+      )}
+      <Outlet />
+      <style>
+        {`
             div:empty:before {
               content:attr(data-placeholder);
               color:gray
@@ -524,10 +524,7 @@ const Home = () => {
             }
             
             `}
-          </style>
-        </div>
-      )}
-      <Outlet />
+      </style>
     </>
   );
 };

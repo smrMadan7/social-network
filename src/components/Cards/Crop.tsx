@@ -14,6 +14,7 @@ const Crop = ({
   defaultProfile,
   getcroppedImage,
 }: any) => {
+  console.log("upload image is ", uploadedImage);
   return (
     <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center w-90 md:w-50">
       <div className=" relative w-90 md:w-50" style={{ height: "50vh" }}>
@@ -58,10 +59,7 @@ const Crop = ({
         </div>
 
         <div className="flex items-center justify-center mb-3">
-          <button
-            className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white"
-            onClick={getcroppedImage}
-          >
+          <button className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white" onClick={getcroppedImage}>
             Done
           </button>
         </div>

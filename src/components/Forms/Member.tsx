@@ -147,7 +147,6 @@ const Member = () => {
       const file = await ipfs.add(croppedImg);
       return file.path;
     } catch (error) {
-      console.log(error);
       return;
     }
   };
@@ -188,13 +187,7 @@ const Member = () => {
     const userAccount = await web3.eth.getAccounts();
     const address = userAccount[0];
 
-    if (
-      bio &&
-      selectedRoles.length >= 1 &&
-      selectedOrganization.length >= 1 &&
-      selectedSkills.length >= 1 &&
-      handle
-    ) {
+    if (bio && selectedRoles.length >= 1 && selectedOrganization.length >= 1 && selectedSkills.length >= 1 && handle) {
       setIsLoading(true);
       if (uploadFile) {
         ipfsClient(uploadFile).then(async (path) => {
@@ -331,10 +324,7 @@ const Member = () => {
                       onChange={(event) => setInputData(event.target.value)}
                     ></input>
                     <div className="flex w-full items-center justify-center text-white">
-                      <button
-                        type="submit"
-                        className="rounded-lg bg-violet-700 mt-4 items-center w-50 p-2"
-                      >
+                      <button type="submit" className="rounded-lg bg-violet-700 mt-4 items-center w-50 p-2">
                         Add
                       </button>
                     </div>
@@ -354,11 +344,7 @@ const Member = () => {
             <div className="flex flex-col bg-white border rounded-lg">
               <div>
                 <h1 className="text-center text-xl font-bold p-3 border-b">Member Details</h1>
-                <form
-                  className="text-sm w-100  overflow-y-auto member-form"
-                  name="member"
-                  onSubmit={formSubmitHandler}
-                >
+                <form className="text-sm w-100  overflow-y-auto member-form" name="member" onSubmit={formSubmitHandler}>
                   <div className="flex-col w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
@@ -410,11 +396,7 @@ const Member = () => {
                       </div>
 
                       {/* Handle  */}
-                      {handleWarning && (
-                        <div className=" text-red-700 flex justify-end px-5 py-1">
-                          *handle already taken
-                        </div>
-                      )}
+                      {handleWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*handle already taken</div>}
 
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
@@ -448,11 +430,7 @@ const Member = () => {
                             <option>Yes</option>
                           </select>
                           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 px-5">
-                            <svg
-                              className="fill-current h-4 w-4"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                            >
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                               <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                             </svg>
                           </div>
@@ -461,10 +439,7 @@ const Member = () => {
                     </div>
                     <div className="gap-2 flex flex-col items-center text-center sm:w-50 md:mt-2">
                       <div className="items-center text-center flex md:justify-center sm:justify-start">
-                        <div
-                          className="relative cursor-pointer"
-                          style={{ width: "140px", height: "140px" }}
-                        >
+                        <div className="relative cursor-pointer" style={{ width: "140px", height: "140px" }}>
                           <img
                             alt="user"
                             className="border rounded-full"
@@ -483,10 +458,7 @@ const Member = () => {
                                 setUploadFile(null);
                               }}
                             >
-                              <GrFormClose
-                                fontSize={28}
-                                className="hover:bg-bgHoverActive bg-bgHover rounded-full"
-                              />
+                              <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
                             </div>
                           )}
                         </div>
@@ -506,9 +478,7 @@ const Member = () => {
                   {/* Bio */}
                   <div className="flex  mx-1 mt-3  ">
                     <div className="w-full md:w-full px-3  md:mb-0">
-                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                        Bio:*
-                      </label>
+                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">Bio:*</label>
                       <textarea
                         onChange={(e) => setBio(e.target.value)}
                         value={bio}
@@ -525,9 +495,7 @@ const Member = () => {
                     {/* Role Selection */}
                     <div className="md:w-50 flex mx-1 justify-between">
                       <div className="md:flex md:items-center md:gap-4 w-full md:w-full  px-3  md:mb-0">
-                        <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700 sm:mb-2">
-                          Role:*
-                        </label>
+                        <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700 sm:mb-2">Role:*</label>
                         <div
                           className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full"
                           onClick={() => {
@@ -574,10 +542,7 @@ const Member = () => {
                               setInputPlaceholder(`Enter your role`);
                             }}
                           >
-                            <GrFormAdd
-                              fontSize={20}
-                              className="border rounded-full hover:bg-gray-700"
-                            />
+                            <GrFormAdd fontSize={20} className="border rounded-full hover:bg-gray-700" />
                           </div>
                         </div>
                       </div>
@@ -604,28 +569,26 @@ const Member = () => {
                             ) : (
                               <>
                                 <div className="flex gap-3 flex-wrap">
-                                  {selectedOrganization?.map(
-                                    (organization: string, index: number) => {
-                                      return (
-                                        <div
-                                          key={uuidv4()}
-                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          {organization}
-                                          <IoIosClose
-                                            fontSize={20}
-                                            color="black"
-                                            className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              cancelEnteredValue(e, organization, "organization");
-                                            }}
-                                          />
-                                        </div>
-                                      );
-                                    }
-                                  )}
+                                  {selectedOrganization?.map((organization: string, index: number) => {
+                                    return (
+                                      <div
+                                        key={uuidv4()}
+                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {organization}
+                                        <IoIosClose
+                                          fontSize={20}
+                                          color="black"
+                                          className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            cancelEnteredValue(e, organization, "organization");
+                                          }}
+                                        />
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </>
                             )}
@@ -638,10 +601,7 @@ const Member = () => {
                               setInputPlaceholder("Enter your organization");
                             }}
                           >
-                            <GrFormAdd
-                              fontSize={20}
-                              className="border rounded-full hover:bg-gray-700"
-                            />
+                            <GrFormAdd fontSize={20} className="border rounded-full hover:bg-gray-700" />
                           </div>
                         </div>
                       </div>
@@ -652,9 +612,7 @@ const Member = () => {
 
                   <div className="md:w-50 flex mx-1 justify-between">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
-                      <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700">
-                        Skill:*
-                      </label>
+                      <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700">Skill:*</label>
                       <div
                         className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
                         onClick={() => {
@@ -701,10 +659,7 @@ const Member = () => {
                             setFormStatus("skill");
                           }}
                         >
-                          <GrFormAdd
-                            fontSize={20}
-                            className="border rounded-full hover:bg-gray-700"
-                          />
+                          <GrFormAdd fontSize={20} className="border rounded-full hover:bg-gray-700" />
                         </div>
                       </div>
                     </div>

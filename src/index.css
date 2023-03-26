@@ -52,3 +52,7 @@ code {
 .link {
   color: blue;
 }
+
+#tagContainer {
+  transform: translate(-50%, -50%);
+}

@@ -7,7 +7,7 @@ import { customGet } from "../../fetch/customFetch";
 import { setProfile } from "../../utils/setProfile";
 import Loading from "../Loading/Loading";
 
-const PostProfile = ({ postDetails, post }: any) => {
+const PostProfile = ({ post }: any) => {
   const [details, setDetails] = useState<any>();
   const [isMember, setIsMember] = useState(false);
   const [isTeam, setIsTeam] = useState(false);
@@ -72,10 +72,7 @@ const PostProfile = ({ postDetails, post }: any) => {
 
   return (
     <>
-      <div
-        className="overflow-y-auto relative "
-        style={isMember ? { height: "250px" } : { height: "250px" }}
-      >
+      <div className="overflow-y-auto relative " style={isMember ? { height: "250px" } : { height: "250px" }}>
         {isMember && (
           <div className="w-full flex flex-col text-black font-2xl">
             <div className="w-full text-black flex px-5 mt-5 gap-4">
@@ -120,11 +117,7 @@ const PostProfile = ({ postDetails, post }: any) => {
 
                     {moreRoles.length > 0 && (
                       <div
-                        style={
-                          moreRoles.length >= 10
-                            ? { height: "60px", width: "60px" }
-                            : { height: "30px", width: "30px" }
-                        }
+                        style={moreRoles.length >= 10 ? { height: "60px", width: "60px" } : { height: "30px", width: "30px" }}
                         className="relative rounded-full border flex items-center justify-center"
                       >
                         <span
@@ -174,11 +167,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                   })}
                   {moreSkills.length > 0 && (
                     <div
-                      style={
-                        moreOrg.length >= 10
-                          ? { height: "60px", width: "60px" }
-                          : { height: "30px", width: "30px" }
-                      }
+                      style={moreOrg.length >= 10 ? { height: "60px", width: "60px" } : { height: "30px", width: "30px" }}
                       className="relative rounded-full border flex items-center justify-center"
                     >
                       <span
@@ -223,11 +212,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                   })}
                   {moreOrg.length > 0 && (
                     <div
-                      style={
-                        moreOrg.length >= 10
-                          ? { height: "60px", width: "60px" }
-                          : { height: "30px", width: "30px" }
-                      }
+                      style={moreOrg.length >= 10 ? { height: "60px", width: "60px" } : { height: "30px", width: "30px" }}
                       className="relative rounded-full border flex items-center justify-center"
                     >
                       <span

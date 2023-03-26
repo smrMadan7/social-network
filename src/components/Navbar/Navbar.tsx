@@ -110,10 +110,6 @@ const Navbar = () => {
               loading="lazy"
               style={profilePictureUrl === null ? { padding: "0px" } : { padding: "10px" }}
             ></img>
-            {/* <div className="hidden md:block mt-1 ">
-              <p className="font-bold text-md">Protocol Labs</p>
-              <p className="font-bold text-md leading-none">Social Network</p>
-            </div> */}
           </div>
 
           <div className=" text-center items-center hidden md:flex">
@@ -240,8 +236,7 @@ const Navbar = () => {
                 </div>
               </div>
               <div className="hidden md:block font-semibold prevent-select">
-                {greeting}, {appState?.action?.user?.firstName}{" "}
-                {appState?.action?.user?.organizationName}
+                {greeting}, {appState?.action?.user?.firstName} {appState?.action?.user?.organizationName}
               </div>
             </>
           ) : (
@@ -283,20 +278,14 @@ const Navbar = () => {
                 style={{ marginTop: "47px" }}
               >
                 <div
-                  style={
-                    routerStatus === "profile"
-                      ? { background: "rgb(196 181 253)" }
-                      : { background: "" }
-                  }
+                  style={routerStatus === "profile" ? { background: "rgb(196 181 253)" } : { background: "" }}
                   className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-bgHover"
                   onClick={() => {
                     setProfileStatus(false);
                     navigate(profileRoute);
                   }}
                 >
-                  <IoIosContact
-                    style={routerStatus === "profile" ? { color: "black" } : { color: "gray" }}
-                  />
+                  <IoIosContact style={routerStatus === "profile" ? { color: "black" } : { color: "gray" }} />
                   Profile
                 </div>
 
@@ -318,9 +307,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {isNotification && (
-        <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />
-      )}
+      {isNotification && <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />}
       {isLogout && <Loading />}
     </>
   );

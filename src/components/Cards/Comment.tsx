@@ -74,10 +74,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
       )}
 
       {isUpdated && (
-        <div
-          className="absolute text-center  top-0 right-0 left-0 bottom-0 "
-          style={{ zIndex: 13, height: "30px" }}
-        >
+        <div className="absolute text-center  top-0 right-0 left-0 bottom-0 " style={{ zIndex: 13, height: "30px" }}>
           <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
         </div>
       )}
@@ -93,10 +90,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
           {comments.map((comment: any, index: number) => {
             const imageUrl = `${ipfsGateway}${comment?.commenterProfilePic}`;
             var user = defaultProfile;
-            if (
-              comment?.commenterProfilePic === "empty" ||
-              comment?.commenterProfilePic === undefined
-            ) {
+            if (comment?.commenterProfilePic === "empty" || comment?.commenterProfilePic === undefined) {
               user = defaultProfile;
             } else {
               user = imageUrl;
@@ -136,15 +130,10 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                         >
                           <div className="flex flex-col md:flex-row md:gap-2 font-bold">
                             <p>{comment?.commenterDisplayName} </p>
-                            <p className="text-md  text-gray-500 font-none">
-                              @{comment?.commenterHandle}
-                            </p>
+                            <p className="text-md  text-gray-500 font-none">@{comment?.commenterHandle}</p>
                           </div>
 
-                          <span className="font-normal text-gray">
-                            {" "}
-                            {timeAgo(comment?.timestamp)}
-                          </span>
+                          <span className="font-normal text-gray"> {timeAgo(comment?.timestamp)}</span>
                         </div>
                       </div>
                     </div>
