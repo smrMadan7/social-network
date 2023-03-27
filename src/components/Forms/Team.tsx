@@ -5,7 +5,7 @@ import { Area } from "react-easy-crop";
 import { GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
 import Web3 from "web3";
-import { addTeam, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
+import { addTeam, defaultUserProfile, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";
 import getCroppedImage from "../../utils/crop";
@@ -149,7 +149,7 @@ const Team = () => {
             discord: target.discord.value,
           },
           desc: description,
-          profilePictureUrl: "empty",
+          profilePictureUrl: defaultUserProfile,
           handle: target.handle.value,
           address: address,
         };
@@ -236,19 +236,13 @@ const Team = () => {
             <div className="flex flex-col bg-white border rounded-lg">
               <div>
                 <h1 className="text-center text-xl font-bold p-3 border-b">Team Details</h1>
-                <form
-                  className="text-sm w-100  overflow-y-auto member-form"
-                  name="member"
-                  onSubmit={formSubmitHandler}
-                >
+                <form className="text-sm w-100  overflow-y-auto member-form" name="member" onSubmit={formSubmitHandler}>
                   <div className="flex-col w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
                         {/* OrganizationName */}
                         <div className="flex w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
-                          <label className="w-60 md:w-30  block tracking-wide text-gray-700 font-bold mb-2">
-                            Org Name:*
-                          </label>
+                          <label className="w-60 md:w-30  block tracking-wide text-gray-700 font-bold mb-2">Org Name:*</label>
                           <input
                             required
                             className="w-full md:w-full  appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -260,11 +254,7 @@ const Team = () => {
                         </div>
 
                         {/* handle */}
-                        {handleWarning && (
-                          <div className=" text-red-700 flex justify-end px-5 py-1">
-                            *handle already taken
-                          </div>
-                        )}
+                        {handleWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*handle already taken</div>}
 
                         <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                           <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
@@ -298,9 +288,7 @@ const Team = () => {
                       </div>
                       {/* Contact Email */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Email:*
-                        </label>
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Email:*</label>
                         <input
                           required
                           className="w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -312,9 +300,7 @@ const Team = () => {
                       </div>
                       {/* Twitter */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Twitter:*
-                        </label>
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Twitter:*</label>
                         <input
                           required
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -326,9 +312,7 @@ const Team = () => {
                       </div>
                       {/* Discord */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Discord:*
-                        </label>
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Discord:*</label>
                         <input
                           required
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -341,10 +325,7 @@ const Team = () => {
                     </div>
                     <div className="gap-2 flex flex-col items-center text-center sm:w-50 md:mt-2">
                       <div className="items-center text-center flex md:justify-center sm:justify-start">
-                        <div
-                          className="relative cursor-pointer"
-                          style={{ width: "140px", height: "140px" }}
-                        >
+                        <div className="relative cursor-pointer" style={{ width: "140px", height: "140px" }}>
                           <img
                             className="border rounded-full"
                             alt="user"
@@ -363,10 +344,7 @@ const Team = () => {
                                 setUploadFile(null);
                               }}
                             >
-                              <GrFormClose
-                                fontSize={28}
-                                className="hover:bg-bgHoverActive bg-bgHover rounded-full"
-                              />
+                              <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
                             </div>
                           )}
                         </div>
@@ -386,9 +364,7 @@ const Team = () => {
                   {/* Description */}
                   <div className="flex  mx-1 mt-3  ">
                     <div className="w-full md:w-full px-3  md:mb-0">
-                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                        Description:*
-                      </label>
+                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">Description:*</label>
                       <textarea
                         required
                         onChange={(e) => setDescription(e.target.value)}

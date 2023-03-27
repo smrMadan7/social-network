@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { AiFillTwitterCircle } from "react-icons/ai";
 import { BsDiscord } from "react-icons/bs";
 import { TbWorld } from "react-icons/tb";
-import { getUser, roles } from "../../constants/AppConstants";
+import { getUser, ipfsGateway, roles } from "../../constants/AppConstants";
 import { customGet } from "../../fetch/customFetch";
-import { setProfile } from "../../utils/setProfile";
 import Loading from "../Loading/Loading";
 
 const PostProfile = ({ post }: any) => {
@@ -12,7 +11,6 @@ const PostProfile = ({ post }: any) => {
   const [isMember, setIsMember] = useState(false);
   const [isTeam, setIsTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [profileUrl, setProfileUrl] = useState("");
   const [profileAddress, setProfileAddress] = useState();
 
   const [moreOrg, setMoreOrg] = useState<any>();
@@ -56,7 +54,6 @@ const PostProfile = ({ post }: any) => {
     if (fetchUserResult?.status) {
       setIsLoading(false);
       setDetails(fetchUserResult?.data);
-      setProfile(fetchUserResult?.data?.profilePictureUrl, setProfileUrl);
       if (fetchUserResult?.data?.type === roles[0]) {
         setIsMember(true);
       } else if (fetchUserResult?.data?.type === roles[1]) {
@@ -82,7 +79,7 @@ const PostProfile = ({ post }: any) => {
                   height="70px"
                   width="70px"
                   className="rounded-full border bg-black"
-                  src={profileUrl}
+                  src={`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`}
                   loading="lazy"
                 ></img>
               </div>
@@ -258,7 +255,7 @@ const PostProfile = ({ post }: any) => {
                   height="70px"
                   width="70px"
                   className="rounded-full border"
-                  src={profileUrl}
+                  src={`${ipfsGateway}4{fetchUserResult?.data?.profilePictureUrl}`}
                   loading="lazy"
                 ></img>
               </div>

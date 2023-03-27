@@ -8,7 +8,7 @@ import { GrFormAdd, GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
-import { addMember, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
+import { addMember, defaultUserProfile, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";
 import getCroppedImage from "../../utils/crop";
@@ -230,7 +230,7 @@ const Member = () => {
           skill: selectedSkills,
           openForWork: target.open.value,
           address: address,
-          profilePictureUrl: "empty",
+          profilePictureUrl: defaultUserProfile,
         };
 
         customPost(params, addMember, "POST", setAddMemberResult, "addingMember");

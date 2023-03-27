@@ -9,7 +9,6 @@ import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
-import { setProfile } from "../../utils/setProfile";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
 import AddComment from "../Forms/AddComment";
@@ -25,8 +24,6 @@ const Post = (post: any) => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [userDetails, setUserDetails] = useState<any>();
   const [refetch, setRefetch] = useState(false);
-  const [imageUrl, setImageUrl] = useState(defaultUser);
-  const [currentUserImage, setCurrentUserImage] = useState(defaultUser);
   const [addCommentResult, setAddCommentResult] = useState<any>();
   const [isCommentSuccess, setIsCommentSuccess] = useState(false);
   const [sharedProfiles, setSharedProfiles] = useState(false);
@@ -35,7 +32,6 @@ const Post = (post: any) => {
     getUserDetails();
     getPostDetails();
     getPostComments();
-    setProfile(appState?.action?.user?.profilePictureUrl, setCurrentUserImage);
   }, []);
 
   useEffect(() => {
@@ -67,8 +63,6 @@ const Post = (post: any) => {
 
   useEffect(() => {
     if (userDetails?.status) {
-      setProfile(userDetails?.data?.profilePictureUrl, setImageUrl);
-
       setUserDetails(userDetails?.data);
     }
   }, [userDetails]);
@@ -117,11 +111,7 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <LikedProfile
-                  post={post}
-                  mode={"liked"}
-                  setLikedProfileStatus={setLikedProfileStatus}
-                />
+                <LikedProfile post={post} mode={"liked"} setLikedProfileStatus={setLikedProfileStatus} />
               </div>
             </div>
           </div>
@@ -134,10 +124,7 @@ const Post = (post: any) => {
             <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
               <div className="flex justify-between p-3 border-b ">
                 {isCommentSuccess && (
-                  <div
-                    className="absolute text-center  top-0 right-0 left-0 bottom-0 "
-                    style={{ zIndex: 100, height: "30px" }}
-                  >
+                  <div className="absolute text-center  top-0 right-0 left-0 bottom-0 " style={{ zIndex: 100, height: "30px" }}>
                     <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
                   </div>
                 )}
@@ -153,11 +140,7 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <Comment
-                  comments={postComments}
-                  postId={post?.post?.postId}
-                  setRefetch={setRefetch}
-                />
+                <Comment comments={postComments} postId={post?.post?.postId} setRefetch={setRefetch} />
               </div>
               <AddComment postId={post?.post?.postId} setAddCommentResult={setAddCommentResult} />
             </div>
@@ -200,13 +183,10 @@ const Post = (post: any) => {
           <div className="px-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
             {post?.post?.createdBy !== appState.action?.user?.address && (
               <div className="w-full py-2  italic border-b flex gap-2 iems-center">
-                <div
-                  className=" rounded-full flex items-center justify-center"
-                  style={{ width: "50px" }}
-                >
+                <div className=" rounded-full flex items-center justify-center" style={{ width: "50px" }}>
                   <img
                     alt="user profile"
-                    src={currentUserImage}
+                    src={`${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`}
                     width="20px"
                     height="20px"
                     className="rounded-full"
@@ -220,7 +200,7 @@ const Post = (post: any) => {
               <div className="flex gap-2">
                 <div>
                   <img
-                    src={imageUrl}
+                    src={`${ipfsGateway}${userDetails?.profilePictureUrl}`}
                     alt="user-profile"
                     height={50}
                     width={50}
@@ -245,10 +225,7 @@ const Post = (post: any) => {
               </div>
               <div className="flex justify-center text-center items-center">
                 <div className="">
-                  <BiDotsVerticalRounded
-                    fontSize={18}
-                    className="rounded-full hover:bg-slate-300"
-                  />
+                  <BiDotsVerticalRounded fontSize={18} className="rounded-full hover:bg-slate-300" />
                 </div>
               </div>
             </div>
@@ -258,12 +235,7 @@ const Post = (post: any) => {
             ></div>
             {postDetails?.media[0]?.file && (
               <div className=" description-container w-180 md:w-320">
-                <img
-                  alt="post"
-                  src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
-                  height="100"
-                  loading="lazy"
-                ></img>
+                <img alt="post" src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100" loading="lazy"></img>
               </div>
             )}
             <div className="prevent-select mb-3 flex gap-7 bottom-menu-container items-center">

@@ -89,15 +89,6 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
         <>
           {likedProfiles?.data?.map((likedProfile: any, index: number) => {
             const imageUrl = `${ipfsGateway}${likedProfile.profilePictureUrl}`;
-            var user = defaultProfile;
-            if (
-              likedProfile?.profilePictureUrl === "empty" ||
-              likedProfile?.profilePictureUrl === undefined
-            ) {
-              user = defaultProfile;
-            } else {
-              user = imageUrl;
-            }
 
             return (
               <div key={index} className="flex p-3 text-sm gap-3 items-center">
@@ -110,13 +101,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
                     setPostProfileStatus(true);
                   }}
                 >
-                  <img
-                    alt="user"
-                    src={user}
-                    height="60px"
-                    width="60px"
-                    className="border rounded-full"
-                  ></img>
+                  <img alt="user" src={imageUrl} height="60px" width="60px" className="border rounded-full"></img>
                 </div>
                 <div
                   className="flex flex-col cursor-pointer"
@@ -147,13 +132,7 @@ const LikedAndSharedProfile = ({ post, mode, setLikedProfileStatus, setSharedSta
               <Loading />
             ) : (
               <div className="absolute top-0 ">
-                <>
-                  {mode === "liked" ? (
-                    <span>No Likes Yet! </span>
-                  ) : (
-                    <span>Profiles Not Found!</span>
-                  )}
-                </>
+                <>{mode === "liked" ? <span>No Likes Yet! </span> : <span>Profiles Not Found!</span>}</>
               </div>
             )}
           </div>

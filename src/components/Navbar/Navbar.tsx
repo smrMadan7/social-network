@@ -23,18 +23,10 @@ const Navbar = () => {
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
-  var profilePictureUrl;
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
   useEffect(() => {});
-  if (appState?.action?.user?.profilePictureUrl === undefined) {
-    profilePictureUrl = undefined;
-  } else if (appState?.action?.user?.profilePictureUrl === "empty") {
-    profilePictureUrl = "empty";
-  } else {
-    profilePictureUrl = imageUrl;
-  }
 
   var profileRoute = "";
 
@@ -108,12 +100,12 @@ const Navbar = () => {
               alt="app-log "
               src={logo}
               loading="lazy"
-              style={profilePictureUrl === null ? { padding: "0px" } : { padding: "10px" }}
+              style={imageUrl === null ? { padding: "0px" } : { padding: "10px" }}
             ></img>
           </div>
 
           <div className=" text-center items-center hidden md:flex">
-            {(profilePictureUrl === "empty" || profilePictureUrl !== undefined) && (
+            {appState?.action?.user?.profilePictureUrl !== undefined && (
               <ul className="flex gap-6 font-semibold ">
                 <NavLink to={"/home"}>
                   <li
@@ -248,27 +240,9 @@ const Navbar = () => {
             onMouseOver={() => setProfileStatus(true)}
             onMouseOut={() => setProfileStatus(false)}
           >
-            {(profilePictureUrl === "empty" || profilePictureUrl !== undefined) && (
+            {appState?.action?.user?.profilePictureUrl !== undefined && (
               <>
-                {!(profilePictureUrl === "empty") ? (
-                  <img
-                    alt="user profile"
-                    height="45px"
-                    width="45px"
-                    src={profilePictureUrl}
-                    className="rounded-full"
-                    loading="lazy"
-                  ></img>
-                ) : (
-                  <img
-                    alt="user profile"
-                    height="45px"
-                    width="45px"
-                    src={defaultUser}
-                    className="rounded-full"
-                    loading="lazy"
-                  ></img>
-                )}
+                <img alt="user profile" height="45px" width="45px" src={imageUrl} className="rounded-full" loading="lazy"></img>
               </>
             )}
 

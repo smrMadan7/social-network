@@ -14,17 +14,19 @@ export const network = {
   blockExplorerUrls: ["https://hyperspace.filfox.info/en"],
 };
 
-export const signMessage = "pln social wants you to sign in!";
+export const signMessage = "pln social wants you to sign in";
 
 // dev
 // export const ipfsGateway = "http://44.214.42.39:8080/ipfs/";
 // export const ipfsPostUrl = "http://44.214.42.39:5001/";
 // export const baseUrl = "http://44.214.42.39:3000";
+// export const defaultUserProfile = "QmeKM5hS2MFpngPbGYVTFxJaqyFNp1wSJa5C3YmicG2XV1";
 
 // production
 export const ipfsGateway = "https://gateway-ipfs.plnetwork.io/ipfs/";
 export const ipfsPostUrl = "https://api-ipfs.plnetwork.io/";
 export const baseUrl = "https://stageapi-social.plnetwork.io";
+export const defaultUserProfile = "QmeKM5hS2MFpngPbGYVTFxJaqyFNp1wSJa5C3YmicG2XV1";
 
 // local set up
 // export const baseUrl = "http://localhost:3000";

@@ -10,7 +10,6 @@ import { getComment, ipfsGateway, likeApi } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet, customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
-import { setProfile } from "../../utils/setProfile";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
 import AddComment from "../Forms/AddComment";
@@ -45,10 +44,7 @@ const Feeds = (post: any) => {
 
   const [isCommentSuccess, setIsCommentSuccess] = useState(false);
 
-  const [userImage, setUserImage] = useState(defaultProfile);
-
   useEffect(() => {
-    setProfile(post?.post?.profilePictureUrl, setUserImage);
     getPostComments();
     getPostDetails();
   }, []);
@@ -156,16 +152,9 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Comment
-                        comments={postComments}
-                        setRefetch={setRefetch}
-                        postId={post?.post?.postId}
-                      />
+                      <Comment comments={postComments} setRefetch={setRefetch} postId={post?.post?.postId} />
                     </div>
-                    <AddComment
-                      postId={post?.post?.postId}
-                      setAddCommentResult={setAddCommentResult}
-                    />
+                    <AddComment postId={post?.post?.postId} setAddCommentResult={setAddCommentResult} />
                   </div>
                 </div>
               </div>
@@ -224,11 +213,7 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <LikedProfile
-                        post={post}
-                        mode={"liked"}
-                        setLikedProfileStatus={setLikedProfileStatus}
-                      />
+                      <LikedProfile post={post} mode={"liked"} setLikedProfileStatus={setLikedProfileStatus} />
                     </div>
                   </div>
                 </div>
@@ -267,11 +252,7 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <LikedProfile
-                        post={post}
-                        mode={"shared"}
-                        setSharedStatus={setSharedProfiles}
-                      />
+                      <LikedProfile post={post} mode={"shared"} setSharedStatus={setSharedProfiles} />
                     </div>
                   </div>
                 </div>
@@ -306,12 +287,9 @@ const Feeds = (post: any) => {
             {/* shared details */}
             {(post?.post?.shares.length > 0 || isReposted) && (
               <div className="w-full py-2 italic border-b flex gap-2 iems-center">
-                <div
-                  className=" rounded-full flex items-center justify-center"
-                  style={{ width: "50px" }}
-                >
+                <div className=" rounded-full flex items-center justify-center" style={{ width: "50px" }}>
                   <img
-                    src={userImage}
+                    src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
                     alt="user profile"
                     width="20px"
                     height="20px"
@@ -344,7 +322,7 @@ const Feeds = (post: any) => {
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
-                  src={userImage}
+                  src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
                   height={50}
                   width={50}
                   loading="lazy"
@@ -353,10 +331,7 @@ const Feeds = (post: any) => {
                   onClick={() => setPostProfileStatus(true)}
                 ></img>
                 <div className="flex flex-col w-full">
-                  <div
-                    className="flex items-center gap-1 text-center"
-                    onClick={() => setPostProfileStatus(true)}
-                  >
+                  <div className="flex items-center gap-1 text-center" onClick={() => setPostProfileStatus(true)}>
                     <p className="text-md  font-semibold">{post?.post?.displayName}</p>
 
                     <p className="text-md  text-gray-500">@{post?.post?.handle}</p>
@@ -368,10 +343,7 @@ const Feeds = (post: any) => {
               </div>
               <div className="flex justify-center text-center items-center">
                 <div>
-                  <BiDotsVerticalRounded
-                    fontSize={18}
-                    className="rounded-full hover:bg-slate-300"
-                  />
+                  <BiDotsVerticalRounded fontSize={18} className="rounded-full hover:bg-slate-300" />
                   {}
                 </div>
               </div>
@@ -385,12 +357,7 @@ const Feeds = (post: any) => {
             </div>
             {postDetails?.media[0]?.file && (
               <div className="description-container w-180 md:w-320">
-                <img
-                  alt="post"
-                  src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
-                  height="100"
-                  loading="lazy"
-                ></img>
+                <img alt="post" src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100" loading="lazy"></img>
               </div>
             )}
 
@@ -424,17 +391,12 @@ const Feeds = (post: any) => {
                 style={isReposted ? {} : {}}
                 className=" flex text-indigo-500 items-center gap-2 prevent-select"
                 onClick={() => {
-                  if (
-                    !(post?.post?.shares?.includes(appState?.action?.user?.address) || isReposted)
-                  ) {
+                  if (!(post?.post?.shares?.includes(appState?.action?.user?.address) || isReposted)) {
                     setIsRepost(true);
                   }
                 }}
               >
-                <div
-                  id="repost"
-                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 h-10 w-10 "
-                >
+                <div id="repost" className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 h-10 w-10 ">
                   <FaShareSquare fontSize={18} className="text-indigo-500" />
 
                   <span className="">
@@ -473,8 +435,7 @@ const Feeds = (post: any) => {
                         }}
                       >
                         <>
-                          {post?.post?.likes?.includes(appState?.action?.user?.address) &&
-                          !isDisLiked ? (
+                          {post?.post?.likes?.includes(appState?.action?.user?.address) && !isDisLiked ? (
                             <>
                               <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
                             </>
@@ -558,7 +519,7 @@ const Feeds = (post: any) => {
           </div>
         </>
       ) : (
-        <> </>
+        <></>
       )}
     </>
   );

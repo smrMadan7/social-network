@@ -89,12 +89,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
         >
           {comments.map((comment: any, index: number) => {
             const imageUrl = `${ipfsGateway}${comment?.commenterProfilePic}`;
-            var user = defaultProfile;
-            if (comment?.commenterProfilePic === "empty" || comment?.commenterProfilePic === undefined) {
-              user = defaultProfile;
-            } else {
-              user = imageUrl;
-            }
 
             return (
               <div key={index} className="mb-5 relative ">
@@ -116,7 +110,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                           height="50px"
                           width="50px"
                           className="border rounded-full"
-                          src={user}
+                          src={imageUrl}
                           loading="lazy"
                         ></img>{" "}
                       </div>
