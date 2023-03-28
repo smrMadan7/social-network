@@ -8,7 +8,6 @@ import { ipfsGateway, roles } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import Loading from "../Loading/Loading";
 import UserNotification from "../UserNotification/UserNotification";
-import defaultUser from "./.././.././assets/Form/default-user.svg";
 import logo from "./.././.././assets/Navbar/nav-logo.svg";
 
 const Navbar = () => {

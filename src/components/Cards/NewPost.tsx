@@ -246,7 +246,6 @@ const NewPost = ({ postStatus }: any) => {
                   id="content"
                   onMouseMove={(e: any) => {
                     var containerElement: any = document.getElementById("tagContainer");
-                    console.log("containerElement: " + containerElement);
                     const x = e.clientX;
                     const y = e.clientY;
                     containerElement.left = x + "px";
@@ -283,9 +282,7 @@ const NewPost = ({ postStatus }: any) => {
             </div>
 
             <div className=" overflow-y-auto " style={{ height: "230px" }}>
-              {filePath && !cropStatus && (
-                <img alt="uploaded Image" src={filePath} loading="lazy"></img>
-              )}
+              {filePath && !cropStatus && <img alt="uploaded Image" src={filePath} loading="lazy"></img>}
             </div>
 
             <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">

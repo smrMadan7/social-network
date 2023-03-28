@@ -3,14 +3,16 @@ import { AiOutlineReload } from "react-icons/ai";
 import { BiMenu } from "react-icons/bi";
 import { getFeeds } from "../constants/AppConstants";
 import FeedsContainer from "../containers/FeedsContainer";
+import { useFeedsContext } from "../context/FeedsContextProvider";
 import { useUserContext } from "../context/UserContextProvider";
 import { customGet } from "../fetch/customFetch";
 import banner from "./../assets/Explore/banner.jpg";
 
 const Explore = () => {
   const { appState }: any = useUserContext();
-  const [feeds, setFeeds] = useState();
+  const [allFeeds, setAllFeeds] = useState();
   const [fetchedFeeds, setFetchedFeeds] = useState<any>();
+  const { feeds, setFeeds }: any = useFeedsContext();
 
   useEffect(() => {
     getAllFeeds();
@@ -21,59 +23,42 @@ const Explore = () => {
 
   useEffect(() => {
     if (fetchedFeeds?.staus) {
-      setFeeds(fetchedFeeds?.data);
+      setAllFeeds(fetchedFeeds?.data);
+      const feeds = fetchedFeeds?.data;
+      setFeeds({
+        feeds,
+      });
     }
   }, [fetchedFeeds]);
 
   const getAllFeeds = async () => {
-    customGet(
-      `${getFeeds}${appState?.action?.user?.address}`,
-      setFetchedFeeds,
-      "getting all feeds"
-    );
+    customGet(`${getFeeds}${appState?.action?.user?.address}`, setFetchedFeeds, "getting all feeds");
   };
 
   return (
     <>
-      <div
-        className="relative home-container h-screen  flex flex-col w-full overflow-y-auto "
-        style={{ paddingTop: "90px" }}
-      >
+      <div className="relative home-container h-screen  flex flex-col w-full overflow-y-auto " style={{ paddingTop: "90px" }}>
         <div className=" featured w-full border-b">
           <div className="m-auto flex w-full px-5 py-8 text-center sm:py-20 sm:text-left">
             <div className="flex flex-col space-y-3">
               <div className="text-3xl font-900 sm:text-4xl">Protocol Labs Social Network👋</div>
-              <div className="sm:w-70">
-                The Protocol Labs Network drives breakthroughs in computing to push humanity
-                forward.
-              </div>
+              <div className="sm:w-70">The Protocol Labs Network drives breakthroughs in computing to push humanity forward.</div>
             </div>
           </div>
         </div>
 
         <div className="flex gap-9 items-center text-gray-700 px-5 mt-6">
           <button className="flex gap-2 items-center p-2 rounded-lg bg-bgActive">
-            <BiMenu
-              fontSize={20}
-              className="origin-center hover:rotate-45"
-              style={{ transition: "1s" }}
-            />
+            <BiMenu fontSize={20} className="origin-center hover:rotate-45" style={{ transition: "1s" }} />
             Timeline
           </button>
-          <button
-            className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
-            onClick={() => getAllFeeds()}
-          >
-            <AiOutlineReload
-              fontSize={23}
-              className="origin-center hover:rotate-180"
-              style={{ transition: "1s" }}
-            />
+          <button className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none" onClick={() => getAllFeeds()}>
+            <AiOutlineReload fontSize={23} className="origin-center hover:rotate-180" style={{ transition: "1s" }} />
             Reload
           </button>
         </div>
 
-        <FeedsContainer feeds={feeds} />
+        <FeedsContainer feeds={allFeeds} />
       </div>
 
       <style>

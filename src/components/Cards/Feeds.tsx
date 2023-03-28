@@ -310,15 +310,6 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            {/* {isSucessfull && (
-              <div
-                className="absolute text-center  top-0 right-0 left-0 bottom-1 items-center "
-                style={{ zIndex: 100, height: "30px" }}
-              >
-                <p className="text-violet-700 font-semibold text-xl pt-3">Successfully Re-post</p>
-              </div>
-            )} */}
-
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img

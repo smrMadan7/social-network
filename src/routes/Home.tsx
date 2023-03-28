@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
-import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
-import { FaUserAlt } from "react-icons/fa";
-import { Outlet } from "react-router-dom";
-
 import { create } from "ipfs-http-client";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { AiFillStar, AiOutlineItalic, AiOutlineReload } from "react-icons/ai";
+import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
+import { FaUserAlt } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
-import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
+import { MdOutlinePermMedia } from "react-icons/md";
+import { Outlet } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { v4 as uuidv4 } from "uuid";
-import Notification from "../components/Cards/Notification";
 import Warning from "../components/Cards/Warning";
 import Loading from "../components/Loading/Loading";
-import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
+import WhoToFollow from "../components/WhoToFollow/WhoToFollow";
+import { createPost, getAllProfiles, getPostById, ipfsGateway, ipfsPostUrl } from "../constants/AppConstants";
 import PostContainer from "../containers/PostContainer";
 import { useUserContext } from "../context/UserContextProvider";
+import { customGet, getAllProfilesForMention } from "../fetch/customFetch";
 import getCroppedImage from "../utils/crop";
 import { htmlToText } from "../utils/htmlToText";
-import { alignTagContainer } from "../utils/alignTagContainer";
+import { MentionsInput } from "react-mentions";
+import { Mention } from "react-mentions";
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -39,6 +39,8 @@ const Home = () => {
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
   const [isReload, setIsReload] = useState(false);
+
+  const [allProfilesList, setAllProfilesList] = useState<any>([]);
 
   useEffect(() => {
     setFilterStatus("timeline");
@@ -83,8 +85,8 @@ const Home = () => {
   const publishPost = async (e: any) => {
     e.preventDefault();
 
-    const contentElement: any = document.getElementById("content");
-    var content = contentElement.innerHTML;
+    // const contentElement: any = document.getElementById("content");
+    var content = postContent;
 
     if (isBold && content) {
       content = `<span class="font-bold">${content}</span>`;
@@ -99,10 +101,9 @@ const Home = () => {
 
     if (htmlToText(content).trim() || uploadImage !== null) {
       try {
+        setIsLoading(true);
         ipfsClient(uploadImage)
           .then(async (path) => {
-            setIsLoading(true);
-
             const currentTimeStamp = Math.floor(Date.now() / 1000);
             const uri: any = {
               version: "1.0.0",
@@ -135,6 +136,7 @@ const Home = () => {
               .then((result) => {
                 if (result.status !== false) {
                   setIsPost(false);
+                  setUploadImage(null);
                   setIsLoading(false);
                   setFilePath("");
                   getAllPosts();
@@ -152,6 +154,7 @@ const Home = () => {
             console.log("Error occured while publishing post", error);
           });
       } catch (e) {
+        setIsLoading(false);
         setWarning(true);
       }
     } else {
@@ -169,10 +172,8 @@ const Home = () => {
     setWarning(false);
     try {
       const { file, url }: any = await getCroppedImage(filePath, croppedPixel);
-
       setFilePath(url);
       setUploadImage(file);
-
       setCropStatus(false);
     } catch (e) {
       setWarning(true);
@@ -192,15 +193,40 @@ const Home = () => {
 
     fetch(`${getPostById}${appState?.action?.user?.address}`, requestOptions)
       .then((response) => response.json())
-      .then((result) => {
+      .then(async (result) => {
         if (result.status !== false) {
           setPosts(result.data);
+          const allProfiles = await getAllProfilesForMention(getAllProfiles, setAllProfilesList, "get all profiles");
+          setAllProfilesList(allProfiles);
         }
       })
       .catch((error) => {
         console.log("Error occured while get all posts", error);
       });
   };
+
+  // tag section
+
+  const [postContent, setPostContent] = useState("");
+
+  const handlePostContentChange = (e: any) => {
+    setPostContent(e.target.value);
+  };
+
+  function renderSuggestion(entry: any, search: any, highlightedDisplay: any, index: any, focused: any) {
+    return (
+      <>
+        <div className="flex items-center gap-2 mt-2">
+          <div>
+            <img height="30px" width="30px" className="border rounded-full" src={`${ipfsGateway}${entry?.profile}`} />
+          </div>
+          <div>
+            <p>{entry?.display}</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -233,18 +259,10 @@ const Home = () => {
               <div className="flex gap-9 items-center text-gray-700">
                 <button
                   className="flex gap-2 items-center p-2 rounded-lg hover:bg-violte-200"
-                  style={
-                    filterStatus === "timeline"
-                      ? { background: "rgb(196 181 253)" }
-                      : { background: "" }
-                  }
+                  style={filterStatus === "timeline" ? { background: "rgb(196 181 253)" } : { background: "" }}
                   onClick={() => setFilterStatus("timeline")}
                 >
-                  <BiMenu
-                    fontSize={20}
-                    className="origin-center hover:rotate-45"
-                    style={{ transition: "1s" }}
-                  />
+                  <BiMenu fontSize={20} className="origin-center hover:rotate-45" style={{ transition: "1s" }} />
                   Timeline
                 </button>
                 <button
@@ -253,11 +271,7 @@ const Home = () => {
                     setIsReload(true);
                   }}
                 >
-                  <AiOutlineReload
-                    fontSize={23}
-                    className="origin-center hover:rotate-180"
-                    style={{ transition: "1s" }}
-                  />
+                  <AiOutlineReload fontSize={23} className="origin-center hover:rotate-180" style={{ transition: "1s" }} />
                   Reload
                 </button>
               </div>
@@ -269,17 +283,7 @@ const Home = () => {
           </div>
 
           {/* Who to follow section */}
-          <div className="flex-col hidden md:flex md:w-30 ">
-            <div className="border-orange-300	text-yellow-600 w-full bg-amber-100  rounded-lg">
-              <Notification
-                headerImg={<MdOutlineScience />}
-                title={"Beta Warning"}
-                description={
-                  "This Decentralized social network is still in the beta phase, things may break, please handle us with care."
-                }
-              />
-            </div>
-          </div>
+          <WhoToFollow />
         </div>
       </div>
       {/* Add new post */}
@@ -332,10 +336,7 @@ const Home = () => {
                               setUploadImage(null);
                             }}
                           >
-                            <GrFormClose
-                              fontSize={28}
-                              className="hover:bg-bgHoverActive bg-bgHover rounded-full"
-                            />
+                            <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
                           </div>
                         </div>
                         <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
@@ -423,17 +424,30 @@ const Home = () => {
                       className="z-10 absolute bg-black text-white border rounded-lg px-2"
                     />
                     <div className="border-t-2 mt-3 p-4">
-                      <div
-                        className=" border rounded-lg overflow-y-auto"
-                        style={{ height: "100px" }}
-                      >
+                      <div className=" border rounded-lg overflow-y-auto p-2" style={{ height: "100px" }}>
                         {/* input text area */}
-                        <div
+
+                        <MentionsInput
+                          style={{ height: "100px" }}
+                          value={postContent}
+                          onChange={handlePostContentChange}
+                          placeholder={"What's happening?"}
+                        >
+                          <Mention
+                            trigger="@"
+                            data={allProfilesList}
+                            renderSuggestion={renderSuggestion}
+                            appendSpaceOnAdd={true}
+                          />
+                        </MentionsInput>
+
+                        {/* <div
                           className="p-2 cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-100"
                           contentEditable="true"
                           id="content"
                           onInput={(e: any) => {
-                            alignTagContainer("tagContainer");
+                            // setPostContent(updateContent(e.target.innerText));
+                            // alignTagContainer("tagContainer");
                           }}
                           onKeyDown={(e: any) => {}}
                           data-placeholder="What's happening?"
@@ -449,29 +463,14 @@ const Home = () => {
                                 }
                               : {}
                           }
-                        ></div>
-
-                        {/* tag container */}
-                        <div
-                          className="mt-5 md:mt-0 absolute border rounded-lg bg-gray-700 left-0 bg-black "
-                          id="tagContainer"
-                        >
-                          <div className=" " style={{ width: "100px", height: "100px" }}>
-                            abc
-                          </div>
-                        </div>
+                        /> */}
                       </div>
                     </div>
 
                     <div className="relative overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
                       {filePath && !cropStatus && (
                         <>
-                          <img
-                            alt="uploaded file"
-                            className="h-150 md:h-225"
-                            src={filePath}
-                            loading="lazy"
-                          ></img>
+                          <img alt="uploaded file" className="h-150 md:h-225" src={filePath} loading="lazy"></img>
                           <div
                             className="px-4 absolute top-0 right-0 cursor-pointer"
                             onClick={() => {
@@ -480,10 +479,7 @@ const Home = () => {
                               setUploadImage(null);
                             }}
                           >
-                            <GrFormClose
-                              fontSize={28}
-                              className="hover:bg-bgHoverActive bg-bgHover rounded-full"
-                            />
+                            <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
                           </div>
                         </>
                       )}
@@ -496,10 +492,7 @@ const Home = () => {
                         </div>
                       </div>
                       <div>
-                        <button
-                          type="submit"
-                          className="rounded-lg bg-violet-700 px-3 py-1 text-white"
-                        >
+                        <button type="submit" className="rounded-lg bg-violet-700 px-3 py-1 text-white">
                           Post
                         </button>
                       </div>
@@ -522,6 +515,16 @@ const Home = () => {
               content:attr(data-placeholder);
               color:gray
             }
+
+            textarea:focus-visible {
+              outline:none;
+            }
+            textarea {
+              height: 100px;
+              background-color: black;
+            }
+
+
             
             `}
       </style>

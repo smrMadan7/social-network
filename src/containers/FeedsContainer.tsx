@@ -1,20 +1,27 @@
+import { BsStars } from "react-icons/bs";
 import { FaThList } from "react-icons/fa";
 import { MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import EmptyPost from "../components/Cards/EmptyPost";
 import Feeds from "../components/Cards/Feeds";
+import Follow from "../components/Cards/Follow";
 import Notification from "../components/Cards/Notification";
 import { useUserContext } from "../context/UserContextProvider";
 
 const FeedsContainer = ({ feeds }: any) => {
   const { appState }: any = useUserContext();
+  const users = [{}, {}, {}, {}, {}, {}];
   return (
     <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
       <div className="w-full md:w-70 border rounded-lg ">
         {feeds?.length > 0 ? (
           <>
             {feeds?.map((post: any, index: number) => {
-              return <Feeds post={post} address={appState?.action?.user?.address} key={index + uuidv4()} />;
+              return (
+                <div id={post?.postId} key={index + uuidv4()}>
+                  <Feeds post={post} address={appState?.action?.user?.address} />
+                </div>
+              );
             })}
           </>
         ) : (

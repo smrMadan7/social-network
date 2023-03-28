@@ -1,10 +1,4 @@
-export const customPost = (
-  params: any,
-  url: string,
-  method: any,
-  setFetchedData: any,
-  purpose: string
-) => {
+export const customPost = (params: any, url: string, method: any, setFetchedData: any, purpose: string) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -38,4 +32,14 @@ export const customGet = (uri: string, setFetchedData: any, purpose: string) => 
     .catch((error) => {
       console.log(`Erro while ${purpose}`, error);
     });
+};
+
+export const getAllProfilesForMention = async (uri: string, setFetchedData: any, purpose: string) => {
+  const data = await fetch(uri, { method: "GET" });
+  const result = await data.json();
+  const output = result?.data.map((data: any) => {
+    return { id: data?.address, display: `${data.handle}`, profile: data?.profilePictureUrl };
+  });
+
+  return output;
 };

@@ -3,22 +3,6 @@ import { SlUserFollow } from "react-icons/sl";
 import { getUser } from "../../constants/AppConstants";
 
 const Follow = () => {
-  useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions: any = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
-    fetch(`${getUser}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {})
-      .catch((error) => {});
-  });
-
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-3">
