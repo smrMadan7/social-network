@@ -35,6 +35,11 @@ const Team = () => {
   const [handleWarning, setHandleWarning] = useState(false);
   const [teamResult, setTeamResult] = useState<any>();
 
+  const [isWebsiteWarning, setIsWebsiteWarning] = useState(true);
+  const [isTwitterWarning, setIsTwitterWarning] = useState(true);
+  const [isDiscordWarning, setIsDiscordWarning] = useState(true);
+  const urlRegex = /^(https?:\/\/)?(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,6 +60,8 @@ const Team = () => {
       setTimeout(() => {
         navigate("/home");
       }, 1000);
+    } else if (!teamResult?.status) {
+      setIsLoading(false);
     }
   }, [teamResult]);
   const ipfs = create({ url: ipfsPostUrl });
@@ -108,10 +115,19 @@ const Team = () => {
     const web3: any = new Web3(provider);
     const userAccount = await web3.eth.getAccounts();
     const address = userAccount[0];
-
-    if (description && handle) {
-      setIsLoading(true);
+    setIsWebsiteWarning(urlRegex.test(target?.website?.value));
+    setIsTwitterWarning(urlRegex.test(target?.twitter?.value));
+    setIsDiscordWarning(urlRegex.test(target?.discord?.value));
+    if (
+      description &&
+      handle &&
+      urlRegex.test(target?.discord?.value) &&
+      urlRegex.test(target?.twitter?.value) &&
+      urlRegex.test(target?.website?.value)
+    ) {
+      console.log("this condition is works");
       if (uploadFile) {
+        setIsLoading(true);
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
             const params = {
@@ -127,7 +143,6 @@ const Team = () => {
               handle: target.handle.value,
               address: address,
             };
-
             customPost(params, addTeam, "POST", setTeamResult, "adding team");
           } else {
             setToast(true);
@@ -140,6 +155,7 @@ const Team = () => {
           }
         });
       } else {
+        setIsLoading(true);
         const params = {
           organizationName: target.organizationName.value,
           website: target.website.value,
@@ -153,10 +169,10 @@ const Team = () => {
           handle: target.handle.value,
           address: address,
         };
-
         customPost(params, addTeam, "POST", setTeamResult, "adding team");
       }
     } else {
+      setIsLoading(false);
       setToast(true);
       setToastMessage("All fields are required");
       setTimeout(() => {
@@ -272,6 +288,7 @@ const Team = () => {
 
                         {/* Website */}
 
+                        {!isWebsiteWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*Enter a valid URL</div>}
                         <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
                           <label className="w-60 md:w-30  block tracking-wide text-gray-700 text-md font-bold mb-2">
                             Website:*
@@ -281,7 +298,7 @@ const Team = () => {
                             className="w-full  md:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="website"
                             name="website"
-                            type="url"
+                            type="text"
                             placeholder="Website"
                           ></input>
                         </div>
@@ -299,6 +316,8 @@ const Team = () => {
                         ></input>
                       </div>
                       {/* Twitter */}
+                      {!isTwitterWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*Enter a valid URL</div>}
+
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Twitter:*</label>
                         <input
@@ -306,11 +325,13 @@ const Team = () => {
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="twitter"
                           name="twitter"
-                          type="url"
+                          type="text"
                           placeholder="Twitter"
                         ></input>
                       </div>
+
                       {/* Discord */}
+                      {!isDiscordWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*Enter a valid URL</div>}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Discord:*</label>
                         <input
@@ -318,7 +339,7 @@ const Team = () => {
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="discord"
                           name="discord"
-                          type="url"
+                          type="text"
                           placeholder="Discord"
                         ></input>
                       </div>

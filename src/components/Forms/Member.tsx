@@ -66,6 +66,8 @@ const Member = () => {
         setToastMessage("");
         navigate("/home");
       }, 1000);
+    } else if (!addMemberResult?.status) {
+      setIsLoading(false);
     }
   }, [addMemberResult]);
 
