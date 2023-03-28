@@ -38,7 +38,7 @@ export const getAllProfilesForMention = async (uri: string, setFetchedData: any,
   const data = await fetch(uri, { method: "GET" });
   const result = await data.json();
   const output = result?.data.map((data: any) => {
-    return { id: data?.address, display: `${data.handle}`, profile: data?.profilePictureUrl };
+    return {name: data?.organizationName || data?.displayName ,id: data?.address, display: `${data.handle}`, profile: data?.profilePictureUrl };
   });
 
   return output;

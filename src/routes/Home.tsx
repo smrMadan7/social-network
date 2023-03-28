@@ -283,7 +283,12 @@ const Home = () => {
           </div>
 
           {/* Who to follow section */}
-          <WhoToFollow />
+          {
+            allProfilesList.length > 0 && (
+          <WhoToFollow allProfiles = {allProfilesList} />
+              
+            )
+          }
         </div>
       </div>
       {/* Add new post */}
@@ -430,11 +435,13 @@ const Home = () => {
                         <MentionsInput
                           style={{ height: "100px" }}
                           value={postContent}
+                          
                           onChange={handlePostContentChange}
                           placeholder={"What's happening?"}
                         >
                           <Mention
                             trigger="@"
+                         
                             data={allProfilesList}
                             renderSuggestion={renderSuggestion}
                             appendSpaceOnAdd={true}
@@ -523,8 +530,6 @@ const Home = () => {
               height: 100px;
               background-color: black;
             }
-
-
             
             `}
       </style>

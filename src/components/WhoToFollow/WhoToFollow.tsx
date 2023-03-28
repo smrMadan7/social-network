@@ -1,9 +1,11 @@
 import { BsStars } from "react-icons/bs";
+import { getAllProfiles } from "../../constants/AppConstants";
+import { getAllProfilesForMention } from "../../fetch/customFetch";
 
 import Follow from "../Cards/Follow";
 
-const WhoToFollow = () => {
-  const users = [{}, {}, {}, {}, {}, {}];
+const WhoToFollow = (props:any) => {
+
 
   return (
     <div className="hidden md:block flex flex-col md:gap-5 md:w-35 follow-container ">
@@ -13,10 +15,10 @@ const WhoToFollow = () => {
       </div>
       <div className=" flex flex-col gap-7 p-3 px-5 border bg-white h-4/5 mt-4 rounded-t-lg overflow-y-auto">
         {/* follow card */}
-        {users.map((user: object, index: number) => {
+        {props?.allProfiles?.map((profile: object, index: number) => {
           return (
             <div key={index}>
-              <Follow />
+              <Follow userProfile ={profile}/>
             </div>
           );
         })}
