@@ -11,6 +11,7 @@ import { eventList } from "../../utils/event";
 import { timeAgo } from "../../utils/timeAgo";
 import SocketNotification from "../Cards/SocketNotification";
 import { useSocketContext } from "../../context/SocketCotextProvider";
+import EmptyPost from "../Cards/EmptyPost";
 
 const UserNotification = ({ isNotification, setIsNotification }: any) => {
   const { appState }: any = useUserContext();
@@ -21,7 +22,7 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
   useEffect(() => {
 
     socketContext?.socket.on("receiveNotifications", (data: any) => {
-      // getAllNotifications();
+       getAllNotifications();
       setAllNotifications([...allNotifications, data])
 
     });
@@ -68,12 +69,11 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
           </div>
         </div>
         <div className="mt-2 overflow-y-auto w-full" style={{ height: "50vh" }}>
-          {allNotifications.length > 0 && (
+          {allNotifications.length > 0 ? (
 
             <>
               {
                 allNotifications?.map((notification: any, index: any) => {
-                  // customGet(getUser, setUserDetails, "getting user detai")
                   return (
                     <div key={index}>
                       <SocketNotification notification={notification} />
@@ -85,6 +85,10 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
               }
 
             </>
+          ): (
+            <div> 
+              <EmptyPost content={"You don't have any notofications yet!"} />
+            </div>
           )
 
 

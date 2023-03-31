@@ -485,7 +485,7 @@ const Home = () => {
 
                       <MentionsInput
 
-                        className="h-100 border overflow-y-auto"
+                        className="h-100 border rounded-lg overflow-y-auto"
 
                         style={{
                           mentionsInputStyle

@@ -42,10 +42,7 @@ const Explore = () => {
   useEffect(() => {
 
     socketContext?.socket.on("receiveNotifications", (data:any) => {
-      console.log("notification data is ", data);
-      if(data.type === "tag") {
       getAllFeeds();
-      } 
     });
   
     }, [socketContext?.socket])

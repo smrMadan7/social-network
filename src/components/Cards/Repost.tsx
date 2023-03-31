@@ -33,7 +33,7 @@ const Repost = ({
   }, [repostResult]);
 
   const sendNotification = () => {
-    if(post?.createdBy !== appState?.action?.user?.address) {
+    if(post?.post?.createdBy !== appState?.action?.user?.address) {
     socketContext?.socket.emit("sendNotifications", {
     type: "share",
     performedBy: appState?.action?.user?.address,

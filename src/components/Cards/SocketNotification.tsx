@@ -11,6 +11,7 @@ const SocketNotification = (props: any) => {
   const navigate = useNavigate();
   const [userImage, setUserImage] = useState(defaultProfile)
   const [userDetails, setUserDetails] = useState<any>();
+  
   const goTo = async (e: any, actionId: any) => {
     navigate(`/explore?${actionId}`)
     const element: any = document.getElementById(actionId);
@@ -33,9 +34,9 @@ const SocketNotification = (props: any) => {
       setNotificationContent("has commented on your post");
     } else if (notificationType === "share") {
       setNotificationContent("has shared your post");
-    } else if (notificationType === "tag" && props?.notification?.actionItem === "post") {
+    } else if (notificationType === "tag" && props?.notification?.details?.actionItem === "post") {
       setNotificationContent("has tagged you in a post")
-    } else if (notificationType === "tag" && props?.notification?.actionItem === "comment") {
+    } else if (notificationType === "tag" && props?.notification?.details?.actionItem === "comment") {
       setNotificationContent("has tagged you in a comment");
     } else {
       setNotificationContent("has followed your profile");
@@ -63,7 +64,7 @@ const SocketNotification = (props: any) => {
         </div>
         <div className="flex items-center mt-1">
           <button className="border rounded-lg px-3 bg-bgHover bg-bgActive font-semibold"
-            onClick={(event: any) => { goTo(event, props?.notification.actionId) }}>
+            onClick={(event: any) => { goTo(event, props?.notification?.details?.actionId) }}>
             View
           </button>
         </div>
