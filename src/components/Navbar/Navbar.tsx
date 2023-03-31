@@ -26,10 +26,10 @@ const Navbar = () => {
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
-  const {socketContext}:any = useSocketContext();
+  const { socketContext }: any = useSocketContext();
 
 
-  
+
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
 
@@ -86,28 +86,32 @@ const Navbar = () => {
 
   // socket listening
   const [oldNotifications, setOldNotifications] = useState<any>();
-  const {notifications, setNotifications}:any = useNotificationsContext();
+  const { notifications, setNotifications }: any = useNotificationsContext();
 
 
   const socketParams = {
     address: appState?.action?.user?.address,
-  } 
+  }
   useEffect(() => {
-    if(oldNotifications?.status) {
+    if (oldNotifications?.status) {
       const notifications = oldNotifications?.data;
       setNotifications({
         notifications,
       })
     }
   }, [oldNotifications])
-  
+
+
   socketContext?.socket.emit("joinNotifications", socketParams);
+
+
+
   useEffect(() => {
     getAllNotifications();
-      }, [])
+  }, [])
 
   const [fetchedFeeds, setFetchedFeeds] = useState<any>();
-  const {setFeeds}:any  = useFeedsContext();
+  const { setFeeds }: any = useFeedsContext();
 
 
 
@@ -163,10 +167,10 @@ const Navbar = () => {
                     style={
                       routerStatus === "home"
                         ? {
-                            background: "rgb(196 181 253)",
-                            color: "black",
-                            borderRadius: "10px",
-                          }
+                          background: "rgb(196 181 253)",
+                          color: "black",
+                          borderRadius: "10px",
+                        }
                         : { background: "" }
                     }
                   >
@@ -180,10 +184,10 @@ const Navbar = () => {
                     style={
                       routerStatus === "explore"
                         ? {
-                            background: "rgb(196 181 253)",
-                            color: "black",
-                            borderRadius: "10px",
-                          }
+                          background: "rgb(196 181 253)",
+                          color: "black",
+                          borderRadius: "10px",
+                        }
                         : { background: "" }
                     }
                   >
@@ -331,7 +335,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {isNotification && <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />}
+      <div style={isNotification ? {display:"block"} : {display:"none"}}>
+        <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />
+      </div>
       {isLogout && <Loading />}
     </>
   );
