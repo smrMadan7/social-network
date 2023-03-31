@@ -17,7 +17,7 @@
     "react-dom": "^18.2.0",
     "react-easy-crop": "^4.7.1",
     "react-icons": "^4.7.1",
-    "react-mentions": "^4.4.7",
+    "react-mentions": "4.4.4",
     "react-router": "^6.8.1",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",

@@ -1,16 +1,17 @@
-import { BsStars } from "react-icons/bs";
-import { FaThList } from "react-icons/fa";
 import { MdOutlineScience } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import EmptyPost from "../components/Cards/EmptyPost";
 import Feeds from "../components/Cards/Feeds";
-import Follow from "../components/Cards/Follow";
 import Notification from "../components/Cards/Notification";
 import { useUserContext } from "../context/UserContextProvider";
 
+
 const FeedsContainer = ({ feeds }: any) => {
   const { appState }: any = useUserContext();
-  const users = [{}, {}, {}, {}, {}, {}];
+  // useEffect(() => {
+  //   const element: any = document.getElementById("0a0f65ab-163b-4274-a6c8-3c4224cae30a");
+  //   element.scrollIntoView({ behavior: "smooth", block:"center" }); 
+  // }, [])
   return (
     <div className=" gap-6 mt-6 flex bg-white w-full px-5 feeds-container">
       <div className="w-full md:w-70 border rounded-lg ">
@@ -44,6 +45,6 @@ const FeedsContainer = ({ feeds }: any) => {
       </div>
     </div>
   );
-};
+}
 
 export default FeedsContainer;

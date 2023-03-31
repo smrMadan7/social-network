@@ -5,13 +5,20 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { UserContextProvider } from "./context/UserContextProvider";
 import { FeedsContextProvider } from "./context/FeedsContextProvider";
+import { NotificationContextProvider } from "./context/NotificationsContextProvider";
+import { SocketContextProvider } from "./context/SocketCotextProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
-  <FeedsContextProvider>
+  <NotificationContextProvider> 
+     <FeedsContextProvider>
     <UserContextProvider>
+      <SocketContextProvider>
       <App />
+      </SocketContextProvider>
     </UserContextProvider>
   </FeedsContextProvider>
+  </NotificationContextProvider>
+
 );
 reportWebVitals();

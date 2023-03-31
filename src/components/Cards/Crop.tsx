@@ -14,7 +14,6 @@ const Crop = ({
   defaultProfile,
   getcroppedImage,
 }: any) => {
-  console.log("upload image is ", uploadedImage);
   return (
     <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center w-90 md:w-50">
       <div className=" relative w-90 md:w-50" style={{ height: "50vh" }}>

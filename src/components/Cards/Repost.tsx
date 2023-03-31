@@ -3,6 +3,7 @@ import { GrFormClose } from "react-icons/gr";
 import { sharePosts } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";
+import { useSocketContext } from "../../context/SocketCotextProvider";
 
 const Repost = ({
   setIsReposted,
@@ -11,9 +12,12 @@ const Repost = ({
   postId,
   sharedCount,
   setSharedCount,
+  post
 }: any) => {
   const { appState }: any = useUserContext();
   const [repostResult, setRepostResult] = useState<any>();
+  const {socketContext}:any = useSocketContext();
+
 
   useEffect(() => {
     if (repostResult?.status) {
@@ -21,12 +25,26 @@ const Repost = ({
       setIsRepost(false);
       setSharedCount(sharedCount + 1);
       setIsSuccessfull(true);
+      sendNotification();
       setTimeout(() => {
         setIsSuccessfull(false);
       }, 2000);
     }
   }, [repostResult]);
 
+  const sendNotification = () => {
+    if(post?.createdBy !== appState?.action?.user?.address) {
+    socketContext?.socket.emit("sendNotifications", {
+    type: "share",
+    performedBy: appState?.action?.user?.address,
+    subjectId: post?.post?.createdBy,
+    details: {
+      actionItem : "share", 
+      actionId: post?.post?.postId,
+    }
+    });
+  }
+}
   const rePost = () => {
     const params = {
       postId: postId,

@@ -16,6 +16,7 @@ import defaultUser from "./../././../assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 
+
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
   const { appState }: any = useUserContext();
@@ -27,6 +28,7 @@ const Post = (post: any) => {
   const [addCommentResult, setAddCommentResult] = useState<any>();
   const [isCommentSuccess, setIsCommentSuccess] = useState(false);
   const [sharedProfiles, setSharedProfiles] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState(defaultUser)
 
   useEffect(() => {
     getUserDetails();
@@ -63,7 +65,9 @@ const Post = (post: any) => {
 
   useEffect(() => {
     if (userDetails?.status) {
+      setProfilePictureUrl(`${ipfsGateway}${userDetails?.data?.profilePictureUrl}`)
       setUserDetails(userDetails?.data);
+      
     }
   }, [userDetails]);
 
@@ -142,7 +146,7 @@ const Post = (post: any) => {
               <div className="h-2/3 overflow-y-auto mt-2 ">
                 <Comment comments={postComments} postId={post?.post?.postId} setRefetch={setRefetch} />
               </div>
-              <AddComment postId={post?.post?.postId} setAddCommentResult={setAddCommentResult} />
+              <AddComment postId={post?.post?.postId} addCommentResult={addCommentResult} setAddCommentResult={setAddCommentResult} />
             </div>
           </div>
         </div>
@@ -181,7 +185,7 @@ const Post = (post: any) => {
       {postDetails ? (
         <>
           <div className="px-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
-            {post?.post?.createdBy !== appState.action?.user?.address && (
+            {post?.post?.shares.includes(appState.action?.user?.address) && (
               <div className="w-full py-2  italic border-b flex gap-2 iems-center">
                 <div className=" rounded-full flex items-center justify-center" style={{ width: "50px" }}>
                   <img
@@ -200,7 +204,7 @@ const Post = (post: any) => {
               <div className="flex gap-2">
                 <div>
                   <img
-                    src={`${ipfsGateway}${userDetails?.profilePictureUrl}`}
+                    src={profilePictureUrl}
                     alt="user-profile"
                     height={50}
                     width={50}

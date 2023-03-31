@@ -28,11 +28,6 @@ export const defaultUserProfile = "QmeKM5hS2MFpngPbGYVTFxJaqyFNp1wSJa5C3YmicG2XV
 // export const baseUrl = "https://stageapi-social.plnetwork.io";
 // export const defaultUserProfile = "QmeKM5hS2MFpngPbGYVTFxJaqyFNp1wSJa5C3YmicG2XV1";
 
-// local set up
-// export const baseUrl = "http://localhost:3000";
-// export const ipfsGateway = "http://127.0.0.1:9090/ipfs/";
-// export const ipfsPostUrl = "http://127.0.0.1:5002/";
-
 export const verifyUser = `${baseUrl}/api/user/verify`;
 export const addMember = `${baseUrl}/api/user/registerMember`;
 export const addTeam = `${baseUrl}/api/user/registerTeam`;
@@ -51,5 +46,6 @@ export const getComment = `${baseUrl}/api/post/comments/get/`;
 export const updateComment = `${baseUrl}/api/post/comments/edit`;
 export const getAllProfiles = `${baseUrl}/api/user/getAllProfiles`;
 export const sharePosts = `${baseUrl}/api/post/share`;
+export const getNotifications = `${baseUrl}/api/notifications/`
 
 export const roles = ["member", "team"];

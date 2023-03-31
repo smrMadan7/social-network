@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { AiOutlineReload } from "react-icons/ai";
 import { BiMenu } from "react-icons/bi";
 import { getFeeds } from "../constants/AppConstants";
 import FeedsContainer from "../containers/FeedsContainer";
 import { useFeedsContext } from "../context/FeedsContextProvider";
+import { useSocketContext } from "../context/SocketCotextProvider";
 import { useUserContext } from "../context/UserContextProvider";
 import { customGet } from "../fetch/customFetch";
 import banner from "./../assets/Explore/banner.jpg";
@@ -13,6 +13,8 @@ const Explore = () => {
   const [allFeeds, setAllFeeds] = useState();
   const [fetchedFeeds, setFetchedFeeds] = useState<any>();
   const { feeds, setFeeds }: any = useFeedsContext();
+  const {socketContext}:any = useSocketContext();
+
 
   useEffect(() => {
     getAllFeeds();
@@ -20,6 +22,7 @@ const Explore = () => {
       window.location.reload();
     }
   }, []);
+
 
   useEffect(() => {
     if (fetchedFeeds?.staus) {
@@ -34,6 +37,19 @@ const Explore = () => {
   const getAllFeeds = async () => {
     customGet(`${getFeeds}${appState?.action?.user?.address}`, setFetchedFeeds, "getting all feeds");
   };
+
+
+  useEffect(() => {
+
+    socketContext?.socket.on("receiveNotifications", (data:any) => {
+      console.log("notification data is ", data);
+      if(data.type === "tag") {
+      getAllFeeds();
+      } 
+    });
+  
+    }, [socketContext?.socket])
+  
 
   return (
     <>
@@ -52,10 +68,7 @@ const Explore = () => {
             <BiMenu fontSize={20} className="origin-center hover:rotate-45" style={{ transition: "1s" }} />
             Timeline
           </button>
-          <button className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none" onClick={() => getAllFeeds()}>
-            <AiOutlineReload fontSize={23} className="origin-center hover:rotate-180" style={{ transition: "1s" }} />
-            Reload
-          </button>
+
         </div>
 
         <FeedsContainer feeds={allFeeds} />
@@ -94,6 +107,6 @@ const Explore = () => {
       </style>
     </>
   );
-};
+}
 
 export default Explore;

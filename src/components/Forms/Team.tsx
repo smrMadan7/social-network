@@ -125,7 +125,7 @@ const Team = () => {
       urlRegex.test(target?.twitter?.value) &&
       urlRegex.test(target?.website?.value)
     ) {
-      console.log("this condition is works");
+   
       if (uploadFile) {
         setIsLoading(true);
         ipfsClient(uploadFile).then(async (path) => {

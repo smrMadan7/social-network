@@ -1,25 +1,32 @@
 import { create } from "ipfs-http-client";
 import { useCallback, useEffect, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import { AiFillStar, AiOutlineItalic, AiOutlineReload } from "react-icons/ai";
+import { AiFillStar, AiOutlineItalic } from "react-icons/ai";
 import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
+import { BsHeart } from "react-icons/bs";
 import { FaUserAlt } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { MdOutlinePermMedia } from "react-icons/md";
+import { Mention, MentionsInput } from "react-mentions";
 import { Outlet } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
+import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import Warning from "../components/Cards/Warning";
 import Loading from "../components/Loading/Loading";
 import WhoToFollow from "../components/WhoToFollow/WhoToFollow";
-import { createPost, getAllProfiles, getPostById, ipfsGateway, ipfsPostUrl } from "../constants/AppConstants";
+import { baseUrl, createPost, getAllProfiles, getPostById, ipfsGateway, ipfsPostUrl } from "../constants/AppConstants";
 import PostContainer from "../containers/PostContainer";
+import { useSocketContext } from "../context/SocketCotextProvider";
 import { useUserContext } from "../context/UserContextProvider";
-import { customGet, getAllProfilesForMention } from "../fetch/customFetch";
+import { getAllProfilesForMention } from "../fetch/customFetch";
+import constructTags from "../utils/constructTags";
 import getCroppedImage from "../utils/crop";
+import { eventList } from "../utils/event";
 import { htmlToText } from "../utils/htmlToText";
-import { MentionsInput } from "react-mentions";
-import { Mention } from "react-mentions";
+import mentionsInputStyle from './../styles/mentionsInputStyle';
+import mentionStyle from "../styles/mentionStyle";
+
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -39,19 +46,19 @@ const Home = () => {
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
   const [isReload, setIsReload] = useState(false);
+  const {socketContext}:any = useSocketContext();
 
   const [allProfilesList, setAllProfilesList] = useState<any>([]);
 
   useEffect(() => {
     setFilterStatus("timeline");
     if (!appState?.action?.user) {
-      window.location.reload();
+      window.location.reload(); 
+    } else {
+      getAllPosts();
     }
   }, []);
 
-  useEffect(() => {
-    getAllPosts();
-  }, [isReload]);
 
   const mediaUpload = () => {
     let input: HTMLInputElement = document.createElement("input");
@@ -87,6 +94,7 @@ const Home = () => {
 
     // const contentElement: any = document.getElementById("content");
     var content = postContent;
+    const tags = await constructTags(content);
 
     if (isBold && content) {
       content = `<span class="font-bold">${content}</span>`;
@@ -122,6 +130,7 @@ const Home = () => {
               postId: uuidv4(),
               address: appState?.action?.user?.address,
               postData: uri,
+              tags: tags
             };
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
@@ -135,14 +144,17 @@ const Home = () => {
               .then((response) => response.json())
               .then((result) => {
                 if (result.status !== false) {
+
+                  sendNotification(tags, result?.data);
                   setIsPost(false);
+                  setPostContent("");
                   setUploadImage(null);
                   setIsLoading(false);
                   setFilePath("");
                   getAllPosts();
                 }
               })
-              .catch((error) => {});
+              .catch((error) => { });
           })
           .catch((error) => {
             setWarningMessage("Something went wrong!");
@@ -205,6 +217,29 @@ const Home = () => {
       });
   };
 
+
+  
+  const sendNotification = (tags: any, postResult: any) => {
+
+    tags?.forEach((element: any) => {
+      socketContext?.socket.emit("sendNotifications", {
+      type: "tag",
+      performedBy: appState?.action?.user?.address,
+      subjectId: element.address,
+      details: {
+        actionItem : "post", 
+        actionId: postResult?.postId,
+      }
+      });
+
+    })
+  }
+
+
+
+
+
+
   // tag section
 
   const [postContent, setPostContent] = useState("");
@@ -214,6 +249,7 @@ const Home = () => {
   };
 
   function renderSuggestion(entry: any, search: any, highlightedDisplay: any, index: any, focused: any) {
+    if(entry.id !== appState?.action?.user?.address) {
     return (
       <>
         <div className="flex items-center gap-2 mt-2">
@@ -221,13 +257,13 @@ const Home = () => {
             <img height="30px" width="30px" className="border rounded-full" src={`${ipfsGateway}${entry?.profile}`} />
           </div>
           <div>
-            <p>{entry?.display}</p>
+            <p className="text-blue-700">{entry?.display}</p>
           </div>
         </div>
       </>
     );
+    }
   }
-
   return (
     <>
       {isLoading && <Loading />}
@@ -262,31 +298,32 @@ const Home = () => {
                   style={filterStatus === "timeline" ? { background: "rgb(196 181 253)" } : { background: "" }}
                   onClick={() => setFilterStatus("timeline")}
                 >
-                  <BiMenu fontSize={20} className="origin-center hover:rotate-45" style={{ transition: "1s" }} />
+                  <BiMenu fontSize={20} className="origin-center" />
                   Timeline
                 </button>
+
                 <button
-                  className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
-                  onClick={() => {
-                    setIsReload(true);
-                  }}
+                  className="flex gap-2 items-center p-2 rounded-lg hover:bg-violte-200"
+                  style={filterStatus === "liked" ? { background: "rgb(196 181 253)" } : { background: "" }}
+                  onClick={() => setFilterStatus("liked")}
                 >
-                  <AiOutlineReload fontSize={23} className="origin-center hover:rotate-180" style={{ transition: "1s" }} />
-                  Reload
+                  <BsHeart fontSize={20} className="origin-center " />
+                  Liked
                 </button>
+
               </div>
             </div>
 
             {/* post section */}
 
-            <PostContainer posts={posts} />
+            <PostContainer posts={posts} mode={filterStatus} />
           </div>
 
           {/* Who to follow section */}
           {
             allProfilesList.length > 0 && (
-          <WhoToFollow allProfiles = {allProfilesList} />
-              
+              <WhoToFollow allProfiles={allProfilesList} />
+
             )
           }
         </div>
@@ -301,7 +338,7 @@ const Home = () => {
               style={{ zIndex: 10 }}
             >
               {/* new post content */}
-              <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto h-5/6 md:h-5/6">
+              <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto">
                 <div className="flex justify-between p-4 w-100">
                   <p className="font-semibold text-xl">Create Post</p>
                   <div
@@ -316,7 +353,7 @@ const Home = () => {
                   </div>
                 </div>
                 {/* new post */}
-                <div className="border-t-2  w-100 ">
+                <div className="border-t-2 relative w-full  ">
                   <form onSubmit={publishPost}>
                     {cropStatus && (
                       <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-full h-full m-auto justify-center ">
@@ -428,51 +465,48 @@ const Home = () => {
                       content="Italic"
                       className="z-10 absolute bg-black text-white border rounded-lg px-2"
                     />
-                    <div className="border-t-2 mt-3 p-4">
-                      <div className=" border rounded-lg overflow-y-auto p-2" style={{ height: "100px" }}>
-                        {/* input text area */}
 
-                        <MentionsInput
-                          style={{ height: "100px" }}
-                          value={postContent}
-                          
-                          onChange={handlePostContentChange}
-                          placeholder={"What's happening?"}
-                        >
-                          <Mention
-                            trigger="@"
+
+                    {/* input text area */}
+
+                    <div className=" p-2 " style={
+                      isBold
+                        ? { fontWeight: "bold" }
+                        : isItalic
+                          ? { fontStyle: "italic" }
+                          : isBold && isItalic
+                            ? {
+                              fontWeight: "bold",
+                              fontStyle: "italic",
+                            }
+                            : {}
+                    }>
+
+
+                      <MentionsInput
+
+                        className="h-100 border overflow-y-auto"
+
+                        style={{
+                          mentionsInputStyle
+                        }}
+                        value={postContent}
+                        onChange={handlePostContentChange}
+                        placeholder={"What's happening?"}
+
+                      >
+                        <Mention
+                        style={mentionStyle}
                          
-                            data={allProfilesList}
-                            renderSuggestion={renderSuggestion}
-                            appendSpaceOnAdd={true}
-                          />
-                        </MentionsInput>
+                          trigger="@"
+                          data={allProfilesList}
+                          renderSuggestion={renderSuggestion}
 
-                        {/* <div
-                          className="p-2 cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-100"
-                          contentEditable="true"
-                          id="content"
-                          onInput={(e: any) => {
-                            // setPostContent(updateContent(e.target.innerText));
-                            // alignTagContainer("tagContainer");
-                          }}
-                          onKeyDown={(e: any) => {}}
-                          data-placeholder="What's happening?"
-                          style={
-                            isBold
-                              ? { fontWeight: "bold" }
-                              : isItalic
-                              ? { fontStyle: "italic" }
-                              : isBold && isItalic
-                              ? {
-                                  fontWeight: "bold",
-                                  fontStyle: "italic",
-                                }
-                              : {}
-                          }
-                        /> */}
-                      </div>
+                        />
+                      </MentionsInput>
                     </div>
+
+
 
                     <div className="relative overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
                       {filePath && !cropStatus && (
@@ -505,7 +539,9 @@ const Home = () => {
                       </div>
                     </div>
                   </form>
+
                 </div>
+
               </div>
             </div>
           </div>
@@ -526,14 +562,21 @@ const Home = () => {
             textarea:focus-visible {
               outline:none;
             }
-            textarea {
-              height: 100px;
-              background-color: black;
+
+            .h-100__suggestions {
+              height: "200px";
+              overflow: scroll;
+              top: 5px;
             }
-            
+
+
             `}
       </style>
+
+
+
     </>
+
   );
 };
 

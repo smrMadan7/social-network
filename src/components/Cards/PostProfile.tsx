@@ -255,7 +255,7 @@ const PostProfile = ({ post }: any) => {
                   height="70px"
                   width="70px"
                   className="rounded-full border"
-                  src={`${ipfsGateway}4{fetchUserResult?.data?.profilePictureUrl}`}
+                  src={`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`}
                   loading="lazy"
                 ></img>
               </div>

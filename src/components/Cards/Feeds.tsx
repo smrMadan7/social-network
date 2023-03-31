@@ -5,7 +5,7 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { Tooltip } from "react-tooltip";
+import { useLocation } from "react-router";
 import { getComment, ipfsGateway, likeApi } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet, customPost } from "../../fetch/customFetch";
@@ -13,11 +13,11 @@ import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
 import AddComment from "../Forms/AddComment";
-import defaultProfile from "./../.././assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
 import Repost from "./Repost";
+import { useSocketContext } from "../../context/SocketCotextProvider";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -43,14 +43,28 @@ const Feeds = (post: any) => {
   const [isReposted, setIsReposted] = useState(false);
 
   const [isCommentSuccess, setIsCommentSuccess] = useState(false);
+  const {socketContext}:any = useSocketContext();
+
 
   useEffect(() => {
     getPostComments();
     getPostDetails();
   }, []);
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location?.search?.includes("?goto=")) {
+      const element: any = document.getElementById("6301bf27-cdb8-43fc-9662-9e43a1398569");
+      element?.scrollIntoView({ behavior: "smooth" });
+  
+    }
+  }, [location])
+
+  
   useEffect(() => {
     if (addCommentResult?.status) {
+      
       getInnerHtml("content").innerHTML = "";
       getPostComments();
       setIsCommentSuccess(true);
@@ -72,7 +86,9 @@ const Feeds = (post: any) => {
 
   useEffect(() => {
     if (incAndDecResult?.status) {
+    
       if (likeMode === "like") {
+        sendNotification();
         setIsLiked(true);
       } else {
         setIsLiked(false);
@@ -122,6 +138,21 @@ const Feeds = (post: any) => {
     customPost(params, likeApi, "POST", setIncAndDecResult, "increment decrement like");
   };
 
+
+  const sendNotification = () => {
+
+      if(post?.post?.createdBy !== appState?.action?.user?.address) {
+      socketContext?.socket.emit("sendNotifications", {
+      type: "like",
+      performedBy: appState?.action?.user?.address,
+      subjectId: post?.post?.createdBy,
+      details: {
+        actionItem : "like", 
+        actionId: post?.post?.postId,
+      }
+      });
+    }
+  }
   return (
     <>
       {postDetails ? (
@@ -154,7 +185,7 @@ const Feeds = (post: any) => {
                     <div className="h-2/3 overflow-y-auto mt-2 ">
                       <Comment comments={postComments} setRefetch={setRefetch} postId={post?.post?.postId} />
                     </div>
-                    <AddComment postId={post?.post?.postId} setAddCommentResult={setAddCommentResult} />
+                    <AddComment postId={post?.post?.postId} addCommentResult={addCommentResult} setAddCommentResult={setAddCommentResult} />
                   </div>
                 </div>
               </div>
@@ -271,6 +302,7 @@ const Feeds = (post: any) => {
 
             {isRepost && (
               <Repost
+              post={post}
                 isRepost={isRepost}
                 setIsRepost={setIsRepost}
                 setIsReposted={setIsReposted}
@@ -368,12 +400,12 @@ const Feeds = (post: any) => {
 
                   <span className="">{postComments?.length ? postComments?.length : 0}</span>
                 </div>
-                <Tooltip
+                {/* <Tooltip
                   anchorSelect="#comment"
                   place="bottom"
                   content="Comments"
                   className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
-                />
+                /> */}
               </div>
 
               {/* Share button */}
@@ -398,12 +430,12 @@ const Feeds = (post: any) => {
                     )}
                   </span>
                 </div>
-                <Tooltip
+                {/* <Tooltip
                   anchorSelect="#repost"
                   place="bottom"
                   content="Repost"
                   className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
-                />
+                /> */}
               </div>
 
               <div className="flex items-center text-center prevent-select">
@@ -470,16 +502,17 @@ const Feeds = (post: any) => {
                       )}
                     </>
                   )}
-                  <Tooltip
+                  {/* <Tooltip
                     anchorSelect="#like"
                     place="bottom"
                     content="Like"
                     className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
-                  />
+                  /> */}
                 </div>
                 {(post?.post?.likes?.length > 0 || isLiked) && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
-                    likes
+                    {post?.post?.likes?.length == 1 && like == 1 ? "like" : "likes"}
+                    
                   </div>
                 )}
               </div>

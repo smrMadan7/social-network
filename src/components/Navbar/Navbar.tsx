@@ -4,11 +4,15 @@ import { AiFillBug } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { IoIosContact, IoMdNotificationsOutline } from "react-icons/io";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ipfsGateway, roles } from "../../constants/AppConstants";
+import { getFeeds, getNotifications, ipfsGateway, roles } from "../../constants/AppConstants";
+import { useNotificationsContext } from "../../context/NotificationsContextProvider";
+import { useSocketContext } from "../../context/SocketCotextProvider";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customGet } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
 import UserNotification from "../UserNotification/UserNotification";
 import logo from "./.././.././assets/Navbar/nav-logo.svg";
+import { useFeedsContext } from "../../context/FeedsContextProvider";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -22,10 +26,12 @@ const Navbar = () => {
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
+  const {socketContext}:any = useSocketContext();
 
+
+  
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
-  useEffect(() => {});
 
   var profileRoute = "";
 
@@ -77,6 +83,51 @@ const Navbar = () => {
   const logoOnClickHandler = () => {
     navigate("/home");
   };
+
+  // socket listening
+  const [oldNotifications, setOldNotifications] = useState<any>();
+  const {notifications, setNotifications}:any = useNotificationsContext();
+
+
+  const socketParams = {
+    address: appState?.action?.user?.address,
+  } 
+  useEffect(() => {
+    if(oldNotifications?.status) {
+      const notifications = oldNotifications?.data;
+      setNotifications({
+        notifications,
+      })
+    }
+  }, [oldNotifications])
+  
+  socketContext?.socket.emit("joinNotifications", socketParams);
+  useEffect(() => {
+    getAllNotifications();
+      }, [])
+
+  const [fetchedFeeds, setFetchedFeeds] = useState<any>();
+  const {setFeeds}:any  = useFeedsContext();
+
+
+
+  useEffect(() => {
+    if (fetchedFeeds?.staus) {
+      const feeds = fetchedFeeds?.data;
+      setFeeds({
+        feeds,
+      });
+    }
+  }, [fetchedFeeds]);
+
+  const getAllFeeds = async () => {
+    customGet(`${getFeeds}${appState?.action?.user?.address}`, setFetchedFeeds, "getting all feeds");
+  };
+  const getAllNotifications = () => {
+    customGet(`${getNotifications}${appState?.action?.user?.address}`, setOldNotifications, "getting all notifications")
+  }
+
+
 
   return (
     <>

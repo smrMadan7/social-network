@@ -1,43 +1,27 @@
 import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { useLocation, useNavigate } from "react-router";
+import { io } from "socket.io-client";
+import { baseUrl, defaultUserProfile, getNotifications, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useFeedsContext } from "../../context/FeedsContextProvider";
-import commingSoon from "./../././../assets/Notification/coming-soon.jpg";
+import { useNotificationsContext } from "../../context/NotificationsContextProvider";
+import { useUserContext } from "../../context/UserContextProvider";
+import { customGet } from "../../fetch/customFetch";
+import { eventList } from "../../utils/event";
+import { timeAgo } from "../../utils/timeAgo";
+import SocketNotification from "../Cards/SocketNotification";
 
 const UserNotification = ({ isNotification, setIsNotification }: any) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { feeds, setFeeds }: any = useFeedsContext();
+  const {notifications, setNotifications}:any = useNotificationsContext();
 
-  // const [scrollingElement, setScrollingElement] = useState<any>(null);
+  console.log("notifications is ", notifications);
 
-  // useEffect(() => {
-  //   if (
-  //     feeds?.action?.feeds.some((object: any) => object.postId === "6301bf27-cdb8-43fc-9662-9e43a1398569") &&
-  //     scrollingElement !== null
-  //   ) {
-  //     scrollingElement.scrollIntoView({ behavior: "smooth" });
-  //   } else if (feeds?.action?.feeds.includes("6301bf27-cdb8-43fc-9662-9e43a1398569")) {
-  //     goTo();
-  //   }
-  // }, [scrollingElement]);
-
-  const goTo = async () => {
-    navigate("/explore");
-    console.log("f", feeds?.action?.feeds);
-
-    if (feeds?.action?.feeds.some((object: any) => object.postId === "6301bf27-cdb8-43fc-9662-9e43a1398569")) {
-      console.log("first works");
-      const element: any = document.getElementById("6301bf27-cdb8-43fc-9662-9e43a1398569");
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
   return (
     <>
-      {isNotification && (
+
         <div
-          className="absolute z-10 text-9xl border rounded-lg right-0 px-2 bg-white w-250 md:w-320  "
-          style={{ marginTop: "65px", height: "85vh" }}
+          className="absolute z-10 border rounded-lg right-0 px-2 bg-white w-250 md:w-320"
+          style={{ marginTop: "65px", height: "65vh" }}
         >
           <div className="flex justify-between p-3 border-b">
             <div>
@@ -52,11 +36,24 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
               <GrFormClose color="black" fontSize={25} />
             </div>
           </div>
-          <div className="mt-2">
-            <img alt="notification" src={commingSoon} height="100px" onClick={goTo}></img>
+          <div className="mt-2 overflow-y-auto w-full" style={{ height: "50vh" }}>
+            {
+              notifications?.action?.notifications?.map((notification: any, index: any) => {
+                // customGet(getUser, setUserDetails, "getting user detai")
+                return (
+                  <div key={index}>
+                  <SocketNotification  notification = {notification}/>
+
+                    </div>
+                 
+                )
+              })
+
+
+            }
           </div>
         </div>
-      )}
+      
     </>
   );
 };

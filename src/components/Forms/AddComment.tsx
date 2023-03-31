@@ -3,8 +3,9 @@ import { postComment } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
+import { useEffect } from "react";
 
-const AddComment = ({ postId, setAddCommentResult }: any) => {
+const AddComment = ({ postId, addCommentResult, setAddCommentResult }: any) => {
   const { appState }: any = useUserContext();
 
   // Add a new comment
