@@ -1,15 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
-import { NavLink, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import defaultUser from "./.././.././assets/Form/default-user.svg";
 
 const TeamProfile = () => {
   const { appState }: any = useUserContext();
   const navigate = useNavigate();
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
+
   return (
     <>
       <div className=" p-5 md:gap-16 gap-4  w-full  flex flex-col items-center justify-center">
@@ -32,9 +33,7 @@ const TeamProfile = () => {
                     <div className="flex flex-col mt-3 mx-1 ">
                       {/* OrganizationName */}
                       <div className="flex flex-col md:flex-row w-full px-3  md:mb-0 sm:mt-3 md:items-center md:gap-3">
-                        <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">
-                          Org Name:
-                        </label>
+                        <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">Org Name:</label>
                         <input
                           readOnly
                           className=" md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -80,9 +79,7 @@ const TeamProfile = () => {
                     </div>
                     {/* Twitter */}
                     <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
-                      <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                        Twitter
-                      </label>
+                      <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">Twitter</label>
                       <input
                         readOnly
                         className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -95,9 +92,7 @@ const TeamProfile = () => {
                     </div>
                     {/* Discord */}
                     <div className="text-sm flex flex-col md:flex-row w-full w-1/2 px-4  md:mb-0 md:items-center md:gap-3 ">
-                      <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                        Discord
-                      </label>
+                      <label className=" md:w-30 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">Discord</label>
                       <input
                         readOnly
                         className="md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -123,10 +118,7 @@ const TeamProfile = () => {
                       </div>
                     </div>
                     <div className="flex md:justify-center sm:justify-start text-center items-center ">
-                      <button
-                        type="button"
-                        className="bg-violet-700 hover:bg-violet-900 text-white px-4 p-2  border rounded-lg"
-                      >
+                      <button type="button" className="bg-violet-700 hover:bg-violet-900 text-white px-4 p-2  border rounded-lg">
                         Profile Image
                       </button>
                     </div>
@@ -136,9 +128,7 @@ const TeamProfile = () => {
                 {/* Description */}
                 <div className="flex  mx-1 mt-3  ">
                   <div className="w-full md:w-full px-3  md:mb-0">
-                    <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                      Description:
-                    </label>
+                    <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">Description:</label>
                     <textarea
                       readOnly
                       id="desacription"

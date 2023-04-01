@@ -1,29 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { create } from "ipfs-http-client";
-import Cropper, { Area } from "react-easy-crop";
+import { Area } from "react-easy-crop";
+import { GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
-import { addTeam, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
+import Web3 from "web3";
+import { addTeam, defaultUserProfile, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customPost } from "../../fetch/customFetch";
 import getCroppedImage from "../../utils/crop";
+import Crop from "../Cards/Crop";
 import Warning from "../Cards/Warning";
 import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
-import defaultProfile from "./.././../assets/Form/default-user.png";
-import { MetaMaskInpageProvider } from "@metamask/providers";
-import Web3 from "web3";
-
-interface Window {
-  ethereum?: MetaMaskInpageProvider;
-  web3?: any;
-}
+import defaultProfile from "./../././.././assets/Form/default-user.svg";
 
 const Team = () => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userImage, setUserImage] = useState(defaultProfile);
-  const [uploadImage, setUploadImage] = useState();
+  const [uploadFile, setUploadFile] = useState<any>();
   const [toast, setToast] = useState(false);
 
   const [cropStatus, setCropStatus] = useState(false);
@@ -32,11 +29,16 @@ const Team = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
-  const { appState, appStatedispatch }: any = useUserContext();
-  const [warning, setWarning] = useState(false);
+  const { appStatedispatch }: any = useUserContext();
   const [toastMessage, setToastMessage] = useState("");
   const [handle, setHandle] = useState(true);
   const [handleWarning, setHandleWarning] = useState(false);
+  const [teamResult, setTeamResult] = useState<any>();
+
+  const [isWebsiteWarning, setIsWebsiteWarning] = useState(true);
+  const [isTwitterWarning, setIsTwitterWarning] = useState(true);
+  const [isDiscordWarning, setIsDiscordWarning] = useState(true);
+  const urlRegex = /^(https?:\/\/)?(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
 
   const navigate = useNavigate();
 
@@ -48,6 +50,20 @@ const Team = () => {
     setCropStatus(false);
     setHandle(true);
   }, []);
+
+  useEffect(() => {
+    if (teamResult?.status) {
+      const user = teamResult?.data;
+      appStatedispatch({
+        user,
+      });
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } else if (!teamResult?.status) {
+      setIsLoading(false);
+    }
+  }, [teamResult]);
   const ipfs = create({ url: ipfsPostUrl });
 
   const ipfsClient = async (croppedImg: any) => {
@@ -83,28 +99,38 @@ const Team = () => {
     }
   };
 
-  const formSubmitHandler = (event: React.SyntheticEvent) => {
+  const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    if (uploadedImage) {
-      if (description && handle) {
+
+    const target = event.target as typeof event.target & {
+      organizationName: { value: string };
+      website: { value: string };
+      contactEmail: { value: string };
+      twitter: { value: string };
+      discord: { value: string };
+      handle: { value: string };
+    };
+
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
+    const userAccount = await web3.eth.getAccounts();
+    const address = userAccount[0];
+    setIsWebsiteWarning(urlRegex.test(target?.website?.value));
+    setIsTwitterWarning(urlRegex.test(target?.twitter?.value));
+    setIsDiscordWarning(urlRegex.test(target?.discord?.value));
+    if (
+      description &&
+      handle &&
+      urlRegex.test(target?.discord?.value) &&
+      urlRegex.test(target?.twitter?.value) &&
+      urlRegex.test(target?.website?.value)
+    ) {
+   
+      if (uploadFile) {
         setIsLoading(true);
-        ipfsClient(uploadImage).then(async (path) => {
+        ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
-            const target = event.target as typeof event.target & {
-              organizationName: { value: string };
-              website: { value: string };
-              contactEmail: { value: string };
-              twitter: { value: string };
-              discord: { value: string };
-              handle: { value: string };
-            };
-            const provider: any = window.ethereum;
-            const web3: any = new Web3(provider);
-
-            const userAccount = await web3.eth.getAccounts();
-            const address = userAccount[0];
-
-            const user = {
+            const params = {
               organizationName: target.organizationName.value,
               website: target.website.value,
               contact: target.contactEmail.value,
@@ -117,55 +143,42 @@ const Team = () => {
               handle: target.handle.value,
               address: address,
             };
-
-            var raw = JSON.stringify(user);
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            var requestOptions: any = {
-              method: "POST",
-              headers: myHeaders,
-              body: raw,
-              redirect: "follow",
-            };
-
-            fetch(addTeam, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  const user = result.data;
-                  appStatedispatch({
-                    user,
-                  });
-                  setTimeout(() => {
-                    navigate("/home");
-                  }, 1000);
-                }
-              });
+            customPost(params, addTeam, "POST", setTeamResult, "adding team");
           } else {
-            setWarning(true);
+            setToast(true);
+            setToastMessage("Something went wrong. Please try again!");
             setIsLoading(false);
             setTimeout(() => {
-              setWarning(false);
+              setToast(false);
+              setToastMessage("");
             }, 3000);
           }
         });
       } else {
-        setToast(true);
-        setToastMessage("All fields are required");
-        setTimeout(() => {
-          setToastMessage("");
-          setToast(false);
-        }, 2000);
+        setIsLoading(true);
+        const params = {
+          organizationName: target.organizationName.value,
+          website: target.website.value,
+          contact: target.contactEmail.value,
+          social: {
+            twitter: target.twitter.value,
+            discord: target.discord.value,
+          },
+          desc: description,
+          profilePictureUrl: defaultUserProfile,
+          handle: target.handle.value,
+          address: address,
+        };
+        customPost(params, addTeam, "POST", setTeamResult, "adding team");
       }
     } else {
-      setToastMessage("Upload profile picture");
-      setToast(true);
       setIsLoading(false);
+      setToast(true);
+      setToastMessage("All fields are required");
       setTimeout(() => {
         setToastMessage("");
         setToast(false);
-      }, 3000);
+      }, 2000);
     }
   };
 
@@ -192,12 +205,12 @@ const Team = () => {
     setCroppedPixel(croppedAreaPixels);
   };
 
-  const getGroppedImage = useCallback(async () => {
+  const getcroppedImage = useCallback(async () => {
     try {
       const { file, url }: any = await getCroppedImage(uploadedImage, croppedPixel);
 
       setUserImage(url);
-      setUploadImage(file);
+      setUploadFile(file);
 
       setCropStatus(false);
     } catch (e) {
@@ -208,53 +221,22 @@ const Team = () => {
   return (
     <>
       <div className="relative w-full h-screen">
-        {warning && <Warning message="Something went wrong. Please try again?"></Warning>}
         {toast && <Warning message={toastMessage}></Warning>}
 
-        {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-90 md:w-50 h-full m-auto justify-center">
-            <div className=" relative  w-90 md:w-50" style={{ height: "50vh" }}>
-              <div>
-                <Cropper
-                  image={uploadedImage}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={5 / 5}
-                  cropShape="round"
-                  showGrid={false}
-                  onCropChange={setCrop}
-                  onCropComplete={cropComplete}
-                  onZoomChange={setZoom}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
-              <div className="flex justify-center items-center mt-3">
-                <input
-                  id="small-range"
-                  type="range"
-                  min={1}
-                  max={50}
-                  value={zoom}
-                  onChange={(e: any) => {
-                    setZoom(e.target.value);
-                  }}
-                  className="w-50 h-2 bg-blue-100 appearance-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-center mb-3">
-                <button
-                  className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white"
-                  onClick={getGroppedImage}
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div></div>
+        {cropStatus && (
+          <Crop
+            uploadedImage={uploadedImage}
+            crop={crop}
+            zoom={zoom}
+            setCrop={setCrop}
+            cropComplete={cropComplete}
+            setZoom={setZoom}
+            setCropStatus={setCropStatus}
+            setUserImage={setUserImage}
+            setUploadFile={setUploadFile}
+            getcroppedImage={getcroppedImage}
+            defaultProfile={defaultProfile}
+          />
         )}
 
         <Navbar />
@@ -270,19 +252,13 @@ const Team = () => {
             <div className="flex flex-col bg-white border rounded-lg">
               <div>
                 <h1 className="text-center text-xl font-bold p-3 border-b">Team Details</h1>
-                <form
-                  className="text-sm w-100  overflow-y-auto member-form"
-                  name="member"
-                  onSubmit={formSubmitHandler}
-                >
+                <form className="text-sm w-100  overflow-y-auto member-form" name="member" onSubmit={formSubmitHandler}>
                   <div className="flex-col w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
                         {/* OrganizationName */}
                         <div className="flex w-full px-3  md:mb-0 sm:mt-3 items-center gap-3">
-                          <label className="w-60 md:w-30  block tracking-wide text-gray-700 font-bold mb-2">
-                            Org Name:*
-                          </label>
+                          <label className="w-60 md:w-30  block tracking-wide text-gray-700 font-bold mb-2">Org Name:*</label>
                           <input
                             required
                             className="w-full md:w-full  appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -294,11 +270,7 @@ const Team = () => {
                         </div>
 
                         {/* handle */}
-                        {handleWarning && (
-                          <div className=" text-red-700 flex justify-end px-5 py-1">
-                            *handle already taken
-                          </div>
-                        )}
+                        {handleWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*handle already taken</div>}
 
                         <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                           <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
@@ -316,6 +288,7 @@ const Team = () => {
 
                         {/* Website */}
 
+                        {!isWebsiteWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*Enter a valid URL</div>}
                         <div className="text-sm flex w-full w-1/2 px-3  md:mb-0 items-center gap-3 ">
                           <label className="w-60 md:w-30  block tracking-wide text-gray-700 text-md font-bold mb-2">
                             Website:*
@@ -325,16 +298,14 @@ const Team = () => {
                             className="w-full  md:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                             id="website"
                             name="website"
-                            type="url"
+                            type="text"
                             placeholder="Website"
                           ></input>
                         </div>
                       </div>
                       {/* Contact Email */}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Email:*
-                        </label>
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Email:*</label>
                         <input
                           required
                           className="w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -345,45 +316,58 @@ const Team = () => {
                         ></input>
                       </div>
                       {/* Twitter */}
+                      {!isTwitterWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*Enter a valid URL</div>}
+
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Twitter:*
-                        </label>
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Twitter:*</label>
                         <input
+                          required
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="twitter"
                           name="twitter"
-                          type="url"
+                          type="text"
                           placeholder="Twitter"
                         ></input>
                       </div>
+
                       {/* Discord */}
+                      {!isDiscordWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*Enter a valid URL</div>}
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
-                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">
-                          Discord:*
-                        </label>
+                        <label className="w-60 md:w-30 block tracking-wide text-gray-700 text-md font-bold mb-2">Discord:*</label>
                         <input
+                          required
                           className="w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                           id="discord"
                           name="discord"
-                          type="url"
+                          type="text"
                           placeholder="Discord"
                         ></input>
-                      </div>{" "}
+                      </div>
                     </div>
                     <div className="gap-2 flex flex-col items-center text-center sm:w-50 md:mt-2">
                       <div className="items-center text-center flex md:justify-center sm:justify-start">
-                        <div
-                          className=" cursor-pointer"
-                          style={{ width: "140px", height: "140px" }}
-                        >
+                        <div className="relative cursor-pointer" style={{ width: "140px", height: "140px" }}>
                           <img
                             className="border rounded-full"
+                            alt="user"
                             height="140px"
                             width="140px"
                             src={userImage}
                             loading="lazy"
                           ></img>
+                          {userImage !== defaultProfile && (
+                            <div
+                              className=" absolute top-0 right-0 cursor-pointer"
+                              style={{ right: "-10px" }}
+                              onClick={() => {
+                                setCropStatus(false);
+                                setUserImage(defaultProfile);
+                                setUploadFile(null);
+                              }}
+                            >
+                              <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex md:justify-center sm:justify-start text-center items-center ">
@@ -401,10 +385,9 @@ const Team = () => {
                   {/* Description */}
                   <div className="flex  mx-1 mt-3  ">
                     <div className="w-full md:w-full px-3  md:mb-0">
-                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                        Description:*
-                      </label>
+                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">Description:*</label>
                       <textarea
+                        required
                         onChange={(e) => setDescription(e.target.value)}
                         value={description}
                         id="desacription"

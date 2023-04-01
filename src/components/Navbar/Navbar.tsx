@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 
 import { AiFillBug } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
-import { IoIosContact } from "react-icons/io";
+import { IoIosContact, IoMdNotificationsOutline } from "react-icons/io";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ipfsGateway, roles } from "../../constants/AppConstants";
+import { getFeeds, getNotifications, ipfsGateway, roles } from "../../constants/AppConstants";
+import { useNotificationsContext } from "../../context/NotificationsContextProvider";
+import { useSocketContext } from "../../context/SocketCotextProvider";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customGet } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
-import defaultUser from "./.././.././assets/Form/default-user.png";
-import logo from "./.././.././assets/Navbar/nav-logo.svg";
-import { IoMdNotificationsOutline } from "react-icons/io";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import Notification from "../Cards/Notification";
 import UserNotification from "../UserNotification/UserNotification";
+import logo from "./.././.././assets/Navbar/nav-logo.svg";
+import { useFeedsContext } from "../../context/FeedsContextProvider";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -21,20 +21,17 @@ const Navbar = () => {
   const [moreStatus, setMoreStatus] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
   const [greeting, setGreeting] = useState("");
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appState }: any = useUserContext();
   const user = localStorage.getItem("signedIn");
   const isRegistered = localStorage.getItem("registered");
   const [profileStatus, setProfileStatus] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
-  var image;
+  const { socketContext }: any = useSocketContext();
+
+
 
   const imageUrl = `${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`;
 
-  if (appState?.action?.user?.profilePictureUrl === undefined) {
-    image = defaultUser;
-  } else {
-    image = imageUrl;
-  }
 
   var profileRoute = "";
 
@@ -87,6 +84,55 @@ const Navbar = () => {
     navigate("/home");
   };
 
+  // socket listening
+  const [oldNotifications, setOldNotifications] = useState<any>();
+  const { notifications, setNotifications }: any = useNotificationsContext();
+
+
+  const socketParams = {
+    address: appState?.action?.user?.address,
+  }
+  useEffect(() => {
+    if (oldNotifications?.status) {
+      const notifications = oldNotifications?.data;
+      setNotifications({
+        notifications,
+      })
+    }
+  }, [oldNotifications])
+
+
+  socketContext?.socket.emit("joinNotifications", socketParams);
+
+
+
+  useEffect(() => {
+    getAllNotifications();
+  }, [])
+
+  const [fetchedFeeds, setFetchedFeeds] = useState<any>();
+  const { setFeeds }: any = useFeedsContext();
+
+
+
+  useEffect(() => {
+    if (fetchedFeeds?.staus) {
+      const feeds = fetchedFeeds?.data;
+      setFeeds({
+        feeds,
+      });
+    }
+  }, [fetchedFeeds]);
+
+  const getAllFeeds = async () => {
+    customGet(`${getFeeds}${appState?.action?.user?.address}`, setFetchedFeeds, "getting all feeds");
+  };
+  const getAllNotifications = () => {
+    customGet(`${getNotifications}${appState?.action?.user?.address}`, setOldNotifications, "getting all notifications")
+  }
+
+
+
   return (
     <>
       {moreStatus || profileStatus ? (
@@ -108,16 +154,12 @@ const Navbar = () => {
               alt="app-log "
               src={logo}
               loading="lazy"
-              style={image !== defaultUser ? { padding: "0px" } : { padding: "10px" }}
+              style={imageUrl === null ? { padding: "0px" } : { padding: "10px" }}
             ></img>
-            {/* <div className="hidden md:block mt-1 ">
-              <p className="font-bold text-md">Protocol Labs</p>
-              <p className="font-bold text-md leading-none">Social Network</p>
-            </div> */}
           </div>
 
           <div className=" text-center items-center hidden md:flex">
-            {image !== defaultUser && (
+            {appState?.action?.user?.profilePictureUrl !== undefined && (
               <ul className="flex gap-6 font-semibold ">
                 <NavLink to={"/home"}>
                   <li
@@ -125,10 +167,10 @@ const Navbar = () => {
                     style={
                       routerStatus === "home"
                         ? {
-                            background: "rgb(196 181 253)",
-                            color: "black",
-                            borderRadius: "10px",
-                          }
+                          background: "rgb(196 181 253)",
+                          color: "black",
+                          borderRadius: "10px",
+                        }
                         : { background: "" }
                     }
                   >
@@ -142,10 +184,10 @@ const Navbar = () => {
                     style={
                       routerStatus === "explore"
                         ? {
-                            background: "rgb(196 181 253)",
-                            color: "black",
-                            borderRadius: "10px",
-                          }
+                          background: "rgb(196 181 253)",
+                          color: "black",
+                          borderRadius: "10px",
+                        }
                         : { background: "" }
                     }
                   >
@@ -240,8 +282,7 @@ const Navbar = () => {
                 </div>
               </div>
               <div className="hidden md:block font-semibold prevent-select">
-                {greeting}, {appState?.action?.user?.firstName}{" "}
-                {appState?.action?.user?.organizationName}
+                {greeting}, {appState?.action?.user?.firstName} {appState?.action?.user?.organizationName}
               </div>
             </>
           ) : (
@@ -253,36 +294,26 @@ const Navbar = () => {
             onMouseOver={() => setProfileStatus(true)}
             onMouseOut={() => setProfileStatus(false)}
           >
-            {image !== defaultUser && (
-              <img
-                alt="user profile"
-                height="45px"
-                width="45px"
-                src={image}
-                className="rounded-full"
-                loading="lazy"
-              ></img>
+            {appState?.action?.user?.profilePictureUrl !== undefined && (
+              <>
+                <img alt="user profile" height="45px" width="45px" src={imageUrl} className="rounded-full" loading="lazy"></img>
+              </>
             )}
+
             {profileStatus && (
               <div
                 className="fixed z-40 border mt-1 gap-2 rounded-lg flex flex-col px-4 py-2 bg-white right-4"
                 style={{ marginTop: "47px" }}
               >
                 <div
-                  style={
-                    routerStatus === "profile"
-                      ? { background: "rgb(196 181 253)" }
-                      : { background: "" }
-                  }
+                  style={routerStatus === "profile" ? { background: "rgb(196 181 253)" } : { background: "" }}
                   className="p-2 flex gap-3 items-center cursor-pointer font-light  rounded-lg hover:bg-bgHover"
                   onClick={() => {
                     setProfileStatus(false);
                     navigate(profileRoute);
                   }}
                 >
-                  <IoIosContact
-                    style={routerStatus === "profile" ? { color: "black" } : { color: "gray" }}
-                  />
+                  <IoIosContact style={routerStatus === "profile" ? { color: "black" } : { color: "gray" }} />
                   Profile
                 </div>
 
@@ -304,9 +335,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {isNotification && (
+      <div style={isNotification ? {display:"block"} : {display:"none"}}>
         <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />
-      )}
+      </div>
       {isLogout && <Loading />}
     </>
   );

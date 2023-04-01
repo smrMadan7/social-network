@@ -3,19 +3,21 @@ import { IoIosClose } from "react-icons/io";
 
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { create } from "ipfs-http-client";
-import Cropper, { Area } from "react-easy-crop";
-import { GrFormAdd } from "react-icons/gr";
+import { Area } from "react-easy-crop";
+import { GrFormAdd, GrFormClose } from "react-icons/gr";
 import { useNavigate } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import Web3 from "web3";
-import { addMember, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
+import { addMember, defaultUserProfile, handleCheck, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
+import { customPost } from "../../fetch/customFetch";
 import getCroppedImage from "../../utils/crop";
+import Crop from "../Cards/Crop";
 import Warning from "../Cards/Warning";
 import Loading from "../Loading/Loading";
 import Navbar from "../Navbar/Navbar";
 import PoweredBy from "../PoweredBy/PoweredBy";
-import defaultProfile from "./.././../assets/Form/default-user.png";
+import defaultProfile from "./.././../assets/Form/default-user.svg";
 
 declare global {
   interface Window {
@@ -31,7 +33,7 @@ const Member = () => {
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userImage, setUserImage] = useState<any>(defaultProfile);
-  const [uploadFile, setUploadFile] = useState<any>();
+  const [uploadFile, setUploadFile] = useState<any>(null);
 
   const [selectedOrganization, setSelectedOrganization] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -43,14 +45,31 @@ const Member = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appStatedispatch }: any = useUserContext();
   const [toast, setToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [warning, setWarning] = useState(false);
   const [handleWarning, setHandleWarning] = useState(false);
   const [handle, setHandle] = useState(true);
+  const [addMemberResult, setAddMemberResult] = useState<any>();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (addMemberResult?.status) {
+      localStorage.setItem("registered", "true");
+      const user = addMemberResult?.data;
+      appStatedispatch({
+        user,
+      });
+      setTimeout(() => {
+        setIsLoading(false);
+        setToastMessage("");
+        navigate("/home");
+      }, 1000);
+    } else if (!addMemberResult?.status) {
+      setIsLoading(false);
+    }
+  }, [addMemberResult]);
 
   useEffect(() => {
     setFormStatus("");
@@ -61,7 +80,6 @@ const Member = () => {
     setCropStatus(false);
     setHandleWarning(false);
     setToast(false);
-    setWarning(false);
     setHandle(true);
   }, []);
 
@@ -131,7 +149,6 @@ const Member = () => {
       const file = await ipfs.add(croppedImg);
       return file.path;
     } catch (error) {
-      console.log(error);
       return;
     }
   };
@@ -156,35 +173,29 @@ const Member = () => {
         });
     }
   };
+
   const formSubmitHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault();
+    const target = event.target as typeof event.target & {
+      firstName: { value: string };
+      lastName: { value: string };
+      displayName: { value: string };
+      open: { value: string };
+      handle: { value: string };
+    };
 
-    if (uploadFile) {
-      if (
-        bio &&
-        selectedRoles.length >= 1 &&
-        selectedOrganization.length >= 1 &&
-        selectedSkills.length >= 1 &&
-        handle
-      ) {
-        setIsLoading(true);
+    const provider: any = window.ethereum;
+    const web3: any = new Web3(provider);
+    const userAccount = await web3.eth.getAccounts();
+    const address = userAccount[0];
+
+    if (bio && selectedRoles.length >= 1 && selectedOrganization.length >= 1 && selectedSkills.length >= 1 && handle) {
+      setIsLoading(true);
+      if (uploadFile) {
         ipfsClient(uploadFile).then(async (path) => {
           if (path !== undefined) {
-            const target = event.target as typeof event.target & {
-              firstName: { value: string };
-              lastName: { value: string };
-              displayName: { value: string };
-              open: { value: string };
-              handle: { value: string };
-            };
-
-            const provider: any = window.ethereum;
-            const web3: any = new Web3(provider);
-
-            const userAccount = await web3.eth.getAccounts();
-            const address = userAccount[0];
-
-            const user = {
+            setIsLoading(true);
+            const params = {
               firstName: target.firstName.value,
               lastName: target.lastName.value,
               handle: target.handle.value,
@@ -198,65 +209,41 @@ const Member = () => {
               profilePictureUrl: path,
             };
 
-            var requestOptions: any = {
-              method: "POST",
-              mode: "cors",
-              redirect: "follow",
-            };
-            setIsLoading(true);
-
-            var raw = JSON.stringify(user);
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            var requestOptions: any = {
-              method: "POST",
-              headers: myHeaders,
-              body: raw,
-              redirect: "follow",
-            };
-
-            fetch(addMember, requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                if (result.status !== false) {
-                  localStorage.setItem("registered", "true");
-                  const user = result.data;
-                  appStatedispatch({
-                    user,
-                  });
-                  setTimeout(() => {
-                    setIsLoading(false);
-                    setToastMessage("");
-                    navigate("/home");
-                  }, 1000);
-                }
-              });
+            customPost(params, addMember, "POST", setAddMemberResult, "adding Member");
           } else {
-            setWarning(true);
+            setToast(true);
+            setToastMessage("Something went wrong. Please try again!");
             setIsLoading(false);
 
             setTimeout(() => {
-              setWarning(false);
+              setToast(false);
             }, 3000);
           }
         });
       } else {
-        setToastMessage("All fields are required");
-        setToast(true);
-        setTimeout(() => {
-          setToastMessage("");
-          setToast(false);
-        }, 2000);
+        const params = {
+          firstName: target.firstName.value,
+          lastName: target.lastName.value,
+          handle: target.handle.value,
+          displayName: target.displayName.value,
+          bio: bio,
+          role: selectedRoles,
+          organization: selectedOrganization,
+          skill: selectedSkills,
+          openForWork: target.open.value,
+          address: address,
+          profilePictureUrl: defaultUserProfile,
+        };
+
+        customPost(params, addMember, "POST", setAddMemberResult, "addingMember");
       }
     } else {
-      setToastMessage("Upload profile picture");
+      setToastMessage("All fields are required");
       setToast(true);
-
       setTimeout(() => {
         setToastMessage("");
         setToast(false);
-      }, 3000);
+      }, 2000);
     }
   };
 
@@ -283,7 +270,7 @@ const Member = () => {
     setCroppedPixel(croppedAreaPixels);
   };
 
-  const getGroppedImage = useCallback(async () => {
+  const getcroppedImage = useCallback(async () => {
     try {
       const { file, url }: any = await getCroppedImage(uploadedImage, croppedPixel);
 
@@ -299,52 +286,21 @@ const Member = () => {
   return (
     <>
       <div className="relative w-full h-screen">
-        {warning && <Warning message="Something went wrong. Please try again!"></Warning>}
         {toast && <Warning message={toastMessage}></Warning>}
-        {cropStatus ? (
-          <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0  h-full m-auto justify-center w-90 md:w-50">
-            <div className=" relative w-90 md:w-50" style={{ height: "50vh" }}>
-              <div>
-                <Cropper
-                  image={uploadedImage}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={5 / 5}
-                  cropShape="round"
-                  showGrid={false}
-                  onCropChange={setCrop}
-                  onCropComplete={cropComplete}
-                  onZoomChange={setZoom}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
-              <div className="flex justify-center items-center mt-3">
-                <input
-                  id="small-range"
-                  type="range"
-                  min={1}
-                  max={50}
-                  value={zoom}
-                  onChange={(e: any) => {
-                    setZoom(e.target.value);
-                  }}
-                  className="w-50 h-2 bg-blue-100 appearance-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-center mb-3">
-                <button
-                  className="px-3 py-2 bg-violet-700 hover:bg-violet-900 rounded-lg text-white"
-                  onClick={getGroppedImage}
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div></div>
+        {cropStatus && (
+          <Crop
+            uploadedImage={uploadedImage}
+            crop={crop}
+            zoom={zoom}
+            setCrop={setCrop}
+            cropComplete={cropComplete}
+            setZoom={setZoom}
+            setCropStatus={setCropStatus}
+            setUserImage={setUserImage}
+            setUploadFile={setUploadFile}
+            getcroppedImage={getcroppedImage}
+            defaultProfile={defaultProfile}
+          />
         )}
 
         <Navbar />
@@ -370,10 +326,7 @@ const Member = () => {
                       onChange={(event) => setInputData(event.target.value)}
                     ></input>
                     <div className="flex w-full items-center justify-center text-white">
-                      <button
-                        type="submit"
-                        className="rounded-lg bg-violet-700 mt-4 items-center w-50 p-2"
-                      >
+                      <button type="submit" className="rounded-lg bg-violet-700 mt-4 items-center w-50 p-2">
                         Add
                       </button>
                     </div>
@@ -393,11 +346,7 @@ const Member = () => {
             <div className="flex flex-col bg-white border rounded-lg">
               <div>
                 <h1 className="text-center text-xl font-bold p-3 border-b">Member Details</h1>
-                <form
-                  className="text-sm w-100  overflow-y-auto member-form"
-                  name="member"
-                  onSubmit={formSubmitHandler}
-                >
+                <form className="text-sm w-100  overflow-y-auto member-form" name="member" onSubmit={formSubmitHandler}>
                   <div className="flex-col w-full flex flex-col md:flex-row sm:flex-col xs:flex-col gap-3">
                     <div className="sm:w-100 md:w-90 ">
                       <div className="flex flex-col mt-3 mx-1 ">
@@ -449,11 +398,7 @@ const Member = () => {
                       </div>
 
                       {/* Handle  */}
-                      {handleWarning && (
-                        <div className=" text-red-700 flex justify-end px-5 py-1">
-                          *handle already taken
-                        </div>
-                      )}
+                      {handleWarning && <div className=" text-red-700 flex justify-end px-5 py-1">*handle already taken</div>}
 
                       <div className="text-sm flex w-full w-1/2 px-4  md:mb-0 items-center gap-3 ">
                         <label className="w-50 md:w-50 sm:w-40 block tracking-wide text-gray-700 text-md font-bold mb-2">
@@ -487,11 +432,7 @@ const Member = () => {
                             <option>Yes</option>
                           </select>
                           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 px-5">
-                            <svg
-                              className="fill-current h-4 w-4"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                            >
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                               <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                             </svg>
                           </div>
@@ -500,17 +441,28 @@ const Member = () => {
                     </div>
                     <div className="gap-2 flex flex-col items-center text-center sm:w-50 md:mt-2">
                       <div className="items-center text-center flex md:justify-center sm:justify-start">
-                        <div
-                          className=" cursor-pointer"
-                          style={{ width: "140px", height: "140px" }}
-                        >
+                        <div className="relative cursor-pointer" style={{ width: "140px", height: "140px" }}>
                           <img
+                            alt="user"
                             className="border rounded-full"
                             height="140px"
                             width="140px"
                             src={userImage}
                             loading="lazy"
                           ></img>
+                          {userImage !== defaultProfile && (
+                            <div
+                              className=" absolute top-0 right-0 cursor-pointer"
+                              style={{ right: "-10px" }}
+                              onClick={() => {
+                                setCropStatus(false);
+                                setUserImage(defaultProfile);
+                                setUploadFile(null);
+                              }}
+                            >
+                              <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex md:justify-center sm:justify-start text-center items-center ">
@@ -528,9 +480,7 @@ const Member = () => {
                   {/* Bio */}
                   <div className="flex  mx-1 mt-3  ">
                     <div className="w-full md:w-full px-3  md:mb-0">
-                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                        Bio:*
-                      </label>
+                      <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">Bio:*</label>
                       <textarea
                         onChange={(e) => setBio(e.target.value)}
                         value={bio}
@@ -547,9 +497,7 @@ const Member = () => {
                     {/* Role Selection */}
                     <div className="md:w-50 flex mx-1 justify-between">
                       <div className="md:flex md:items-center md:gap-4 w-full md:w-full  px-3  md:mb-0">
-                        <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700 sm:mb-2">
-                          Role:*
-                        </label>
+                        <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700 sm:mb-2">Role:*</label>
                         <div
                           className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full"
                           onClick={() => {
@@ -564,7 +512,7 @@ const Member = () => {
                               </>
                             ) : (
                               <>
-                                <p className="flex gap-3 flex-wrap">
+                                <div className="flex gap-3 flex-wrap">
                                   {selectedRoles?.map((role: string, index: number) => {
                                     return (
                                       <div
@@ -585,7 +533,7 @@ const Member = () => {
                                       </div>
                                     );
                                   })}
-                                </p>
+                                </div>
                               </>
                             )}
                           </div>
@@ -596,10 +544,7 @@ const Member = () => {
                               setInputPlaceholder(`Enter your role`);
                             }}
                           >
-                            <GrFormAdd
-                              fontSize={20}
-                              className="border rounded-full hover:bg-gray-700"
-                            />
+                            <GrFormAdd fontSize={20} className="border rounded-full hover:bg-gray-700" />
                           </div>
                         </div>
                       </div>
@@ -625,30 +570,28 @@ const Member = () => {
                               </>
                             ) : (
                               <>
-                                <p className="flex gap-3 flex-wrap">
-                                  {selectedOrganization?.map(
-                                    (organization: string, index: number) => {
-                                      return (
-                                        <div
-                                          key={uuidv4()}
-                                          className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                          onClick={(e) => e.stopPropagation()}
-                                        >
-                                          {organization}
-                                          <IoIosClose
-                                            fontSize={20}
-                                            color="black"
-                                            className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              cancelEnteredValue(e, organization, "organization");
-                                            }}
-                                          />
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </p>
+                                <div className="flex gap-3 flex-wrap">
+                                  {selectedOrganization?.map((organization: string, index: number) => {
+                                    return (
+                                      <div
+                                        key={uuidv4()}
+                                        className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
+                                        {organization}
+                                        <IoIosClose
+                                          fontSize={20}
+                                          color="black"
+                                          className="mt-1 cursor-pointer hover:bg-gray-700 rounded-full"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            cancelEnteredValue(e, organization, "organization");
+                                          }}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </>
                             )}
                           </div>
@@ -660,10 +603,7 @@ const Member = () => {
                               setInputPlaceholder("Enter your organization");
                             }}
                           >
-                            <GrFormAdd
-                              fontSize={20}
-                              className="border rounded-full hover:bg-gray-700"
-                            />
+                            <GrFormAdd fontSize={20} className="border rounded-full hover:bg-gray-700" />
                           </div>
                         </div>
                       </div>
@@ -674,9 +614,7 @@ const Member = () => {
 
                   <div className="md:w-50 flex mx-1 justify-between">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
-                      <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700">
-                        Skill:*
-                      </label>
+                      <label className="mb-1 md:mb-0 text-md font-bold block tracking-wide text-gray-700">Skill:*</label>
                       <div
                         className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer"
                         onClick={() => {
@@ -691,7 +629,7 @@ const Member = () => {
                             </>
                           ) : (
                             <>
-                              <p className="flex gap-3 flex-wrap">
+                              <div className="flex gap-3 flex-wrap">
                                 {selectedSkills?.map((skill: string, index: number) => {
                                   return (
                                     <div
@@ -712,7 +650,7 @@ const Member = () => {
                                     </div>
                                   );
                                 })}
-                              </p>
+                              </div>
                             </>
                           )}
                         </div>
@@ -723,10 +661,7 @@ const Member = () => {
                             setFormStatus("skill");
                           }}
                         >
-                          <GrFormAdd
-                            fontSize={20}
-                            className="border rounded-full hover:bg-gray-700"
-                          />
+                          <GrFormAdd fontSize={20} className="border rounded-full hover:bg-gray-700" />
                         </div>
                       </div>
                     </div>

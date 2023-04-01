@@ -1,8 +1,4 @@
-import React from "react";
-import SignInCard from "./SignInCard";
-import reload from "./.././../assets/Navbar/reload.png";
 import logo from "./.././.././assets/Navbar/logo.svg";
-
 import ipfsLogo from "./.././.././assets/Auth/ipfs-logo.svg";
 import fileCoinLogo from "./../././.././assets/Auth/filecoin-logo.svg";
 

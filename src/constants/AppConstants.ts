@@ -14,22 +14,19 @@ export const network = {
   blockExplorerUrls: ["https://hyperspace.filfox.info/en"],
 };
 
-export const signMessage = "pln social wants you to sign in!";
+export const signMessage = "pln social wants you to sign in";
 
 // dev
 // export const ipfsGateway = "http://44.214.42.39:8080/ipfs/";
 // export const ipfsPostUrl = "http://44.214.42.39:5001/";
 // export const baseUrl = "http://44.214.42.39:3000";
+// export const defaultUserProfile = "QmeKM5hS2MFpngPbGYVTFxJaqyFNp1wSJa5C3YmicG2XV1";
 
 // production
 export const ipfsGateway = "https://gateway-ipfs.plnetwork.io/ipfs/";
 export const ipfsPostUrl = "https://api-ipfs.plnetwork.io/";
 export const baseUrl = "https://stageapi-social.plnetwork.io";
-
-// local set up
-// export const baseUrl = "http://localhost:3000";
-// export const ipfsGateway = "http://127.0.0.1:9090/ipfs/";
-// export const ipfsPostUrl = "http://127.0.0.1:5002/";
+export const defaultUserProfile = "QmeKM5hS2MFpngPbGYVTFxJaqyFNp1wSJa5C3YmicG2XV1";
 
 export const verifyUser = `${baseUrl}/api/user/verify`;
 export const addMember = `${baseUrl}/api/user/registerMember`;
@@ -49,5 +46,6 @@ export const getComment = `${baseUrl}/api/post/comments/get/`;
 export const updateComment = `${baseUrl}/api/post/comments/edit`;
 export const getAllProfiles = `${baseUrl}/api/user/getAllProfiles`;
 export const sharePosts = `${baseUrl}/api/post/share`;
+export const getNotifications = `${baseUrl}/api/notifications/`
 
 export const roles = ["member", "team"];

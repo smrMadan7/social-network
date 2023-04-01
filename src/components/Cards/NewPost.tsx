@@ -4,7 +4,6 @@ import Cropper, { Area } from "react-easy-crop";
 import { AiFillStar, AiOutlineFileGif } from "react-icons/ai";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
 import { createPost, ipfsPostUrl } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customPost } from "../../fetch/customFetch";
@@ -237,11 +236,21 @@ const NewPost = ({ postStatus }: any) => {
               </div>
             </div>
             <div className="w-full border-t-2">
-              <div className="mt-3 p-4">
+              <div className="mt-3 p-4 relative">
+                <div className=" border " id="tagContainer" style={{ fontSize: "20rem" }}>
+                  abc
+                </div>
                 <div
                   className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
                   contentEditable="true"
                   id="content"
+                  onMouseMove={(e: any) => {
+                    var containerElement: any = document.getElementById("tagContainer");
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    containerElement.left = x + "px";
+                    containerElement.style.top = y + "px";
+                  }}
                   data-placeholder="What's happening?"
                   style={
                     isBold
@@ -273,9 +282,7 @@ const NewPost = ({ postStatus }: any) => {
             </div>
 
             <div className=" overflow-y-auto " style={{ height: "230px" }}>
-              {filePath && !cropStatus && (
-                <img alt="uploaded Image" src={filePath} loading="lazy"></img>
-              )}
+              {filePath && !cropStatus && <img alt="uploaded Image" src={filePath} loading="lazy"></img>}
             </div>
 
             <div className="absolute bottom-2 px-5 flex justify-between  w-full items-center">
@@ -293,25 +300,33 @@ const NewPost = ({ postStatus }: any) => {
                 </button>
               </div>
             </div>
-
-            <style>
-              {`
-            div:empty:before {
-              content:attr(data-placeholder);
-              color:gray
-            }
-            div:empty:before {
-              content:attr(data-placeholder);
-              color:gray
-            }
-            
-            `}
-            </style>
           </form>
         </div>
       )}
+      <style>
+        {`
+            div:empty:before {
+              content:attr(data-placeholder);
+              color:gray
+            }
+            div:empty:before {
+              content:attr(data-placeholder);
+              color:gray
+            }
+
+            #tagContainer {
+              height: 20px;
+              width:"20px";
+              background-color:black;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color:black;
+            }
+
+            `}
+      </style>
     </>
   );
 };
-
 export default NewPost;

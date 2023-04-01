@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { AiFillBug, AiFillHome } from "react-icons/ai";
-import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { useLocation, useNavigate } from "react-router";
-import { NavLink } from "react-router-dom";
 import { IoIosContact } from "react-icons/io";
+import { MdOutlineTravelExplore } from "react-icons/md";
+import { useLocation } from "react-router";
+import { NavLink } from "react-router-dom";
 import { useUserContext } from "../../context/UserContextProvider";
 
 const Footer = () => {
-  const navigate = useNavigate();
   const exactPath = useLocation().pathname.slice(1);
   const [routerStatus, setRouterStatus] = useState("");
   const user = localStorage.getItem("signedIn");

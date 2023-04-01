@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import { AiFillTwitterCircle } from "react-icons/ai";
 import { BsDiscord } from "react-icons/bs";
 import { TbWorld } from "react-icons/tb";
-import { getUser, roles, ipfsGateway } from "../../constants/AppConstants";
+import { getUser, ipfsGateway, roles } from "../../constants/AppConstants";
 import { customGet } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
 
-const PostProfile = ({ postDetails, post }: any) => {
+const PostProfile = ({ post }: any) => {
   const [details, setDetails] = useState<any>();
   const [isMember, setIsMember] = useState(false);
   const [isTeam, setIsTeam] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [profileUrl, setProfileUrl] = useState("");
   const [profileAddress, setProfileAddress] = useState();
 
   const [moreOrg, setMoreOrg] = useState<any>();
@@ -55,7 +54,6 @@ const PostProfile = ({ postDetails, post }: any) => {
     if (fetchUserResult?.status) {
       setIsLoading(false);
       setDetails(fetchUserResult?.data);
-      setProfileUrl(`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`);
       if (fetchUserResult?.data?.type === roles[0]) {
         setIsMember(true);
       } else if (fetchUserResult?.data?.type === roles[1]) {
@@ -71,19 +69,17 @@ const PostProfile = ({ postDetails, post }: any) => {
 
   return (
     <>
-      <div
-        className="overflow-y-auto relative "
-        style={isMember ? { height: "250px" } : { height: "250px" }}
-      >
+      <div className="overflow-y-auto relative " style={isMember ? { height: "250px" } : { height: "250px" }}>
         {isMember && (
           <div className="w-full flex flex-col text-black font-2xl">
             <div className="w-full text-black flex px-5 mt-5 gap-4">
               <div>
                 <img
+                  alt="profile picture"
                   height="70px"
                   width="70px"
                   className="rounded-full border bg-black"
-                  src={profileUrl}
+                  src={`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`}
                   loading="lazy"
                 ></img>
               </div>
@@ -118,11 +114,7 @@ const PostProfile = ({ postDetails, post }: any) => {
 
                     {moreRoles.length > 0 && (
                       <div
-                        style={
-                          moreRoles.length >= 10
-                            ? { height: "60px", width: "60px" }
-                            : { height: "30px", width: "30px" }
-                        }
+                        style={moreRoles.length >= 10 ? { height: "60px", width: "60px" } : { height: "30px", width: "30px" }}
                         className="relative rounded-full border flex items-center justify-center"
                       >
                         <span
@@ -172,11 +164,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                   })}
                   {moreSkills.length > 0 && (
                     <div
-                      style={
-                        moreOrg.length >= 10
-                          ? { height: "60px", width: "60px" }
-                          : { height: "30px", width: "30px" }
-                      }
+                      style={moreOrg.length >= 10 ? { height: "60px", width: "60px" } : { height: "30px", width: "30px" }}
                       className="relative rounded-full border flex items-center justify-center"
                     >
                       <span
@@ -221,11 +209,7 @@ const PostProfile = ({ postDetails, post }: any) => {
                   })}
                   {moreOrg.length > 0 && (
                     <div
-                      style={
-                        moreOrg.length >= 10
-                          ? { height: "60px", width: "60px" }
-                          : { height: "30px", width: "30px" }
-                      }
+                      style={moreOrg.length >= 10 ? { height: "60px", width: "60px" } : { height: "30px", width: "30px" }}
                       className="relative rounded-full border flex items-center justify-center"
                     >
                       <span
@@ -267,10 +251,11 @@ const PostProfile = ({ postDetails, post }: any) => {
             <div className="text-black flex flex-col md:flex-row px-5 mt-5 gap-3">
               <div>
                 <img
+                  alt="profile"
                   height="70px"
                   width="70px"
                   className="rounded-full border"
-                  src={profileUrl}
+                  src={`${ipfsGateway}${fetchUserResult?.data?.profilePictureUrl}`}
                   loading="lazy"
                 ></img>
               </div>
@@ -295,13 +280,13 @@ const PostProfile = ({ postDetails, post }: any) => {
 
             <div className="absolute bottom-0 flex justify-end mb-3 px-5 w-full items-center gap-3 mt-3 ">
               <div className="flex gap-3">
-                <a href={details?.social?.twitter} target="_blank">
+                <a href={details?.social?.twitter} target="_blank" rel="noreferrer">
                   <AiFillTwitterCircle size={30} color="blue" />
                 </a>
-                <a href={details?.social?.discord} target="_blank">
+                <a href={details?.social?.discord} target="_blank" rel="noreferrer">
                   <BsDiscord size={30} color="blue" />
                 </a>
-                <a href={details?.website} target="_blank">
+                <a href={details?.website} target="_blank" rel="noreferrer">
                   <TbWorld size={30} />
                 </a>
               </div>

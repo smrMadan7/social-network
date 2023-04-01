@@ -5,13 +5,17 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { getComment, getUser, ipfsGateway, updateComment } from "../../constants/AppConstants";
+import { getComment, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet } from "../../fetch/customFetch";
+import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import AddComment from "../Forms/AddComment";
+import defaultUser from "./../././../assets/Form/default-user.svg";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
+
 
 const Post = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -21,12 +25,27 @@ const Post = (post: any) => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [userDetails, setUserDetails] = useState<any>();
   const [refetch, setRefetch] = useState(false);
+  const [addCommentResult, setAddCommentResult] = useState<any>();
+  const [isCommentSuccess, setIsCommentSuccess] = useState(false);
+  const [sharedProfiles, setSharedProfiles] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState(defaultUser)
 
   useEffect(() => {
     getUserDetails();
     getPostDetails();
     getPostComments();
   }, []);
+
+  useEffect(() => {
+    if (addCommentResult?.status) {
+      getInnerHtml("content").innerHTML = "";
+      getPostComments();
+      setIsCommentSuccess(true);
+      setTimeout(() => {
+        setIsCommentSuccess(false);
+      }, 500);
+    }
+  }, [addCommentResult]);
 
   useEffect(() => {
     if (postDetails?.status) {
@@ -46,7 +65,9 @@ const Post = (post: any) => {
 
   useEffect(() => {
     if (userDetails?.status) {
+      setProfilePictureUrl(`${ipfsGateway}${userDetails?.data?.profilePictureUrl}`)
       setUserDetails(userDetails?.data);
+      
     }
   }, [userDetails]);
 
@@ -94,11 +115,7 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <LikedProfile
-                  post={post}
-                  mode={"liked"}
-                  setLikedProfileStatus={setLikedProfileStatus}
-                />
+                <LikedProfile post={post} mode={"liked"} setLikedProfileStatus={setLikedProfileStatus} />
               </div>
             </div>
           </div>
@@ -110,6 +127,11 @@ const Post = (post: any) => {
           <div className="text-white flex items-center justify-center flex m-auto h-screen">
             <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
               <div className="flex justify-between p-3 border-b ">
+                {isCommentSuccess && (
+                  <div className="absolute text-center  top-0 right-0 left-0 bottom-0 " style={{ zIndex: 100, height: "30px" }}>
+                    <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
+                  </div>
+                )}
                 <p className="text-xl font-bold">Comments</p>
                 <div
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
@@ -122,11 +144,39 @@ const Post = (post: any) => {
                 </div>
               </div>
               <div className="h-2/3 overflow-y-auto mt-2 ">
-                <Comment
-                  comments={postComments}
-                  postId={post?.post?.postId}
-                  setRefetch={setRefetch}
-                />
+                <Comment comments={postComments} postId={post?.post?.postId} setRefetch={setRefetch} />
+              </div>
+              <AddComment postId={post?.post?.postId} addCommentResult={addCommentResult} setAddCommentResult={setAddCommentResult} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {sharedProfiles && (
+        <div className="w-100 fixed z-10  top-0 bottom-0 right-0 left-0 items-center m-auto h-screen bg-blackOverlay ">
+          <div className="text-white flex items-center justify-center flex m-auto h-screen">
+            <div
+              className="bg-black relative w-90 md:w-50 border  rounded-lg text-black bg-white overflow-y-auto"
+              style={{
+                maxHeight: "300px",
+                height: "300px",
+                maxWidth: "250px",
+                width: "250px",
+              }}
+            >
+              <div className="flex justify-between p-3 border-b ">
+                <p className="text-xl font-bold">Shared By</p>
+                <div
+                  className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
+                  onClick={() => {
+                    setSharedProfiles(false);
+                  }}
+                >
+                  <GrFormClose color="black" fontSize={25} />
+                </div>
+              </div>
+              <div className="h-2/3 overflow-y-auto mt-2 ">
+                <LikedProfile post={post} mode={"shared"} setSharedStatus={setSharedProfiles} />
               </div>
             </div>
           </div>
@@ -135,13 +185,11 @@ const Post = (post: any) => {
       {postDetails ? (
         <>
           <div className="px-5 flex flex-col border-b rounded-t-lg bg-white hover:bg-slate-100 w-full cursor-pointer">
-            {post?.post?.createdBy !== appState.action?.user?.address && (
+            {post?.post?.shares.includes(appState.action?.user?.address) && (
               <div className="w-full py-2  italic border-b flex gap-2 iems-center">
-                <div
-                  className=" rounded-full flex items-center justify-center"
-                  style={{ width: "50px" }}
-                >
+                <div className=" rounded-full flex items-center justify-center" style={{ width: "50px" }}>
                   <img
+                    alt="user profile"
                     src={`${ipfsGateway}${appState?.action?.user?.profilePictureUrl}`}
                     width="20px"
                     height="20px"
@@ -156,7 +204,7 @@ const Post = (post: any) => {
               <div className="flex gap-2">
                 <div>
                   <img
-                    src={`${ipfsGateway}${userDetails?.profilePictureUrl}`}
+                    src={profilePictureUrl}
                     alt="user-profile"
                     height={50}
                     width={50}
@@ -181,10 +229,7 @@ const Post = (post: any) => {
               </div>
               <div className="flex justify-center text-center items-center">
                 <div className="">
-                  <BiDotsVerticalRounded
-                    fontSize={18}
-                    className="rounded-full hover:bg-slate-300"
-                  />
+                  <BiDotsVerticalRounded fontSize={18} className="rounded-full hover:bg-slate-300" />
                 </div>
               </div>
             </div>
@@ -194,15 +239,10 @@ const Post = (post: any) => {
             ></div>
             {postDetails?.media[0]?.file && (
               <div className=" description-container w-180 md:w-320">
-                <img
-                  alt="post-image"
-                  src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
-                  height="100"
-                  loading="lazy"
-                ></img>
+                <img alt="post" src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100" loading="lazy"></img>
               </div>
             )}
-            <div className="mb-3 flex gap-7 bottom-menu-container items-center">
+            <div className="prevent-select mb-3 flex gap-7 bottom-menu-container items-center">
               <div
                 className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 "
                 onClick={() => setCommentStatus(true)}
@@ -214,38 +254,40 @@ const Post = (post: any) => {
               <div
                 id="share"
                 className="rounded-full hover:bg-indigo-200 px-2  py-2 text-indigo-500 flex items-center gap-1 "
+                onClick={() => {
+                  if (post?.post?.shares?.length > 0) {
+                    setSharedProfiles(true);
+                  }
+                }}
               >
                 <FaShareSquare fontSize={18} className="text-violet-500" />
 
                 <p className=" ">{post?.post?.shares?.length}</p>
               </div>
 
-              <div className="flex items-center text-center">
-                <div
-                  id="like"
-                  className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
-                >
-                  {post?.post?.likes.length > 0 ? (
-                    <>
-                      <AiTwotoneHeart
-                        fontSize={15}
-                        className="text-fuchsia-500 mt-1"
-                        onClick={() => setLikedProfileStatus(true)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <BsHeart
-                        fontSize={15}
-                        className="text-fuchsia-500 mt-1 "
-                        onClick={() => setLikedProfileStatus(true)}
-                      />
-                    </>
-                  )}
-                  <p className="prevent-default" onClick={() => setLikedProfileStatus(true)}>
-                    {post?.post?.likes.length}
-                  </p>
-                </div>
+              <div className="prevent-select flex items-center text-center">
+                {post?.post?.likes.length > 0 ? (
+                  <>
+                    <div
+                      id="like"
+                      className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
+                      onClick={() => setLikedProfileStatus(true)}
+                    >
+                      <AiTwotoneHeart fontSize={15} className="text-fuchsia-500 mt-1" />
+                      <p className="prevent-default">{post?.post?.likes.length}</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      id="like"
+                      className="relative rounded-full hover:bg-fuchsia-200 px-2  py-2 text-fuchsia-500 flex justify-center items-center gap-1 m-auto"
+                    >
+                      <BsHeart fontSize={15} className="text-fuchsia-500 mt-1 " />
+                      <p className="prevent-default">{post?.post?.likes.length}</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <style>

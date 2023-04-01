@@ -2,16 +2,17 @@ import { MetaMaskInpageProvider } from "@metamask/providers";
 import { useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { Outlet, useLocation, useNavigate } from "react-router";
+import { io } from "socket.io-client";
 import Web3 from "web3";
+import Footer from "../components/Footer/Footer";
 import Loading from "../components/Loading/Loading";
 import Navbar from "../components/Navbar/Navbar";
-import { chainId, getUser, network, verifyUser } from "../constants/AppConstants";
+import { baseUrl, chainId, getUser, network, verifyUser } from "../constants/AppConstants";
 import { useUserContext } from "../context/UserContextProvider";
-import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
-import logo from "./../assets/Navbar/logo.svg";
 import fileCoinLogo from "./../assets/Auth/filecoin-logo.svg";
 import ipfsLogo from "./../assets/Auth/ipfs-logo.svg";
-import Footer from "../components/Footer/Footer";
+import metamaskLogo from "./../assets/Auth/metamask-logo.svg";
+import logo from "./../assets/Navbar/logo.svg";
 
 declare global {
   interface Window {
@@ -21,7 +22,7 @@ declare global {
 }
 
 const SecureLayout = () => {
-  const { appState, appStatedispatch }: any = useUserContext();
+  const { appStatedispatch }: any = useUserContext();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,6 +40,7 @@ const SecureLayout = () => {
 
   useEffect(() => {
     const listen = async () => {
+      appStatedispatch({});
       window?.ethereum?.on("accountsChanged", async function () {
         window.location.reload();
       });
@@ -216,6 +218,7 @@ const SecureLayout = () => {
     }
   };
 
+
   return (
     <>
       {loading ? (
@@ -266,7 +269,13 @@ const SecureLayout = () => {
                               onClick={signUser}
                             >
                               Sign-In
-                              <img src={logo} width="35px" height="35px" loading="lazy"></img>
+                              <img
+                                alt="logo"
+                                src={logo}
+                                width="35px"
+                                height="35px"
+                                loading="lazy"
+                              ></img>
                             </button>
                           </div>
                         </div>
@@ -283,6 +292,7 @@ const SecureLayout = () => {
                             >
                               Browser Wallet
                               <img
+                                alt="meta mask logo"
                                 src={metamaskLogo}
                                 width="30px"
                                 height="20px"

@@ -1,14 +1,15 @@
 export const updateContent = (content: any) => {
-  const anchorRegex = /(<a\s.*?>.*?<\/a>)/g;
 
-  const hasAnchor = anchorRegex.test(content);
+  const anchorRegex = /(<a\s.*?>.*?<\/a>)/g;
+  const tagRegex = /\[(\w+)\]\(\w+\)/g;
+  const urlPattern = /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
+
+const result = content.replace(tagRegex, '<span style="color: blue;">$1</span>').replace(/@/g, '<span style="color: blue;">@</span>');
+  const hasAnchor = anchorRegex.test(result);
 
   if (hasAnchor) {
-    return content.replace(anchorRegex, "<a style='color: blue;' $1");
+    return result.replace(anchorRegex, "<a style='color: blue;' $1");
   } else {
-    const urlPattern =
-      /((http|https|ftp):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi;
-
-    return content?.replace(urlPattern, '<a href="$1" target="_blank" style="color: blue;">$1</a>');
+    return result?.replace(urlPattern, '<a href="$1" target="_blank" style="color: blue;">$1</a>');
   }
 };

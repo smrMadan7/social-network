@@ -5,18 +5,19 @@ import { BsHeart } from "react-icons/bs";
 import { FaShareSquare } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
 import { TbMessage } from "react-icons/tb";
-import { Tooltip } from "react-tooltip";
-import { v4 as uuidv4 } from "uuid";
-import { getComment, ipfsGateway, likeApi, postComment } from "../../constants/AppConstants";
+import { useLocation } from "react-router";
+import { getComment, ipfsGateway, likeApi } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet, customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import AddComment from "../Forms/AddComment";
 import Comment from "./Comment";
 import LikedProfile from "./LikedAndSharedProfile";
 import PostProfile from "./PostProfile";
 import Repost from "./Repost";
+import { useSocketContext } from "../../context/SocketCotextProvider";
 
 const Feeds = (post: any) => {
   const [postDetails, setPostDetails] = useState<any>();
@@ -41,13 +42,34 @@ const Feeds = (post: any) => {
   const [isRepost, setIsRepost] = useState(false);
   const [isReposted, setIsReposted] = useState(false);
 
+  const [isCommentSuccess, setIsCommentSuccess] = useState(false);
+  const {socketContext}:any = useSocketContext();
+
+
+  useEffect(() => {
+    getPostComments();
+    getPostDetails();
+  }, []);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location?.search?.includes("?goto=")) {
+      const element: any = document.getElementById("6301bf27-cdb8-43fc-9662-9e43a1398569");
+      element?.scrollIntoView({ behavior: "smooth" });
+  
+    }
+  }, [location])
+
+  
   useEffect(() => {
     if (addCommentResult?.status) {
+      
       getInnerHtml("content").innerHTML = "";
       getPostComments();
-      setIsSuccessfull(true);
+      setIsCommentSuccess(true);
       setTimeout(() => {
-        setIsSuccessfull(false);
+        setIsCommentSuccess(false);
       }, 500);
     }
   }, [addCommentResult]);
@@ -64,7 +86,9 @@ const Feeds = (post: any) => {
 
   useEffect(() => {
     if (incAndDecResult?.status) {
+    
       if (likeMode === "like") {
+        sendNotification();
         setIsLiked(true);
       } else {
         setIsLiked(false);
@@ -77,11 +101,6 @@ const Feeds = (post: any) => {
       setPostDetails(postDetails.data);
     }
   }, [postDetails]);
-
-  useEffect(() => {
-    getPostComments();
-    getPostDetails();
-  }, []);
 
   useEffect(() => {
     getPostComments();
@@ -119,20 +138,21 @@ const Feeds = (post: any) => {
     customPost(params, likeApi, "POST", setIncAndDecResult, "increment decrement like");
   };
 
-  // Add a new comment
-  const addComment = async (e: any) => {
-    e.preventDefault();
-    const params = {
-      postId: post?.post?.postId,
-      commentId: uuidv4(),
-      commenter: appState?.action?.user?.address,
-      comment: getInnerHtml("content").innerHTML,
-      tage: ["@madan"],
-    };
 
-    customPost(params, postComment, "POST", setAddCommentResult, "adding comment");
-  };
+  const sendNotification = () => {
 
+      if(post?.post?.createdBy !== appState?.action?.user?.address) {
+      socketContext?.socket.emit("sendNotifications", {
+      type: "like",
+      performedBy: appState?.action?.user?.address,
+      subjectId: post?.post?.createdBy,
+      details: {
+        actionItem : "like", 
+        actionId: post?.post?.postId,
+      }
+      });
+    }
+  }
   return (
     <>
       {postDetails ? (
@@ -143,7 +163,7 @@ const Feeds = (post: any) => {
                 <div className="text-white flex items-center justify-center flex m-auto h-screen">
                   <div className="relative w-90 md:w-50 border h-4/6 rounded-lg text-black bg-white">
                     <div className="flex justify-between p-3 border-b ">
-                      {isSucessfull && (
+                      {isCommentSuccess && (
                         <div
                           className="absolute text-center  top-0 right-0 left-0 bottom-0 "
                           style={{ zIndex: 100, height: "30px" }}
@@ -163,33 +183,9 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <Comment
-                        comments={postComments}
-                        setRefetch={setRefetch}
-                        postId={post?.post?.postId}
-                      />
+                      <Comment comments={postComments} setRefetch={setRefetch} postId={post?.post?.postId} />
                     </div>
-                    <div className="absolute w-full bottom-2 px-5 py-3 flex gap-2">
-                      <form onSubmit={addComment} className="flex w-full gap-2">
-                        <div
-                          style={{ maxHeight: "43px" }}
-                          className="w-full p-2 overflow-y-auto cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words border rounded-lg"
-                          contentEditable="true"
-                          id="content"
-                          onKeyDown={(e: any) => {}}
-                          data-placeholder="Add a comment..."
-                        ></div>
-                        <div>
-                          <button
-                            className="border rounded-lg bg-violet-700 hover:bg-violet-900 py-2 px-4 text-white"
-                            type="submit"
-                          >
-                            ADD
-                          </button>
-                        </div>
-                      </form>
-                      {/* </div> */}
-                    </div>
+                    <AddComment postId={post?.post?.postId} addCommentResult={addCommentResult} setAddCommentResult={setAddCommentResult} />
                   </div>
                 </div>
               </div>
@@ -248,11 +244,7 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <LikedProfile
-                        post={post}
-                        mode={"liked"}
-                        setLikedProfileStatus={setLikedProfileStatus}
-                      />
+                      <LikedProfile post={post} mode={"liked"} setLikedProfileStatus={setLikedProfileStatus} />
                     </div>
                   </div>
                 </div>
@@ -291,11 +283,7 @@ const Feeds = (post: any) => {
                       </div>
                     </div>
                     <div className="h-2/3 overflow-y-auto mt-2 ">
-                      <LikedProfile
-                        post={post}
-                        mode={"shared"}
-                        setSharedStatus={setSharedProfiles}
-                      />
+                      <LikedProfile post={post} mode={"shared"} setSharedStatus={setSharedProfiles} />
                     </div>
                   </div>
                 </div>
@@ -314,6 +302,7 @@ const Feeds = (post: any) => {
 
             {isRepost && (
               <Repost
+              post={post}
                 isRepost={isRepost}
                 setIsRepost={setIsRepost}
                 setIsReposted={setIsReposted}
@@ -330,12 +319,10 @@ const Feeds = (post: any) => {
             {/* shared details */}
             {(post?.post?.shares.length > 0 || isReposted) && (
               <div className="w-full py-2 italic border-b flex gap-2 iems-center">
-                <div
-                  className=" rounded-full flex items-center justify-center"
-                  style={{ width: "50px" }}
-                >
+                <div className=" rounded-full flex items-center justify-center" style={{ width: "50px" }}>
                   <img
                     src={`${ipfsGateway}${post?.post?.profilePictureUrl}`}
+                    alt="user profile"
                     width="20px"
                     height="20px"
                     className="rounded-full"
@@ -355,15 +342,6 @@ const Feeds = (post: any) => {
               </div>
             )}
 
-            {/* {isSucessfull && (
-              <div
-                className="absolute text-center  top-0 right-0 left-0 bottom-1 items-center "
-                style={{ zIndex: 100, height: "30px" }}
-              >
-                <p className="text-violet-700 font-semibold text-xl pt-3">Successfully Re-post</p>
-              </div>
-            )} */}
-
             <div className=" mt-2 flex justify-between">
               <div className="flex gap-2">
                 <img
@@ -371,14 +349,12 @@ const Feeds = (post: any) => {
                   height={50}
                   width={50}
                   loading="lazy"
+                  alt="user profile"
                   className=" rounded-full cursor-pointer"
                   onClick={() => setPostProfileStatus(true)}
                 ></img>
                 <div className="flex flex-col w-full">
-                  <div
-                    className="flex items-center gap-1 text-center"
-                    onClick={() => setPostProfileStatus(true)}
-                  >
+                  <div className="flex items-center gap-1 text-center" onClick={() => setPostProfileStatus(true)}>
                     <p className="text-md  font-semibold">{post?.post?.displayName}</p>
 
                     <p className="text-md  text-gray-500">@{post?.post?.handle}</p>
@@ -390,10 +366,7 @@ const Feeds = (post: any) => {
               </div>
               <div className="flex justify-center text-center items-center">
                 <div>
-                  <BiDotsVerticalRounded
-                    fontSize={18}
-                    className="rounded-full hover:bg-slate-300"
-                  />
+                  <BiDotsVerticalRounded fontSize={18} className="rounded-full hover:bg-slate-300" />
                   {}
                 </div>
               </div>
@@ -407,11 +380,7 @@ const Feeds = (post: any) => {
             </div>
             {postDetails?.media[0]?.file && (
               <div className="description-container w-180 md:w-320">
-                <img
-                  src={`${ipfsGateway}${postDetails?.media[0]?.file}`}
-                  height="100"
-                  loading="lazy"
-                ></img>
+                <img alt="post" src={`${ipfsGateway}${postDetails?.media[0]?.file}`} height="100" loading="lazy"></img>
               </div>
             )}
 
@@ -431,12 +400,12 @@ const Feeds = (post: any) => {
 
                   <span className="">{postComments?.length ? postComments?.length : 0}</span>
                 </div>
-                <Tooltip
+                {/* <Tooltip
                   anchorSelect="#comment"
                   place="bottom"
                   content="Comments"
                   className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
-                />
+                /> */}
               </div>
 
               {/* Share button */}
@@ -445,17 +414,12 @@ const Feeds = (post: any) => {
                 style={isReposted ? {} : {}}
                 className=" flex text-indigo-500 items-center gap-2 prevent-select"
                 onClick={() => {
-                  if (
-                    !(post?.post?.shares?.includes(appState?.action?.user?.address) || isReposted)
-                  ) {
+                  if (!(post?.post?.shares?.includes(appState?.action?.user?.address) || isReposted)) {
                     setIsRepost(true);
                   }
                 }}
               >
-                <div
-                  id="repost"
-                  className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 h-10 w-10 "
-                >
+                <div id="repost" className="rounded-full hover:bg-indigo-200 items-center flex justify-center gap-1 h-10 w-10 ">
                   <FaShareSquare fontSize={18} className="text-indigo-500" />
 
                   <span className="">
@@ -466,12 +430,12 @@ const Feeds = (post: any) => {
                     )}
                   </span>
                 </div>
-                <Tooltip
+                {/* <Tooltip
                   anchorSelect="#repost"
                   place="bottom"
                   content="Repost"
                   className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
-                />
+                /> */}
               </div>
 
               <div className="flex items-center text-center prevent-select">
@@ -494,8 +458,7 @@ const Feeds = (post: any) => {
                         }}
                       >
                         <>
-                          {post?.post?.likes?.includes(appState?.action?.user?.address) &&
-                          !isDisLiked ? (
+                          {post?.post?.likes?.includes(appState?.action?.user?.address) && !isDisLiked ? (
                             <>
                               <AiTwotoneHeart fontSize={18} className="text-fuchsia-500 mt-1" />
                             </>
@@ -539,16 +502,17 @@ const Feeds = (post: any) => {
                       )}
                     </>
                   )}
-                  <Tooltip
+                  {/* <Tooltip
                     anchorSelect="#like"
                     place="bottom"
                     content="Like"
                     className="text-center items-center text-sm z-10 absolute bg-gray-700 text-white border rounded-lg px-2"
-                  />
+                  /> */}
                 </div>
                 {(post?.post?.likes?.length > 0 || isLiked) && (
                   <div className="cursor-pointer" onClick={() => setLikedProfileStatus(true)}>
-                    likes
+                    {post?.post?.likes?.length == 1 && like == 1 ? "like" : "likes"}
+                    
                   </div>
                 )}
               </div>
@@ -579,7 +543,7 @@ const Feeds = (post: any) => {
           </div>
         </>
       ) : (
-        <> </>
+        <></>
       )}
     </>
   );

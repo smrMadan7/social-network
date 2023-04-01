@@ -1,6 +1,5 @@
 import { BiArrowBack } from "react-icons/bi";
 import { Outlet, useNavigate } from "react-router";
-import { NavLink } from "react-router-dom";
 import { ipfsGateway } from "../../constants/AppConstants";
 import { useUserContext } from "../../context/UserContextProvider";
 
@@ -30,9 +29,7 @@ const MemberProfile = () => {
                     <div className="flex flex-col mt-3 mx-1 ">
                       {/* First Name */}
                       <div className="flex flex-col md:flex-row w-full px-3  md:mb-0 sm:mt-3 md:items-center md:gap-3">
-                        <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">
-                          First Name:
-                        </label>
+                        <label className="md:w-30 sm:w-40 block tracking-wide text-gray-700 font-bold mb-2">First Name:</label>
                         <input
                           readOnly
                           className=" md:w-full sm:w-full appearance-none block  bg-gray-200 text-gray-700 border  rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -108,10 +105,7 @@ const MemberProfile = () => {
                       </div>
                     </div>
                     <div className="flex md:justify-center sm:justify-start text-center items-center ">
-                      <button
-                        type="button"
-                        className="bg-violet-700 hover:bg-violet-900 text-white px-4 p-2  border rounded-lg"
-                      >
+                      <button type="button" className="bg-violet-700 hover:bg-violet-900 text-white px-4 p-2  border rounded-lg">
                         Profile Image
                       </button>
                     </div>
@@ -121,9 +115,7 @@ const MemberProfile = () => {
                 {/* Bio */}
                 <div className="flex  mx-1 mt-3  ">
                   <div className="w-full md:w-full px-3  md:mb-0">
-                    <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">
-                      Bio:
-                    </label>
+                    <label className="text-md font-bold block tracking-wide text-gray-700 font-bold mb-2">Bio:</label>
                     <textarea
                       readOnly
                       id="message"
@@ -139,14 +131,12 @@ const MemberProfile = () => {
                   {/* Role Selection */}
                   <div className="md:w-50 flex mx-1 justify-between">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full  px-3  md:mb-0">
-                      <label className="text-md font-bold block tracking-wide text-gray-700 sm:mb-2">
-                        Role:
-                      </label>
+                      <label className="text-md font-bold block tracking-wide text-gray-700 sm:mb-2">Role:</label>
                       <div className="bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer md:w-full">
                         <div className="text-gray-700 flex gap-2 ">
                           <>
                             <div className="flex gap-3 flex-wrap">
-                              {appState?.action?.user?.role.map((role: string, index: number) => {
+                              {appState?.action?.user?.role?.map((role: string, index: number) => {
                                 return (
                                   <div
                                     key={index}
@@ -167,26 +157,22 @@ const MemberProfile = () => {
                   {/* Organization */}
                   <div className=" md:w-50 flex mx-1 justify-between ">
                     <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
-                      <label className="text-md font-bold block  tracking-wide text-gray-700 sm:mb-2">
-                        Organization:
-                      </label>
+                      <label className="text-md font-bold block  tracking-wide text-gray-700 sm:mb-2">Organization:</label>
                       <div className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer">
                         <div className="text-gray-700 flex gap-2 role-container">
                           <>
                             <div className="flex gap-3 flex-wrap">
-                              {appState?.action?.user?.organization.map(
-                                (organization: string, index: number) => {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      {organization}
-                                    </div>
-                                  );
-                                }
-                              )}
+                              {appState?.action?.user?.organization?.map((organization: string, index: number) => {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="border flex items-center gap-4 justify-between border-black rounded-full py-1 px-2 "
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {organization}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </>
                         </div>
@@ -199,14 +185,12 @@ const MemberProfile = () => {
 
                 <div className="md:w-50 flex mx-1 justify-between mb-2">
                   <div className="md:flex md:items-center md:gap-4 w-full md:w-full px-3  md:mb-0">
-                    <label className="text-md font-bold block tracking-wide text-gray-700">
-                      Skill:
-                    </label>
+                    <label className="text-md font-bold block tracking-wide text-gray-700">Skill:</label>
                     <div className="w-full bg-gray-200 focus:bg-white flex justify-between py-2 px-4  border rounded-lg cursor-pointer">
                       <div className="text-gray-700 flex gap-2 role-container">
                         <>
                           <div className="flex gap-3 flex-wrap">
-                            {appState?.action?.user?.skill.map((skill: string, index: number) => {
+                            {appState?.action?.user?.skill?.map((skill: string, index: number) => {
                               return (
                                 <div
                                   key={index}

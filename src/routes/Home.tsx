@@ -1,25 +1,32 @@
-import { useEffect, useState } from "react";
-import { BiMenu, BiMessageAltEdit } from "react-icons/bi";
-import { FaThList, FaUserAlt } from "react-icons/fa";
-import { Outlet } from "react-router-dom";
-
 import { create } from "ipfs-http-client";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import { AiFillStar, AiOutlineReload, AiOutlineItalic } from "react-icons/ai";
+import { AiFillStar, AiOutlineItalic } from "react-icons/ai";
+import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
+import { BsHeart } from "react-icons/bs";
+import { FaUserAlt } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
-import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
-import { v4 as uuidv4 } from "uuid";
-import Web3 from "web3";
-import Notification from "../components/Cards/Notification";
-import Warning from "../components/Cards/Warning";
-import { createPost, getPostById, ipfsPostUrl } from "../constants/AppConstants";
-import { useUserContext } from "../context/UserContextProvider";
-import getCroppedImage from "../utils/crop";
+import { MdOutlinePermMedia } from "react-icons/md";
+import { Mention, MentionsInput } from "react-mentions";
+import { Outlet } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
+import { io } from "socket.io-client";
+import { v4 as uuidv4 } from "uuid";
+import Warning from "../components/Cards/Warning";
 import Loading from "../components/Loading/Loading";
-import Post from "../components/Cards/Post";
+import WhoToFollow from "../components/WhoToFollow/WhoToFollow";
+import { baseUrl, createPost, getAllProfiles, getPostById, ipfsGateway, ipfsPostUrl } from "../constants/AppConstants";
+import PostContainer from "../containers/PostContainer";
+import { useSocketContext } from "../context/SocketCotextProvider";
+import { useUserContext } from "../context/UserContextProvider";
+import { getAllProfilesForMention } from "../fetch/customFetch";
+import constructTags from "../utils/constructTags";
+import getCroppedImage from "../utils/crop";
+import { eventList } from "../utils/event";
 import { htmlToText } from "../utils/htmlToText";
+import mentionsInputStyle from './../styles/mentionsInputStyle';
+import mentionStyle from "../styles/mentionStyle";
+
 
 const Home = () => {
   const [filterStatus, setFilterStatus] = useState("timeline");
@@ -29,8 +36,7 @@ const Home = () => {
   const [filePath, setFilePath] = useState("");
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
-  const [isCode, setIsCode] = useState(false);
-  const [uploadImage, setUploadImage] = useState<any>();
+  const [uploadImage, setUploadImage] = useState<any>(null);
   const [warning, setWarning] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -39,19 +45,20 @@ const Home = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
-  const [ipfsPath, setIpfsPath] = useState<any>();
   const [isReload, setIsReload] = useState(false);
+  const {socketContext}:any = useSocketContext();
+
+  const [allProfilesList, setAllProfilesList] = useState<any>([]);
 
   useEffect(() => {
     setFilterStatus("timeline");
     if (!appState?.action?.user) {
-      window.location.reload();
+      window.location.reload(); 
+    } else {
+      getAllPosts();
     }
   }, []);
 
-  useEffect(() => {
-    getAllPosts();
-  }, [isReload]);
 
   const mediaUpload = () => {
     let input: HTMLInputElement = document.createElement("input");
@@ -85,8 +92,9 @@ const Home = () => {
   const publishPost = async (e: any) => {
     e.preventDefault();
 
-    const contentElement: any = document.getElementById("content");
-    var content = contentElement.innerHTML;
+    // const contentElement: any = document.getElementById("content");
+    var content = postContent;
+    const tags = await constructTags(content);
 
     if (isBold && content) {
       content = `<span class="font-bold">${content}</span>`;
@@ -95,22 +103,15 @@ const Home = () => {
     } else if (isBold && isItalic && content) {
       content = `<span class="font-bold italic">${content}</span>`;
     } else {
-      content = content;
     }
 
-    content = content.trim();
+    content = content.trimStart();
 
-    if (htmlToText(content).trim() || uploadImage) {
+    if (htmlToText(content).trim() || uploadImage !== null) {
       try {
+        setIsLoading(true);
         ipfsClient(uploadImage)
           .then(async (path) => {
-            setIsLoading(true);
-            if (path !== undefined) {
-              setIpfsPath(path);
-            } else {
-              setIsLoading(true);
-            }
-
             const currentTimeStamp = Math.floor(Date.now() / 1000);
             const uri: any = {
               version: "1.0.0",
@@ -129,6 +130,7 @@ const Home = () => {
               postId: uuidv4(),
               address: appState?.action?.user?.address,
               postData: uri,
+              tags: tags
             };
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
@@ -142,13 +144,17 @@ const Home = () => {
               .then((response) => response.json())
               .then((result) => {
                 if (result.status !== false) {
+
+                  sendNotification(tags, result?.data);
                   setIsPost(false);
+                  setPostContent("");
+                  setUploadImage(null);
                   setIsLoading(false);
                   setFilePath("");
                   getAllPosts();
                 }
               })
-              .catch((error) => {});
+              .catch((error) => { });
           })
           .catch((error) => {
             setWarningMessage("Something went wrong!");
@@ -160,6 +166,7 @@ const Home = () => {
             console.log("Error occured while publishing post", error);
           });
       } catch (e) {
+        setIsLoading(false);
         setWarning(true);
       }
     } else {
@@ -177,10 +184,8 @@ const Home = () => {
     setWarning(false);
     try {
       const { file, url }: any = await getCroppedImage(filePath, croppedPixel);
-
       setFilePath(url);
       setUploadImage(file);
-
       setCropStatus(false);
     } catch (e) {
       setWarning(true);
@@ -200,9 +205,11 @@ const Home = () => {
 
     fetch(`${getPostById}${appState?.action?.user?.address}`, requestOptions)
       .then((response) => response.json())
-      .then((result) => {
+      .then(async (result) => {
         if (result.status !== false) {
           setPosts(result.data);
+          const allProfiles = await getAllProfilesForMention(getAllProfiles, setAllProfilesList, "get all profiles");
+          setAllProfilesList(allProfiles);
         }
       })
       .catch((error) => {
@@ -210,9 +217,57 @@ const Home = () => {
       });
   };
 
+
+  
+  const sendNotification = (tags: any, postResult: any) => {
+
+    tags?.forEach((element: any) => {
+      socketContext?.socket.emit("sendNotifications", {
+      type: "tag",
+      performedBy: appState?.action?.user?.address,
+      subjectId: element.address,
+      details: {
+        actionItem : "post", 
+        actionId: postResult?.postId,
+      }
+      });
+
+    })
+  }
+
+
+
+
+
+
+  // tag section
+
+  const [postContent, setPostContent] = useState("");
+
+  const handlePostContentChange = (e: any) => {
+    setPostContent(e.target.value);
+  };
+
+  function renderSuggestion(entry: any, search: any, highlightedDisplay: any, index: any, focused: any) {
+    if(entry.id !== appState?.action?.user?.address) {
+    return (
+      <>
+        <div className="flex items-center gap-2 mt-2">
+          <div>
+            <img height="30px" width="30px" className="border rounded-full" src={`${ipfsGateway}${entry?.profile}`} />
+          </div>
+          <div>
+            <p className="text-blue-700">{entry?.display}</p>
+          </div>
+        </div>
+      </>
+    );
+    }
+  }
   return (
     <>
       {isLoading && <Loading />}
+
       <div className="p-5 flex flex-col w-full overflow-y-auto bg-gray-100 h-screen">
         <div style={{ height: "90px" }}></div>
 
@@ -240,91 +295,37 @@ const Home = () => {
               <div className="flex gap-9 items-center text-gray-700">
                 <button
                   className="flex gap-2 items-center p-2 rounded-lg hover:bg-violte-200"
-                  style={
-                    filterStatus === "timeline"
-                      ? { background: "rgb(196 181 253)" }
-                      : { background: "" }
-                  }
+                  style={filterStatus === "timeline" ? { background: "rgb(196 181 253)" } : { background: "" }}
                   onClick={() => setFilterStatus("timeline")}
                 >
-                  <BiMenu
-                    fontSize={20}
-                    className="origin-center hover:rotate-45"
-                    style={{ transition: "1s" }}
-                  />
+                  <BiMenu fontSize={20} className="origin-center" />
                   Timeline
                 </button>
-                <button
-                  className="flex gap-2  items-center p-2 rounded-lg hover:bg-violet-200 d-none"
-                  onClick={() => {
-                    setIsReload(true);
-                  }}
-                >
-                  <AiOutlineReload
-                    fontSize={23}
-                    className="origin-center hover:rotate-180"
-                    style={{ transition: "1s" }}
-                  />
-                  Reload
-                </button>
-              </div>
 
-              {/* <div className="flex gap-9 items-center">
-                <button className="flex hover:bg-violet-200 p-2 rounded-lg">
-                  <div className="flex items-center gap-2 text-center">
-                    <div className="rounded-full bg-black px-1 py-1">
-                      <FaUserAlt color="white" />
-                    </div>
-                    My Feed
-                    <div className="items-center flex ">
-                      <RiArrowDownSLine fontSize={23} />
-                    </div>
-                  </div>
+                <button
+                  className="flex gap-2 items-center p-2 rounded-lg hover:bg-violte-200"
+                  style={filterStatus === "liked" ? { background: "rgb(196 181 253)" } : { background: "" }}
+                  onClick={() => setFilterStatus("liked")}
+                >
+                  <BsHeart fontSize={20} className="origin-center " />
+                  Liked
                 </button>
-                <div className="cursor-pointer p-2 hover:bg-violet-200 rounded-lg">
-                  <FiFilter />
-                </div>
-              </div> */}
+
+              </div>
             </div>
 
             {/* post section */}
 
-            <div className="border rounded-lg">
-              {posts?.length === 0 ? (
-                <div className="p-7 flex justify-center bg-white border rounded-lg ">
-                  <div className="flex flex-col items-center gap-2 text-violet-700 ">
-                    <FaThList fontSize={20} />
-                    <h1 className=" text-md text-slate-400 text-center">
-                      You haven't posted anything yet!
-                    </h1>
-                  </div>
-                </div>
-              ) : (
-                <div className=" mb-9 md:mb-2">
-                  {posts?.map((post: any, index: any) => {
-                    return (
-                      <div key={uuidv4()}>
-                        <Post post={post} />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <PostContainer posts={posts} mode={filterStatus} />
           </div>
 
           {/* Who to follow section */}
-          <div className="flex-col hidden md:flex md:w-30 ">
-            <div className="border-orange-300	text-yellow-600 w-full bg-amber-100  rounded-lg">
-              <Notification
-                headerImg={<MdOutlineScience />}
-                title={"Beta Warning"}
-                description={
-                  "This Decentralized social network is still in the beta phase, things may break, please handle us with care."
-                }
-              />
-            </div>
-          </div>
+          {
+            allProfilesList.length > 0 && (
+              <WhoToFollow allProfiles={allProfilesList} />
+
+            )
+          }
         </div>
       </div>
       {/* Add new post */}
@@ -337,13 +338,14 @@ const Home = () => {
               style={{ zIndex: 10 }}
             >
               {/* new post content */}
-              <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto h-5/6 md:h-5/6">
+              <div className="relative flex flex-col w-90 md:w-50 bg-white rounded-lg overflow-y-auto m-auto">
                 <div className="flex justify-between p-4 w-100">
                   <p className="font-semibold text-xl">Create Post</p>
                   <div
                     className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                     onClick={() => {
                       setFilePath("");
+                      setUploadImage(null);
                       setIsPost(false);
                     }}
                   >
@@ -351,9 +353,9 @@ const Home = () => {
                   </div>
                 </div>
                 {/* new post */}
-                <div className="border-t-2  w-100 ">
+                <div className="border-t-2 relative w-full  ">
                   <form onSubmit={publishPost}>
-                    {cropStatus ? (
+                    {cropStatus && (
                       <div className="absolute z-10 flex flex-col items-center top-0 right-0 left-0 bottom-0 w-full h-full m-auto justify-center ">
                         <div className=" relative w-90 sm:w-50" style={{ height: "50vh" }}>
                           <div>
@@ -366,6 +368,17 @@ const Home = () => {
                               onCropComplete={cropComplete}
                               onZoomChange={setZoom}
                             />
+                          </div>
+                          <div
+                            className="absolute top-0 right-0 cursor-pointer"
+                            style={{ top: "-10px", right: "-10px" }}
+                            onClick={() => {
+                              setCropStatus(false);
+                              setFilePath("");
+                              setUploadImage(null);
+                            }}
+                          >
+                            <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
                           </div>
                         </div>
                         <div className="flex flex-col gap-4 w-90 md:w-50 bg-gray-700 ">
@@ -394,8 +407,6 @@ const Home = () => {
                           </div>
                         </div>
                       </div>
-                    ) : (
-                      <div></div>
                     )}
                     {warning && <Warning message={warningMessage}></Warning>}
                     <div className="flex gap-4 justify-between p-4">
@@ -429,22 +440,8 @@ const Home = () => {
                             }
                           }}
                         >
-                          <AiOutlineItalic />
+                          {isItalic ? <BiItalic /> : <AiOutlineItalic />}
                         </button>
-                        {/* <button
-                          type="button"
-                          className="font-semibold text-violet-900 text-xl"
-                          style={isCode ? { fontWeight: "700" } : { fontWeight: "" }}
-                          onClick={() => {
-                            if (isCode) {
-                              setIsCode(false);
-                            } else {
-                              setIsCode(true);
-                            }
-                          }}
-                        >
-                          {"</>"}
-                        </button> */}
                       </div>
                       <div>
                         <button
@@ -468,94 +465,64 @@ const Home = () => {
                       content="Italic"
                       className="z-10 absolute bg-black text-white border rounded-lg px-2"
                     />
-                    <div className="w-full border-t-2">
-                      <div className="mt-3 p-4">
-                        {/* <input
-                          placeholder="Share something!"
-                          value={content}
-                          onChange={(e) => {
-                            setContent(e.target.value);
-                            if (e.target.value.includes("http")) {
-                              const firstIndex = e.target.value.indexOf("http");
-                              const lastIndex = e.target.value.indexOf(" ", firstIndex);
-                              console.log("first index is", firstIndex, "last index is", lastIndex);
+
+
+                    {/* input text area */}
+
+                    <div className=" p-2 " style={
+                      isBold
+                        ? { fontWeight: "bold" }
+                        : isItalic
+                          ? { fontStyle: "italic" }
+                          : isBold && isItalic
+                            ? {
+                              fontWeight: "bold",
+                              fontStyle: "italic",
                             }
-                          }}
-                          className="cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-15"
-                          style={
-                            isBold
-                              ? { fontWeight: "bold" }
-                              : isCode
-                              ? { background: "gray" }
-                              : isItalic
-                              ? { fontStyle: "italic" }
-                              : isBold && isCode && isItalic
-                              ? {
-                                  fontWeight: "bold",
-                                  background: "grap",
-                                  fontStyle: "italic",
-                                }
-                              : isCode && isItalic
-                              ? {
-                                  background: "gray",
-                                  fontStyle: "italic",
-                                }
-                              : isBold && isItalic
-                              ? {
-                                  fontStyle: "italic",
-                                  fontWeight: "bold",
-                                }
-                              : {}
-                          }
-                        ></input> */}
-                        <div
-                          className="border rounded-lg w-full overflow-y-auto"
-                          style={{ height: "100px" }}
-                        >
-                          <div
-                            className="p-2 cursor-pointer focus:outline-none select-text whitespace-pre-wrap break-words h-100"
-                            contentEditable="true"
-                            id="content"
-                            onKeyDown={(e: any) => {}}
-                            data-placeholder="What's happening?"
-                            style={
-                              isBold
-                                ? { fontWeight: "bold" }
-                                : isCode
-                                ? { background: "gray" }
-                                : isItalic
-                                ? { fontStyle: "italic" }
-                                : isBold && isCode && isItalic
-                                ? {
-                                    fontWeight: "bold",
-                                    background: "grap",
-                                    fontStyle: "italic",
-                                  }
-                                : isCode && isItalic
-                                ? {
-                                    background: "gray",
-                                    fontStyle: "italic",
-                                  }
-                                : isBold && isItalic
-                                ? {
-                                    fontStyle: "italic",
-                                    fontWeight: "bold",
-                                  }
-                                : {}
-                            }
-                          ></div>
-                        </div>
-                      </div>
+                            : {}
+                    }>
+
+
+                      <MentionsInput
+
+                        className="h-100 border rounded-lg overflow-y-auto"
+
+                        style={{
+                          mentionsInputStyle
+                        }}
+                        value={postContent}
+                        onChange={handlePostContentChange}
+                        placeholder={"What's happening?"}
+
+                      >
+                        <Mention
+                        style={mentionStyle}
+                         
+                          trigger="@"
+                          data={allProfilesList}
+                          renderSuggestion={renderSuggestion}
+
+                        />
+                      </MentionsInput>
                     </div>
 
-                    <div className=" overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
+
+
+                    <div className="relative overflow-y-auto h-150 md:h-225 ml-5 md:ml-10">
                       {filePath && !cropStatus && (
-                        <img
-                          alt="uploaded Image"
-                          className="h-150 md:h-225"
-                          src={filePath}
-                          loading="lazy"
-                        ></img>
+                        <>
+                          <img alt="uploaded file" className="h-150 md:h-225" src={filePath} loading="lazy"></img>
+                          <div
+                            className="px-4 absolute top-0 right-0 cursor-pointer"
+                            onClick={() => {
+                              setCropStatus(false);
+                              setFilePath("");
+                              setUploadImage(null);
+                            }}
+                          >
+                            <GrFormClose fontSize={28} className="hover:bg-bgHoverActive bg-bgHover rounded-full" />
+                          </div>
+                        </>
                       )}
                     </div>
 
@@ -566,36 +533,50 @@ const Home = () => {
                         </div>
                       </div>
                       <div>
-                        <button
-                          type="submit"
-                          className="rounded-lg bg-violet-700 px-3 py-1 text-white"
-                        >
+                        <button type="submit" className="rounded-lg bg-violet-700 px-3 py-1 text-white">
                           Post
                         </button>
                       </div>
                     </div>
                   </form>
+
                 </div>
+
               </div>
             </div>
           </div>
-          <style>
-            {`
-            div:empty:before {
-              content:attr(data-placeholder);
-              color:gray
-            }
-            div:empty:before {
-              content:attr(data-placeholder);
-              color:gray
-            }
-            
-            `}
-          </style>
         </div>
       )}
       <Outlet />
+      <style>
+        {`
+            div:empty:before {
+              content:attr(data-placeholder);
+              color:gray
+            }
+            div:empty:before {
+              content:attr(data-placeholder);
+              color:gray
+            }
+
+            textarea:focus-visible {
+              outline:none;
+            }
+
+            .h-100__suggestions {
+              height: "200px";
+              overflow: scroll;
+              top: 5px;
+            }
+
+
+            `}
+      </style>
+
+
+
     </>
+
   );
 };
 

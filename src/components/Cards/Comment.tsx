@@ -9,6 +9,7 @@ import { customPost } from "../../fetch/customFetch";
 import { getInnerHtml } from "../../utils/geteInnerHtml";
 import { timeAgo } from "../../utils/timeAgo";
 import { updateContent } from "../../utils/updateContent";
+import defaultProfile from "./../././../assets/Form/default-user.svg";
 import PostProfile from "./PostProfile";
 
 const Comment = ({ comments, setRefetch, postId }: any) => {
@@ -61,7 +62,6 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                   className="px-1 py-1 rounded-full cursor-pointer hover:bg-gray-300"
                   onClick={() => {
                     setPostProfileStatus(false);
-                    setRefetch(true);
                   }}
                 >
                   <GrFormClose color="black" fontSize={25} />
@@ -74,10 +74,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
       )}
 
       {isUpdated && (
-        <div
-          className="absolute text-center  top-0 right-0 left-0 bottom-0 "
-          style={{ zIndex: 13, height: "30px" }}
-        >
+        <div className="absolute text-center  top-0 right-0 left-0 bottom-0 " style={{ zIndex: 13, height: "30px" }}>
           <p className="text-violet-700 font-semibold text-xl pt-3">Success!</p>
         </div>
       )}
@@ -127,15 +124,10 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                         >
                           <div className="flex flex-col md:flex-row md:gap-2 font-bold">
                             <p>{comment?.commenterDisplayName} </p>
-                            <p className="text-md  text-gray-500 font-none">
-                              @{comment?.commenterHandle}
-                            </p>
+                            <p className="text-md  text-gray-500 font-none">@{comment?.commenterHandle}</p>
                           </div>
 
-                          <span className="font-normal text-gray">
-                            {" "}
-                            {timeAgo(comment?.timestamp)}
-                          </span>
+                          <span className="font-normal text-gray"> {timeAgo(comment?.timestamp)}</span>
                         </div>
                       </div>
                     </div>
@@ -173,7 +165,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                               onClick={(e) => e.stopPropagation()}
                               className="whitespace-normal overflow-y-auto resize-none text-black outline-none prevent-select rounded-lg p-2"
                               style={
-                                isUpdatePopup && comment?.commentId == commentId
+                                isUpdatePopup && comment?.commentId === commentId
                                   ? { maxHeight: "100px", border: "1px solid grey" }
                                   : {}
                               }
@@ -195,7 +187,7 @@ const Comment = ({ comments, setRefetch, postId }: any) => {
                     </div>
                   </div>
                 </div>
-                {isUpdatePopup && commentId == comment?.commentId && (
+                {isUpdatePopup && commentId === comment?.commentId && (
                   <div className="absolute right-0 bottom-1 px-3">
                     <div className="flex gap-2">
                       <div>

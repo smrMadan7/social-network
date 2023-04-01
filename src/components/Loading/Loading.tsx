@@ -1,5 +1,3 @@
-import React from "react";
-
 const Loading = () => {
   return (
     <div className="absolute  w-full top-0" style={{ zIndex: 50 }}>

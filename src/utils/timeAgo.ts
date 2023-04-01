@@ -47,5 +47,11 @@ export const timeAgo: any = (timestamp: any) => {
       return interval + " minutes ago";
     }
   }
-  return Math.floor(seconds) + " seconds ago";
+
+  interval = Math.floor(seconds);
+  if (interval === 1 || interval <= 0) {
+    return 1 + "second ago";
+  } else {
+    return Math.floor(seconds) + " seconds ago";
+  }
 };
