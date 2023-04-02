@@ -29,7 +29,7 @@ const Team = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
-  const { appStatedispatch }: any = useUserContext();
+  const {appState, appStatedispatch }: any = useUserContext();
   const [toastMessage, setToastMessage] = useState("");
   const [handle, setHandle] = useState(true);
   const [handleWarning, setHandleWarning] = useState(false);
@@ -43,12 +43,17 @@ const Team = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoading(false);
-    setDescription("");
-    setUserImage(defaultProfile);
-    setToast(false);
-    setCropStatus(false);
-    setHandle(true);
+      if (appState?.action?.user) {
+        navigate("/")
+      } else {
+        setIsLoading(false);
+        setDescription("");
+        setUserImage(defaultProfile);
+        setToast(false);
+        setCropStatus(false);
+        setHandle(true);
+      }
+  
   }, []);
 
   useEffect(() => {
@@ -218,6 +223,7 @@ const Team = () => {
     }
   }, [croppedPixel]);
 
+ 
   return (
     <>
       <div className="relative w-full h-screen">
