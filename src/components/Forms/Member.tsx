@@ -45,12 +45,13 @@ const Member = () => {
   const [croppedPixel, setCroppedPixel] = useState<Area>();
   const [zoom, setZoom] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string>();
-  const { appStatedispatch }: any = useUserContext();
+  const { appState, appStatedispatch }: any = useUserContext();
   const [toast, setToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [handleWarning, setHandleWarning] = useState(false);
   const [handle, setHandle] = useState(true);
   const [addMemberResult, setAddMemberResult] = useState<any>();
+
 
   const navigate = useNavigate();
 
@@ -71,16 +72,22 @@ const Member = () => {
     }
   }, [addMemberResult]);
 
+
   useEffect(() => {
-    setFormStatus("");
-    setInputData("");
-    setIsLoading(false);
-    setBio("");
-    setUserImage(defaultProfile);
-    setCropStatus(false);
-    setHandleWarning(false);
-    setToast(false);
-    setHandle(true);
+    if (appState?.action?.user) {
+      navigate("/")
+    } else {
+      setFormStatus("");
+      setInputData("");
+      setIsLoading(false);
+      setBio("");
+      setUserImage(defaultProfile);
+      setCropStatus(false);
+      setHandleWarning(false);
+      setToast(false);
+      setHandle(true);
+    }
+
   }, []);
 
   const inputFormSubmitHandler = (event: React.SyntheticEvent) => {
