@@ -41,6 +41,10 @@ const UserNotification = ({ isNotification, setIsNotification, setIsNewNotificat
   }, [])
 
   useEffect(() => {
+    getAllNotifications();
+  }, [appState])
+
+  useEffect(() => {
 
 
     if(allNotifications?.status) {
