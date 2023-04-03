@@ -53,8 +53,8 @@ const Explore = () => {
       <div className="relative home-container h-screen  flex flex-col w-full overflow-y-auto " style={{ paddingTop: "90px" }}>
         <div className=" featured w-full border-b">
           <div className="m-auto flex w-full px-5 py-8 text-center sm:py-20 sm:text-left">
-            <div className="flex flex-col space-y-3">
-              <div className="md:w-60 text-3xl font-900 sm:text-4xl">ProtoSphere - <a  href="https://www.plnetwork.io/" target="_blank" className=" ">Protocol Labs Network's</a> dSocial Platform 👋</div>
+            <div className="flex flex-col space-y-3 text-white">
+              <div className="md:w-60 text-3xl font-900 sm:text-4xl">ProtoSphere - <a  href="https://www.plnetwork.io/" target="_blank" className=" ">Protocol Labs Network's</a> Social Platform 👋</div>
               <div className="w-70 md:w-60">The Protocol Labs Network drives breakthroughs in computing to push humanity forward.</div>
             </div>
           </div>
