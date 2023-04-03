@@ -12,7 +12,7 @@ import SocketNotification from "../Cards/SocketNotification";
 import { useSocketContext } from "../../context/SocketCotextProvider";
 import EmptyPost from "../Cards/EmptyPost";
 
-const UserNotification = ({ isNotification, setIsNotification }: any) => {
+const UserNotification = ({ isNotification, setIsNotification, setIsNewNotification}: any) => {
   const { appState }: any = useUserContext();
   const { socketContext }: any = useSocketContext();
   const [allNotifications, setAllNotifications] = useState<any>([]);
@@ -21,6 +21,7 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
   useEffect(() => {
 
     socketContext?.socket.on("receiveNotifications", (data: any) => {
+      setIsNewNotification(true);
        getAllNotifications();
       setAllNotifications([...allNotifications, data])
 
@@ -28,13 +29,13 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
 
   }, [socketContext?.socket]);
 
-  const socketParams = {
-    address: appState?.action?.user?.address,
-  }
-  useEffect(() => {
-    if (appState?.action?.user) {
-  socketContext?.socket.emit("joinNotifications", socketParams);
 
+  useEffect(() => {
+    const socketParams = {
+      address: appState?.action?.user?.address,
+    }
+    socketContext?.socket.emit("joinNotifications", socketParams);
+    if (appState?.action?.user) {
     getAllNotifications();
     }
   }, [])
