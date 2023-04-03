@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router";
 import { io } from "socket.io-client";
 import { baseUrl, defaultUserProfile, getNotifications, getUser, ipfsGateway } from "../../constants/AppConstants";
 import { useFeedsContext } from "../../context/FeedsContextProvider";
-import { useNotificationsContext } from "../../context/NotificationsContextProvider";
 import { useUserContext } from "../../context/UserContextProvider";
 import { customGet } from "../../fetch/customFetch";
 import { eventList } from "../../utils/event";
@@ -29,9 +28,15 @@ const UserNotification = ({ isNotification, setIsNotification }: any) => {
 
   }, [socketContext?.socket]);
 
-
+  const socketParams = {
+    address: appState?.action?.user?.address,
+  }
   useEffect(() => {
+    if (appState?.action?.user) {
+  socketContext?.socket.emit("joinNotifications", socketParams);
+
     getAllNotifications();
+    }
   }, [])
 
   useEffect(() => {
