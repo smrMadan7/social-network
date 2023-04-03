@@ -54,8 +54,8 @@ const Explore = () => {
         <div className=" featured w-full border-b">
           <div className="m-auto flex w-full px-5 py-8 text-center sm:py-20 sm:text-left">
             <div className="flex flex-col space-y-3">
-              <div className="text-3xl font-900 sm:text-4xl">Protocol Labs Social Network👋</div>
-              <div className="sm:w-70">The Protocol Labs Network drives breakthroughs in computing to push humanity forward.</div>
+              <div className="md:w-60 text-3xl font-900 sm:text-4xl">ProtoSphere - <a  href="https://www.plnetwork.io/" target="_blank" className=" ">Protocol Labs Network's</a> dSocial Platform 👋</div>
+              <div className="w-70 md:w-60">The Protocol Labs Network drives breakthroughs in computing to push humanity forward.</div>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ const Explore = () => {
           .featured {
             width: 100%;
             height: 300px;
-            background: linear-gradient(90deg, #fff, #fff 10%, transparent),
+            background: 
               url(${banner});
             background-size: cover;
           }
