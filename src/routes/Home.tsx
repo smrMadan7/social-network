@@ -6,7 +6,7 @@ import { BiItalic, BiMenu, BiMessageAltEdit } from "react-icons/bi";
 import { BsHeart } from "react-icons/bs";
 import { FaUserAlt } from "react-icons/fa";
 import { GrFormClose } from "react-icons/gr";
-import { MdOutlinePermMedia } from "react-icons/md";
+import { MdOutlinePermMedia, MdOutlineScience } from "react-icons/md";
 import { Mention, MentionsInput } from "react-mentions";
 import { Outlet } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
@@ -26,6 +26,7 @@ import { eventList } from "../utils/event";
 import { htmlToText } from "../utils/htmlToText";
 import mentionsInputStyle from './../styles/mentionsInputStyle';
 import mentionStyle from "../styles/mentionStyle";
+import Notification from "../components/Cards/Notification";
 
 
 const Home = () => {
@@ -46,14 +47,14 @@ const Home = () => {
   const [zoom, setZoom] = useState(1);
   const [posts, setPosts] = useState<any>([]);
   const [isReload, setIsReload] = useState(false);
-  const {socketContext}:any = useSocketContext();
+  const { socketContext }: any = useSocketContext();
 
   const [allProfilesList, setAllProfilesList] = useState<any>([]);
 
   useEffect(() => {
     setFilterStatus("timeline");
     if (!appState?.action?.user) {
-      window.location.reload(); 
+      window.location.reload();
     } else {
       getAllPosts();
     }
@@ -218,18 +219,18 @@ const Home = () => {
   };
 
 
-  
+
   const sendNotification = (tags: any, postResult: any) => {
 
     tags?.forEach((element: any) => {
       socketContext?.socket.emit("sendNotifications", {
-      type: "tag",
-      performedBy: appState?.action?.user?.address,
-      subjectId: element.address,
-      details: {
-        actionItem : "post", 
-        actionId: postResult?.postId,
-      }
+        type: "tag",
+        performedBy: appState?.action?.user?.address,
+        subjectId: element.address,
+        details: {
+          actionItem: "post",
+          actionId: postResult?.postId,
+        }
       });
 
     })
@@ -249,19 +250,19 @@ const Home = () => {
   };
 
   function renderSuggestion(entry: any, search: any, highlightedDisplay: any, index: any, focused: any) {
-    if(entry.id !== appState?.action?.user?.address) {
-    return (
-      <>
-        <div className="flex items-center gap-2 mt-2">
-          <div>
-            <img height="30px" width="30px" className="border rounded-full" src={`${ipfsGateway}${entry?.profile}`} />
+    if (entry.id !== appState?.action?.user?.address) {
+      return (
+        <>
+          <div className="flex items-center gap-2 mt-2">
+            <div>
+              <img height="30px" width="30px" className="border rounded-full" src={`${ipfsGateway}${entry?.profile}`} />
+            </div>
+            <div>
+              <p className="text-blue-700">{entry?.display}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-blue-700">{entry?.display}</p>
-          </div>
-        </div>
-      </>
-    );
+        </>
+      );
     }
   }
   return (
@@ -320,12 +321,23 @@ const Home = () => {
           </div>
 
           {/* Who to follow section */}
-          {
+          {/* {
             allProfilesList.length > 0 && (
               <WhoToFollow allProfiles={allProfilesList} />
 
             )
-          }
+          } */}
+          <div className="flex-col hidden md:flex md:w-30 sticky top-4 right-0 z-1" style={{ left: "70vw" }}>
+            <div className="border-orange-300	text-yellow-600 w-full bg-amber-100 rounded-lg">
+              <Notification
+                headerImg={<MdOutlineScience />}
+                title={"Beta Warning"}
+                description={
+                  "This Decentralized social network is still in the beta phase, things may break, please handle us with care."
+                }
+              />
+            </div>
+          </div>
         </div>
       </div>
       {/* Add new post */}
@@ -482,28 +494,29 @@ const Home = () => {
                             : {}
                     }>
 
+                      <div className="p-2 h-100 overflow-y-auto border rounded-lg overflow-x-hidden">
+                        <MentionsInput
+                          className=" overflow-y-scroll  "
+                          
 
-                      <MentionsInput
+                          style={{
+                            mentionsInputStyle
+                          }}
+                          value={postContent}
+                          onChange={handlePostContentChange}
+                          placeholder={"What's happening?"}
 
-                        className="h-100 border rounded-lg overflow-y-auto"
+                        >
+                          <Mention
+                            style={mentionStyle}
 
-                        style={{
-                          mentionsInputStyle
-                        }}
-                        value={postContent}
-                        onChange={handlePostContentChange}
-                        placeholder={"What's happening?"}
+                            trigger="@"
+                            data={allProfilesList}
+                            renderSuggestion={renderSuggestion}
 
-                      >
-                        <Mention
-                        style={mentionStyle}
-                         
-                          trigger="@"
-                          data={allProfilesList}
-                          renderSuggestion={renderSuggestion}
-
-                        />
-                      </MentionsInput>
+                          />
+                        </MentionsInput>
+                      </div>
                     </div>
 
 

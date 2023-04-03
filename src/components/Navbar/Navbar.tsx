@@ -4,14 +4,12 @@ import { AiFillBug } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
 import { IoIosContact, IoMdNotificationsOutline } from "react-icons/io";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { getFeeds, getNotifications, ipfsGateway, roles } from "../../constants/AppConstants";
+import { ipfsGateway, roles } from "../../constants/AppConstants";
 import { useSocketContext } from "../../context/SocketCotextProvider";
 import { useUserContext } from "../../context/UserContextProvider";
-import { customGet } from "../../fetch/customFetch";
 import Loading from "../Loading/Loading";
 import UserNotification from "../UserNotification/UserNotification";
 import logo from "./.././.././assets/Navbar/nav-logo.svg";
-import { useFeedsContext } from "../../context/FeedsContextProvider";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -26,6 +24,7 @@ const Navbar = () => {
   const [profileStatus, setProfileStatus] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
   const { socketContext }: any = useSocketContext();
+  const [isNewNotification, setIsNewNotification] = useState(false);
 
 
 
@@ -82,7 +81,7 @@ const Navbar = () => {
   const logoOnClickHandler = () => {
     navigate("/home");
   };
-  
+
   return (
     <>
       {moreStatus || profileStatus ? (
@@ -219,13 +218,19 @@ const Navbar = () => {
                 className="relative cursor-pointer prevent-select"
                 onClick={() => {
                   if (isNotification) {
+                    setIsNewNotification(false);
                     setIsNotification(false);
                   } else {
+                    setIsNewNotification(false);
                     setIsNotification(true);
                   }
                 }}
               >
-                <p className="absolute bottom-4 left-4 text-7xl text-red-500 ">.</p>
+                {
+                  isNewNotification && (
+                    <p className="absolute bottom-4 left-4 text-7xl text-red-500 ">.</p>
+                  )
+                }
 
                 <div className="cursor-pointer  rounded-full p-1 hover:bg-bgActive bg-bgHover">
                   <IoMdNotificationsOutline size={20} />
@@ -285,8 +290,8 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div style={isNotification ? {display:"block"} : {display:"none"}}>
-        <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} />
+      <div style={isNotification ? { display: "block" } : { display: "none" }}>
+        <UserNotification isNotification={isNotification} setIsNotification={setIsNotification} setIsNewNotification={setIsNewNotification} />
       </div>
       {isLogout && <Loading />}
     </>
